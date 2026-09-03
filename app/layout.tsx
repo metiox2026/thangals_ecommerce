@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Jost } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import { BagProvider } from '@/context/BagContext';
 import { Header } from '@/components/Header';
@@ -9,16 +9,18 @@ import { WhatsAppButton } from '@/components/WhatsAppButton';
 import { GoldRateButton } from '@/components/GoldRateButton';
 import { PageScroll } from '@/components/PageScroll';
 
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+const cormorant = localFont({
+  src: './fonts/CormorantGaramond-VariableFont_wght.woff2',
   variable: '--font-cormorant',
+  display: 'swap',
+  weight: '300 700',
 });
 
-const jost = Jost({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+const jost = localFont({
+  src: './fonts/Jost-VariableFont_wght.woff2',
   variable: '--font-jost',
+  display: 'swap',
+  weight: '300 600',
 });
 
 export const metadata: Metadata = {

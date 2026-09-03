@@ -10,5 +10,4 @@ services:
       - /app/.next
     environment:
       - HOSTNAME=0.0.0.0
-      - NODE_ENV=development
-    command: npm run dev
+      - NODE_ENV=production

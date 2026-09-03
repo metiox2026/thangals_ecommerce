@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:20 AS builder
 
 WORKDIR /app
 
@@ -7,8 +7,23 @@ RUN npm config set strict-ssl false && npm install --legacy-peer-deps --no-audit
 
 COPY . .
 
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+FROM node:20 AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME="0.0.0.0"
+ENV PORT=3000
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
 EXPOSE 3000
 
-ENV HOSTNAME="0.0.0.0"
-
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
