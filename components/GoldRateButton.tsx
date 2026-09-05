@@ -11,7 +11,7 @@ const RATES = [
 
 const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
 const BRAND = '#144B3C';
-const NOTCH = 20;
+const NOTCH = 12;
 
 export const GoldRateButton: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -36,7 +36,7 @@ export const GoldRateButton: React.FC = () => {
       className={`fixed top-1/2 right-0 z-40 -translate-y-1/2 bg-[#144B3C] text-white ${
         open
           ? 'w-80 rounded-l-md'
-          : 'w-[32px] h-[140px] rounded-tl-[20px] rounded-bl-[20px]'
+          : 'w-[24px] h-[90px] rounded-tl-[12px] rounded-bl-[12px]'
       }`}
     >
       {!open && (
@@ -82,9 +82,9 @@ export const GoldRateButton: React.FC = () => {
             transform: 'rotate(180deg)',
             color: '#ffffff',
             fontFamily: 'Arial, Helvetica, sans-serif',
-            fontSize: '13px',
+            fontSize: '8px',
             fontWeight: 600,
-            letterSpacing: '3px',
+            letterSpacing: '2px',
             whiteSpace: 'nowrap',
           }}
         >
