@@ -10,6 +10,8 @@ const RATES = [
 ];
 
 const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+const BRAND = '#144B3C';
+const NOTCH = 20;
 
 export const GoldRateButton: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -28,35 +30,42 @@ export const GoldRateButton: React.FC = () => {
       style={{
         transition: `width 280ms ${EASE} ${open ? '0ms' : '180ms'}, border-radius 280ms ${EASE} ${
           open ? '0ms' : '180ms'
-        }`,
+        }, box-shadow 280ms ${EASE}`,
+        boxShadow: open ? 'none' : '-2px 2px 6px rgba(0, 0, 0, 0.2)',
       }}
       className={`fixed top-1/2 right-0 z-40 -translate-y-1/2 bg-[#144B3C] text-white ${
         open
           ? 'w-80 rounded-l-md'
-          : 'h-32 w-7 rounded-l-[16px]'
+          : 'w-[32px] h-[140px] rounded-tl-[20px] rounded-bl-[20px]'
       }`}
     >
       {!open && (
         <>
+          {/* Top concave notch — radial-gradient curve biting into the top-right corner */}
           <div
             aria-hidden
-            className="pointer-events-none absolute right-0 -top-[14px] h-[14px] w-[14px] bg-[#144B3C]"
+            className="pointer-events-none absolute right-0"
             style={{
-              clipPath:
-                'path("M 14 0 L 14 14 L 0 14 A 14 14 0 0 0 14 0 Z")',
+              top: `-${NOTCH - 1}px`,
+              width: NOTCH,
+              height: NOTCH,
+              background: `radial-gradient(circle at top left, transparent ${NOTCH}px, ${BRAND} ${NOTCH + 1}px)`,
             }}
           />
+          {/* Bottom concave notch — mirrored curve on the lower side */}
           <div
             aria-hidden
-            className="pointer-events-none absolute right-0 -bottom-[14px] h-[14px] w-[14px] bg-[#144B3C]"
+            className="pointer-events-none absolute right-0"
             style={{
-              clipPath:
-                'path("M 0 0 L 14 0 L 14 14 A 14 14 0 0 0 0 0 Z")',
+              bottom: `-${NOTCH - 1}px`,
+              width: NOTCH,
+              height: NOTCH,
+              background: `radial-gradient(circle at bottom left, transparent ${NOTCH}px, ${BRAND} ${NOTCH + 1}px)`,
             }}
           />
         </>
       )}
-      {/* Closed state: small icon button. Only visible AFTER panel has fully collapsed. */}
+      {/* Closed state: vertical tab. Visible only after the panel has fully collapsed. */}
       <button
         onClick={() => setOpen(true)}
         aria-label="Open today's gold rate"
@@ -68,8 +77,16 @@ export const GoldRateButton: React.FC = () => {
         }`}
       >
         <span
-          style={{ writingMode: 'vertical-rl' }}
-          className="text-[11px] font-medium tracking-[0.22em] uppercase"
+          style={{
+            writingMode: 'vertical-rl',
+            transform: 'rotate(180deg)',
+            color: '#ffffff',
+            fontFamily: 'Arial, Helvetica, sans-serif',
+            fontSize: '13px',
+            fontWeight: 600,
+            letterSpacing: '3px',
+            whiteSpace: 'nowrap',
+          }}
         >
           Gold Rate
         </span>
@@ -100,7 +117,7 @@ export const GoldRateButton: React.FC = () => {
             className="text-white/70 transition-colors hover:text-white"
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="http://www.w3://www.w3.org/2000/svg"
               width="24"
               height="24"
               viewBox="0 0 24 24"
