@@ -56,7 +56,7 @@ export const SnapCarousel: React.FC<{ items: SnapItem[] }> = ({ items }) => {
     <div className="mt-8 md:mt-12">
       <div
         ref={ref}
-        className="flex snap-x snap-mandatory snap-stop-always gap-4 overflow-x-auto overflow-y-hidden pb-4 md:gap-6 md:pb-6 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:pb-0"
+        className="snap-scroll flex snap-x snap-mandatory snap-stop-always gap-4 overflow-x-auto overflow-y-hidden pb-4 md:gap-6 md:pb-6 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:pb-0"
         style={{
           WebkitOverflowScrolling: 'touch',
           touchAction: 'pan-x pan-y',
@@ -66,7 +66,6 @@ export const SnapCarousel: React.FC<{ items: SnapItem[] }> = ({ items }) => {
           width: '100%',
           transform: 'translateZ(0)',
         }}
-        className="snap-scroll flex snap-x snap-mandatory snap-stop-always gap-4 overflow-x-auto overflow-y-hidden pb-4 md:gap-6 md:pb-6 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:pb-0"
       >
         {items.map((tile) => (
           <Link
