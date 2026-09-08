@@ -8,6 +8,7 @@ import { BagDrawer } from '@/components/BagDrawer';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
 import { GoldRateButton } from '@/components/GoldRateButton';
 import { PageScroll } from '@/components/PageScroll';
+import { SearchBar } from '@/components/SearchBar';
 
 const cormorant = localFont({
   src: './fonts/CormorantGaramond-VariableFont_wght.woff2',
@@ -34,12 +35,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
+    <html lang="en" className={`${cormorant.variable} ${jost.variable}`} suppressHydrationWarning>
       <body className="bg-white text-[#1C1C1C] antialiased font-sans overflow-hidden">
         <BagProvider>
           <PageScroll>
             <Header />
-            <div className="h-[115px]" />
+            <div className="h-[75px] md:h-[115px]" />
+            <SearchBar />
             <main className="min-h-[70vh]">{children}</main>
             <Footer />
           </PageScroll>

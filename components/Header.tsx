@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useBag } from '@/context/BagContext';
 import { usePageScroll } from '@/context/ScrollContext';
@@ -12,9 +13,42 @@ export const Header: React.FC = () => {
   const { scrollY } = usePageScroll();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const lastScrollYRef = useRef(0);
+  const directionalEnabledRef = useRef(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // PageScroll's initial reading happens ~1 frame after mount. Wait briefly
+  // before enabling directional logic so a page-refresh-mid-scroll doesn't
+  // look like a "scroll down from 0" and instantly collapse the top row,
+  // which hides the menu button.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      directionalEnabledRef.current = true;
+    }, 250);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (mobileNavOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileNavOpen]);
+
+  useEffect(() => {
+    if (!directionalEnabledRef.current) {
+      lastScrollYRef.current = scrollY;
+      return;
+    }
+
     if (scrollY < HEADER_HEIGHT) {
       setScrolled(false);
       lastScrollYRef.current = scrollY;
@@ -50,9 +84,9 @@ export const Header: React.FC = () => {
               <button
                 onClick={() => setMobileNavOpen(true)}
                 aria-label="Open menu"
-                className="text-[#1A2621] transition-colors hover:text-[#144B3C] lg:hidden"
+                className="-ml-2.5 flex items-center justify-center p-2.5 text-[#1A2621] transition-colors hover:text-[#144B3C] lg:hidden"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-6">
                   <path d="M4 5h16"></path>
                   <path d="M4 12h16"></path>
                   <path d="M4 19h16"></path>
@@ -60,13 +94,13 @@ export const Header: React.FC = () => {
               </button>
               <button
                 aria-label="Search"
-                className="flex w-64 items-center gap-2 border border-[#EAEAEA] bg-white px-4 py-2 text-[#1A2621] transition-colors hover:border-[#D5D5D5]"
+                className="hidden w-64 items-center gap-2 border border-[#EAEAEA] bg-white px-4 py-2 text-[#1A2621] transition-colors hover:border-[#D5D5D5] lg:flex"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-[16px] text-[#60736A]">
                   <path d="m21 21-4.34-4.34"></path>
                   <circle cx="11" cy="11" r="8"></circle>
                 </svg>
-                <span className="hidden text-[11px] tracking-[0.14em] text-[#60736A] uppercase sm:block">
+                <span className="text-[11px] tracking-[0.14em] text-[#60736A] uppercase">
                   Search
                 </span>
               </button>
@@ -161,23 +195,56 @@ export const Header: React.FC = () => {
         </ul>
       </nav>
 
-      {/* Mobile Drawer */}
-      {mobileNavOpen && (
-        <div className="fixed inset-0 z-50 bg-white p-6 lg:hidden">
-          <div className="flex justify-between items-center pb-6 border-b border-[#E2E7E4]">
-            <img src="/images/thangals-logo.png" alt="Thangals" className="h-10 w-auto" />
-            <button onClick={() => setMobileNavOpen(false)} className="text-2xl text-[#1A2621]">×</button>
+      {/* Mobile Drawer — always rendered after mount; CSS controls open/close via .drawer-open class */}
+      {mounted && createPortal(
+        <div
+          className={mobileNavOpen ? 'drawer-root drawer-open' : 'drawer-root'}
+          aria-hidden={!mobileNavOpen}
+        >
+          <div
+            className="drawer-backdrop"
+            onClick={() => setMobileNavOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="drawer-panel">
+            <div className="drawer-header">
+              <img src="/images/thangals-logo.png" alt="Thangals" className="drawer-logo" />
+              <button
+                onClick={() => setMobileNavOpen(false)}
+                aria-label="Close menu"
+                className="drawer-close"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+              </button>
+            </div>
+            <ul className="drawer-list">
+              {[
+                { name: 'Gold Jewellery', href: '/shop' },
+                { name: 'Diamond Jewellery', href: '/shop' },
+                { name: 'Collections', href: '/collections' },
+                { name: 'Wedding', href: '/bridal' },
+                { name: 'Best Sellers', href: '/shop' },
+                { name: 'New Arrivals', href: '/shop' },
+                { name: 'Gifts', href: '/collections' },
+                { name: 'Offers', href: '/shop' },
+              ].map((item) => (
+                <li key={item.name} className="drawer-item">
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileNavOpen(false)}
+                    className="drawer-link"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="flex flex-col gap-5 pt-6 font-display text-xl text-[#1A2621]">
-            <li><Link href="/" onClick={() => setMobileNavOpen(false)}>Home</Link></li>
-            <li><Link href="/shop" onClick={() => setMobileNavOpen(false)}>Gold Jewellery</Link></li>
-            <li><Link href="/shop" onClick={() => setMobileNavOpen(false)}>Diamond Jewellery</Link></li>
-            <li><Link href="/collections" onClick={() => setMobileNavOpen(false)}>Collections</Link></li>
-            <li><Link href="/bridal" onClick={() => setMobileNavOpen(false)}>Wedding &amp; Bridal</Link></li>
-            <li><Link href="/stores" onClick={() => setMobileNavOpen(false)}>Boutiques</Link></li>
-            <li><Link href="/contact" onClick={() => setMobileNavOpen(false)}>Contact Us</Link></li>
-          </ul>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );

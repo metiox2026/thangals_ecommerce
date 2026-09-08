@@ -12,6 +12,8 @@ const RATES = [
 const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
 const BRAND = '#144B3C';
 const NOTCH = 12;
+const PANEL_MS = 320;
+const FADE_MS = 200;
 
 export const GoldRateButton: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -28,15 +30,13 @@ export const GoldRateButton: React.FC = () => {
   return (
     <div
       style={{
-        transition: `width 280ms ${EASE} ${open ? '0ms' : '180ms'}, border-radius 280ms ${EASE} ${
-          open ? '0ms' : '180ms'
-        }, box-shadow 280ms ${EASE}`,
-        boxShadow: open ? 'none' : '-2px 2px 6px rgba(0, 0, 0, 0.2)',
+        transition: `width ${PANEL_MS}ms ${EASE}, height ${PANEL_MS}ms ${EASE}, border-radius ${PANEL_MS}ms ${EASE}, box-shadow ${PANEL_MS}ms ${EASE}`,
+        boxShadow: open ? '0 0 0 0 rgba(0, 0, 0, 0)' : '-2px 2px 6px rgba(0, 0, 0, 0.2)',
       }}
-      className={`fixed top-1/2 right-0 z-40 -translate-y-1/2 bg-[#144B3C] text-white ${
+      className={`fixed bottom-24 right-0 top-auto z-40 bg-[#144B3C] text-white max-w-[320px] md:top-1/2 md:bottom-auto md:-translate-y-1/2 ${
         open
-          ? 'w-80 rounded-l-md'
-          : 'w-[24px] h-[90px] rounded-tl-[12px] rounded-bl-[12px]'
+          ? 'w-[calc(100vw-32px)] h-[420px] rounded-l-md'
+          : 'w-[28px] h-[96px] rounded-tl-[12px] rounded-bl-[12px]'
       }`}
     >
       {!open && (
@@ -65,14 +65,14 @@ export const GoldRateButton: React.FC = () => {
           />
         </>
       )}
-      {/* Closed state: vertical tab. Visible only after the panel has fully collapsed. */}
+      {/* Closed state: vertical tab. Fades in after the panel has finished shrinking. */}
       <button
         onClick={() => setOpen(true)}
         aria-label="Open today's gold rate"
         style={{
-          transition: `opacity 200ms ease ${open ? '0ms' : '280ms'}`,
+          transition: `opacity ${FADE_MS}ms ease ${open ? '0ms' : `${PANEL_MS}ms`}`,
         }}
-        className={`absolute inset-0 flex items-center justify-center ${
+        className={`absolute inset-0 flex items-center justify-center cursor-pointer ${
           open ? 'pointer-events-none opacity-0' : 'opacity-100'
         }`}
       >
@@ -82,7 +82,7 @@ export const GoldRateButton: React.FC = () => {
             transform: 'rotate(180deg)',
             color: '#ffffff',
             fontFamily: 'Arial, Helvetica, sans-serif',
-            fontSize: '8px',
+            fontSize: '9px',
             fontWeight: 600,
             letterSpacing: '2px',
             whiteSpace: 'nowrap',
@@ -92,13 +92,14 @@ export const GoldRateButton: React.FC = () => {
         </span>
       </button>
 
-      {/* Open state: rate board. Fades out first on close, then width shrinks. */}
+      {/* Open state: rate board. Fades in after the panel has finished expanding.
+          Always absolute inset-0 so it shrinks with the parent instead of snapping. */}
       <div
         style={{
-          transition: `opacity 200ms ease ${open ? '120ms' : '0ms'}`,
+          transition: `opacity ${FADE_MS}ms ease ${open ? `${PANEL_MS}ms` : '0ms'}`,
         }}
-        className={`flex h-full flex-col bg-[#144B3C] p-5 ${
-          open ? 'opacity-100' : 'pointer-events-none opacity-0'
+        className={`absolute inset-0 flex flex-col bg-[#144B3C] p-5 ${
+          open ? 'opacity-100' : 'pointer-events-none overflow-hidden opacity-0'
         }`}
       >
         <div className="flex items-start justify-between">
@@ -106,7 +107,7 @@ export const GoldRateButton: React.FC = () => {
             <p className="text-[10px] tracking-[0.22em] uppercase text-white/70">
               Today&apos;s Rate
             </p>
-            <p className="mt-1 font-display text-xl">
+            <p className="mt-1 font-sans text-lg font-medium tracking-[0.04em]">
               Gold Rates in Dubai
             </p>
             <div className="mt-2 h-px w-10 bg-[#C89F53]"></div>
@@ -117,7 +118,7 @@ export const GoldRateButton: React.FC = () => {
             className="text-white/70 transition-colors hover:text-white"
           >
             <svg
-              xmlns="http://www.w3://www.w3.org/2000/svg"
+              xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               viewBox="0 0 24 24"

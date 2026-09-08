@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 interface Slide {
@@ -34,20 +34,70 @@ const SLIDES: Slide[] = [
 
 const INTERVAL_MS = 5000;
 const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+const SWIPE_THRESHOLD = 50;
 
 export const HeroCarousel: React.FC = () => {
   const [index, setIndex] = useState(0);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchEndXRef = useRef<number | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    const id = setInterval(() => {
+  const startAuto = () => {
+    intervalRef.current = setInterval(() => {
       setIndex((i) => (i + 1) % SLIDES.length);
     }, INTERVAL_MS);
-    return () => clearInterval(id);
+  };
+
+  const stopAuto = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    startAuto();
+    return stopAuto;
   }, []);
 
+  const goTo = (next: number) => {
+    const wrapped = (next + SLIDES.length) % SLIDES.length;
+    setIndex(wrapped);
+    stopAuto();
+    startAuto();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchEndXRef.current = null;
+    touchStartXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartXRef.current === null || touchEndXRef.current === null) return;
+    const delta = touchStartXRef.current - touchEndXRef.current;
+    if (Math.abs(delta) > SWIPE_THRESHOLD) {
+      if (delta > 0) {
+        goTo(index + 1);
+      } else {
+        goTo(index - 1);
+      }
+    }
+    touchStartXRef.current = null;
+    touchEndXRef.current = null;
+  };
+
   return (
-    <section className="relative">
-      <div className="relative h-[calc(100vh-115px)] w-full overflow-hidden bg-[#0E372B]">
+    <section className="relative w-full">
+      <div
+        className="relative aspect-[16/9] w-full overflow-hidden bg-[#0E372B] touch-pan-y md:aspect-auto md:h-[calc(100vh-115px)]"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {SLIDES.map((slide, i) => (
           <Link
             key={slide.src}
@@ -60,7 +110,8 @@ export const HeroCarousel: React.FC = () => {
               alt={slide.alt}
               width={1920}
               height={1080}
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover select-none pointer-events-none"
+              draggable={false}
               style={{
                 opacity: i === index ? 1 : 0,
                 transition: `opacity 1000ms ${EASE}`,
@@ -76,7 +127,7 @@ export const HeroCarousel: React.FC = () => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setIndex(i);
+                goTo(i);
               }}
               aria-label={`Go to slide ${i + 1}`}
               className="h-1.5 rounded-full transition-all duration-300"

@@ -29,7 +29,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           className="aspect-square w-full object-cover"
         />
         {tagLabel && (
-          <span className="absolute left-4 top-4 bg-white/90 px-3 py-1 text-[10px] tracking-[0.18em] uppercase text-[#144B3C] font-medium">
+          <span className="absolute left-2 top-2 bg-white px-2 py-1 text-[9px] tracking-[0.16em] uppercase text-[#144B3C] font-semibold md:left-4 md:top-4 md:px-3 md:py-1 md:text-[10px] md:tracking-[0.18em]">
             {tagLabel}
           </span>
         )}

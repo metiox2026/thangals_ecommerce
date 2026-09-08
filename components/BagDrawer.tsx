@@ -20,7 +20,7 @@ export const BagDrawer: React.FC = () => {
       {/* Panel */}
       <aside className="relative z-10 flex h-full w-full max-w-md flex-col bg-[#FAF8F5] p-6 shadow-2xl transition-transform">
         <div className="flex items-center justify-between border-b border-[#E5DDD0] pb-4">
-          <h2 className="font-serif text-2xl font-medium text-[#1A3A2A]">Your Shopping Bag</h2>
+          <h2 className="font-jost text-base font-semibold tracking-[0.18em] uppercase text-[#1A3A2A]">Your Shopping Bag</h2>
           <button
             onClick={closeBag}
             className="text-2xl text-[#777] transition-colors hover:text-[#1C1C1C]"

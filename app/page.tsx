@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { api, Product } from '@/lib/api';
 import { ProductCard } from '@/components/ProductCard';
 import { HeroCarousel } from '@/components/HeroCarousel';
+import { SnapCarousel } from '@/components/SnapCarousel';
 
 type Review = {
   name: string;
@@ -93,7 +94,7 @@ const row2: Review[] = [
 ];
 
 const ReviewCard: React.FC<{ review: Review }> = ({ review }) => (
-  <article className="flex w-[360px] shrink-0 flex-col rounded-2xl border border-[#E8EAED] bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
+  <article className="flex w-[360px] shrink-0 flex-col rounded-2xl border border-[#E8EAED] bg-white p-6">
     <header className="flex items-center gap-3">
       <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#144B3C] to-[#0E372B] text-sm font-semibold text-white">
         {review.initial}
@@ -151,67 +152,75 @@ export default async function HomePage() {
       {/* ===== HERO CAROUSEL ===== */}
       <HeroCarousel />
 
-      {/* ===== TRUST BAR ===== */}
-      <div className="border-y border-[#E2E7E4] bg-[#FAF8F4] py-6">
-        <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-6 px-5 md:grid-cols-4 lg:px-10">
-          <div className="flex flex-col items-center gap-3 text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-5 text-[#144B3C]">
-              <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
-              <path d="m9 12 2 2 4-4"></path>
-            </svg>
-            <span className="text-[10px] leading-relaxed tracking-[0.16em] uppercase text-[#60736A]">
-              Hallmarked 22K &amp; 18K Gold
-            </span>
-          </div>
-
-          <div className="flex flex-col items-center gap-3 text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-5 text-[#144B3C]">
-              <path d="M6 3h12l4 6-10 12L2 9z"></path>
-              <path d="M11 3 8 9l4 12 4-12-3-6"></path>
-              <path d="M2 9h20"></path>
-            </svg>
-            <span className="text-[10px] leading-relaxed tracking-[0.16em] uppercase text-[#60736A]">
-              Natural Emeralds &amp; Diamonds
-            </span>
-          </div>
-
-          <div className="flex flex-col items-center gap-3 text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-5 text-[#144B3C]">
-              <path d="M8 2v4"></path>
-              <path d="M16 2v4"></path>
-              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-              <path d="M3 10h18"></path>
-            </svg>
-            <span className="text-[10px] leading-relaxed tracking-[0.16em] uppercase text-[#60736A]">
-              Private Appointments
-            </span>
-          </div>
-
-          <div className="flex flex-col items-center gap-3 text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-5 text-[#144B3C]">
-              <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
-              <path d="M20 2v4"></path>
-              <path d="M22 4h-4"></path>
-              <circle cx="4" cy="20" r="2"></circle>
-            </svg>
-            <span className="text-[10px] leading-relaxed tracking-[0.16em] uppercase text-[#60736A]">
-              Complimentary Polishing
-            </span>
-          </div>
+      {/* ===== TRUST BAR (marquee) ===== */}
+      <div className="relative overflow-hidden border-y border-[#E2E7E4] bg-[#FAF8F4] py-3 lg:py-5">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#FAF8F4] to-transparent"></div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#FAF8F4] to-transparent"></div>
+        <div className="flex w-max animate-marquee-left whitespace-nowrap">
+          {[...Array(4)].flatMap((_, dupIdx) =>
+            [
+              {
+                label: 'Hallmarked 22K & 18K Gold',
+                icon: (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-[#144B3C] lg:size-5">
+                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+                    <path d="m9 12 2 2 4-4"></path>
+                  </svg>
+                ),
+              },
+              {
+                label: 'Natural Emeralds & Diamonds',
+                icon: (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-[#144B3C] lg:size-5">
+                    <path d="M6 3h12l4 6-10 12L2 9z"></path>
+                    <path d="M11 3 8 9l4 12 4-12-3-6"></path>
+                    <path d="M2 9h20"></path>
+                  </svg>
+                ),
+              },
+              {
+                label: 'Private Appointments',
+                icon: (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-[#144B3C] lg:size-5">
+                    <path d="M8 2v4"></path>
+                    <path d="M16 2v4"></path>
+                    <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                    <path d="M3 10h18"></path>
+                  </svg>
+                ),
+              },
+              {
+                label: 'Complimentary Polishing',
+                icon: (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-4 text-[#144B3C] lg:size-5">
+                    <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                    <path d="M20 2v4"></path>
+                    <path d="M22 4h-4"></path>
+                    <circle cx="4" cy="20" r="2"></circle>
+                  </svg>
+                ),
+              },
+            ].map((item, i) => (
+              <div
+                key={`${dupIdx}-${i}`}
+                className="flex shrink-0 items-center gap-2 px-6 text-[10px] tracking-[0.16em] uppercase text-[#60736A] lg:gap-3 lg:px-10 lg:text-[13px] lg:tracking-[0.22em]"
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
       {/* ===== SHOP BY CATEGORY (100% EXACT MATCH) ===== */}
-      <section className="bg-white mx-auto max-w-[1400px] px-5 py-20 lg:px-10">
+      <section className="bg-white mx-auto max-w-[1400px] px-5 py-12 lg:px-10">
         <div className="text-center">
           <p className="eyebrow">Browse</p>
           <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
             Shop by Category
           </h2>
           <div className="rule-gold mt-5 mx-auto"></div>
-          <p className="mt-5 text-sm leading-relaxed text-[#60736A] mx-auto max-w-xl">
-            Five houses of jewellery, one standard of finishing.
-          </p>
         </div>
 
         <div className="mt-12 grid grid-cols-2 gap-5 md:grid-cols-5">
@@ -246,7 +255,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== NEW THIS SEASON ===== */}
-      <section className="bg-white mx-auto max-w-[1400px] px-5 py-20 lg:px-10 !pt-0">
+      <section className="bg-white mx-auto max-w-[1400px] px-5 py-12 lg:px-10 !pt-0">
         <div className="text-center">
           <p className="eyebrow">Just In</p>
           <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
@@ -272,7 +281,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== SHOP BY GENDER ===== */}
-      <section className="bg-white mx-auto max-w-[1400px] px-5 py-20 lg:px-10 !pt-0">
+      <section className="bg-white mx-auto max-w-[1400px] px-5 py-12 lg:px-10 !pt-0">
         <div className="text-center">
           <p className="eyebrow">For Everyone</p>
           <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
@@ -281,30 +290,13 @@ export default async function HomePage() {
           <div className="rule-gold mt-5 mx-auto"></div>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {[
+        <SnapCarousel
+          items={[
             { title: 'Women', desc: 'Necklaces, earrings, rings & bridal sets', img: '/images/gender-women.jpg', link: '/shop' },
             { title: 'Men', desc: 'Signets, cuffs and curb chains', img: '/images/gender-men.jpg', link: '/shop' },
             { title: 'Kids & Teen', desc: 'Lightweight gold, made for everyday', img: '/images/gender-kids.jpg', link: '/shop' },
-          ].map((tile) => (
-            <Link key={tile.title} href={tile.link} className="group block">
-              <div className="media-zoom relative bg-[#F2F6F4]">
-                <img
-                  src={tile.img}
-                  alt={tile.title}
-                  loading="lazy"
-                  width={912}
-                  height={1200}
-                  className="aspect-[3/4] w-full object-cover"
-                />
-              </div>
-              <div className="mt-4 text-center">
-                <h3 className="font-display text-2xl text-[#1A2621]">{tile.title}</h3>
-                <p className="mt-1 text-sm text-[#60736A]">{tile.desc}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+          ]}
+        />
       </section>
 
       {/* ===== SIGNATURE SPOTLIGHT — THE EMERALD SUITE ===== */}
@@ -315,7 +307,7 @@ export default async function HomePage() {
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover opacity-40"
         />
-        <div className="relative mx-auto flex max-w-[1400px] items-center px-8 py-10 lg:px-20 lg:py-16">
+        <div className="relative mx-auto flex max-w-[1400px] items-center px-8 py-8 lg:px-20 lg:py-12">
           <div className="max-w-lg text-white">
             <p className="eyebrow !text-[#C89F53]">Signature Piece</p>
             <h2 className="mt-3 font-display text-4xl leading-tight md:text-5xl">The Emerald Suite</h2>
@@ -334,7 +326,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== SHOP BY OCCASION ===== */}
-      <section className="bg-white mx-auto max-w-[1400px] px-5 py-20 lg:px-10">
+      <section className="bg-white mx-auto max-w-[1400px] px-5 py-12 lg:px-10">
         <div className="text-center">
           <p className="eyebrow">Curated</p>
           <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
@@ -343,8 +335,8 @@ export default async function HomePage() {
           <div className="rule-gold mt-5 mx-auto"></div>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {[
+        <SnapCarousel
+          items={[
             {
               title: 'Bridal',
               desc: 'Ceremonial sets in emerald and 22K gold',
@@ -363,29 +355,12 @@ export default async function HomePage() {
               img: '/images/occasion_men.jpg',
               link: '/shop',
             },
-          ].map((occ) => (
-            <Link key={occ.title} href={occ.link} className="group block">
-              <div className="media-zoom relative bg-[#F2F6F4]">
-                <img
-                  src={occ.img}
-                  alt={occ.title}
-                  loading="lazy"
-                  width={912}
-                  height={1200}
-                  className="aspect-[3/4] w-full object-cover"
-                />
-              </div>
-              <div className="mt-4 text-center">
-                <h3 className="font-display text-2xl text-[#1A2621]">{occ.title}</h3>
-                <p className="mt-1 text-sm text-[#60736A]">{occ.desc}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+          ]}
+        />
       </section>
 
       {/* ===== MOST LOVED ===== */}
-      <section className="bg-white mx-auto max-w-[1400px] px-5 py-20 lg:px-10 !pt-0">
+      <section className="bg-white mx-auto max-w-[1400px] px-5 py-12 lg:px-10 !pt-0">
         <div className="text-center">
           <p className="eyebrow">Most Loved</p>
           <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
@@ -403,12 +378,11 @@ export default async function HomePage() {
 
       {/* ===== FULL-WIDTH CRAFT VIDEO ===== */}
       <section className="w-full bg-white">
-        <div className="mx-auto max-w-[1400px] px-5 pt-20 text-center lg:px-10">
+        <div className="mx-auto max-w-[1400px] px-5 pt-12 pb-6 text-center lg:px-10">
           <p className="eyebrow">Inside the Atelier</p>
           <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
             Where the metal becomes memory
           </h2>
-          <div className="rule-gold mt-5 mx-auto"></div>
         </div>
         <video
           src="/craft-video.mp4"
@@ -423,7 +397,7 @@ export default async function HomePage() {
 
       {/* ===== GIFTING SECTION ===== */}
       <section className="bg-[#E5F0EB]">
-        <div className="mx-auto grid max-w-[1400px] items-center gap-12 px-5 py-20 lg:grid-cols-2 lg:px-10">
+        <div className="mx-auto grid max-w-[1400px] items-center gap-12 px-5 py-12 lg:grid-cols-2 lg:px-10">
           <img
             src="/images/gifting.jpg"
             alt="White gift box tied with a deep green ribbon beside gold earrings"
@@ -454,7 +428,7 @@ export default async function HomePage() {
       </section>
 
       {/* ===== VISIT US ===== */}
-      <section className="bg-white mx-auto max-w-[1400px] px-5 py-20 lg:px-10">
+      <section className="bg-white mx-auto max-w-[1400px] px-5 py-12 lg:px-10">
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.3fr]">
           <div>
             <div>
@@ -487,7 +461,7 @@ export default async function HomePage() {
 
       {/* ===== TESTIMONIALS / CLIENTS ===== */}
       <section className="border-t border-[#E2E7E4] bg-[#FAF8F4]">
-        <div className="mx-auto max-w-[1400px] px-5 py-24 lg:px-10">
+        <div className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10">
           <div className="text-center">
             <p className="eyebrow">Clients</p>
             <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
@@ -495,8 +469,8 @@ export default async function HomePage() {
             </h2>
             <div className="rule-gold mt-5 mx-auto"></div>
 
-            <div className="mt-7 inline-flex items-center gap-3 rounded-full border border-[#E8EAED] bg-white px-5 py-2.5 shadow-sm">
-              <svg className="size-5" viewBox="0 0 24 24" aria-hidden="true">
+            <div className="mt-7 inline-flex items-center gap-2 rounded-full border border-[#E8EAED] bg-white px-3.5 py-1.5 shadow-sm md:gap-3 md:px-5 md:py-2.5">
+              <svg className="size-4 md:size-5" viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -504,13 +478,13 @@ export default async function HomePage() {
               </svg>
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="size-4 fill-[#FBBC05]" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg key={i} className="size-3.5 fill-[#FBBC05] md:size-4" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                   </svg>
                 ))}
               </div>
-              <span className="text-sm font-semibold text-[#1A2621]">4.9</span>
-              <span className="text-sm text-[#5F6368]">· 320 Google reviews</span>
+              <span className="text-xs font-semibold text-[#1A2621] md:text-sm">4.9</span>
+              <span className="text-xs text-[#5F6368] md:text-sm">· 320 Google reviews</span>
             </div>
           </div>
 
@@ -540,7 +514,7 @@ export default async function HomePage() {
 
       {/* ===== EDITORIAL / SEO CONTENT ===== */}
       <section className="bg-white">
-        <div className="mx-auto max-w-[1400px] px-5 py-20 lg:px-10">
+        <div className="mx-auto max-w-[1400px] px-5 py-12 lg:px-10">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
             <div>
               <p className="eyebrow">A Brief Guide</p>

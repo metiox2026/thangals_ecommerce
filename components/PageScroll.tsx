@@ -33,7 +33,7 @@ export const PageScroll: React.FC<{ children: React.ReactNode }> = ({ children }
     <ScrollProvider value={{ scrollY }}>
       <SimpleBar
         ref={ref}
-        style={{ maxHeight: '100vh' }}
+        style={{ height: '100dvh' }}
         autoHide={false}
         className="page-scrollbar"
       >

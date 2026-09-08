@@ -1,55 +1,121 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 const socialIconClass =
   'flex h-9 w-9 items-center justify-center border border-[#D8D2C7] text-[#666666] transition-colors hover:border-[#0B3C30] hover:text-[#0B3C30]';
 
+const ChevronIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="m6 9 6 6 6-6"></path>
+  </svg>
+);
+
+const useMediaQuery = (query: string) => {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    setMatches(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, [query]);
+  return matches;
+};
+
+const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
+  const isLg = useMediaQuery('(min-width: 1024px)');
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (isLg) setOpen(true);
+  }, [isLg]);
+
+  return (
+    <details
+      open={open}
+      onToggle={(e) => {
+        if (!isLg) setOpen(e.currentTarget.open);
+      }}
+      className="group border-b border-[#E6E1DA] py-3 sm:border-0 sm:py-0"
+    >
+      <summary className="flex cursor-pointer items-center justify-between list-none marker:hidden lg:cursor-default lg:pointer-events-none">
+        <h3 className="font-jost text-[13px] font-medium tracking-[0.2em] uppercase text-[#4A4A4A]">
+          {title}
+        </h3>
+        <ChevronIcon className="size-4 text-[#666666] transition-transform duration-200 group-open:rotate-180 lg:hidden" />
+      </summary>
+      <div className="mt-3 lg:mt-5">{children}</div>
+    </details>
+  );
+};
+
+const StaticSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+  <div className="border-b border-[#E6E1DA] py-3 sm:border-0 sm:py-0">
+    <h3 className="font-jost text-[13px] font-medium tracking-[0.2em] uppercase text-[#4A4A4A]">
+      {title}
+    </h3>
+    <div className="mt-3 lg:mt-5">{children}</div>
+  </div>
+);
+
 export const Footer: React.FC = () => {
   return (
-    <footer className="mt-24 border-t border-[#E6E1DA] bg-[#F5F2EC]">
+    <footer className="mt-16 border-t border-[#E6E1DA] bg-[#F5F2EC] lg:mt-24">
       {/* ===== NEWSLETTER BAND ===== */}
       <div className="border-b border-[#E6E1DA]">
-        <div className="mx-auto flex max-w-[1400px] flex-col items-center gap-3 px-5 py-8 text-center lg:px-10">
+        <div className="mx-auto flex max-w-[1400px] flex-col items-center gap-2 px-5 py-6 text-center sm:gap-3 sm:py-8 lg:px-10">
           <img
             src="/images/thangals-logo.png"
             alt="Thangals Gold &amp; Diamonds"
-            className="h-10 w-auto sm:h-12"
+            className="h-9 w-auto sm:h-12"
           />
-          <h2 className="font-display text-2xl md:text-[1.75rem] md:leading-[1.15]">
+          <h2 className="font-display text-xl leading-tight sm:text-2xl md:text-[1.75rem] md:leading-[1.15]">
             Join the World of Thangals
           </h2>
-          <p className="mx-auto max-w-xl text-sm leading-relaxed text-[#666666]">
+          <p className="mx-auto max-w-xl text-xs leading-relaxed text-[#666666] sm:text-sm">
             From heritage gold to emerald heirlooms, find the piece that feels like you.
           </p>
           <form
-            className="mx-auto mt-1 flex max-w-md items-stretch border-b border-[#1C1C1C]/30"
+            className="mx-auto mt-1 flex w-full max-w-md items-stretch border-b border-[#1C1C1C]/30"
             onSubmit={(e) => e.preventDefault()}
+            suppressHydrationWarning
           >
             <input
               type="email"
               required
               placeholder="Email"
-              className="flex-1 bg-transparent py-1.5 text-sm uppercase tracking-[0.12em] outline-none placeholder:text-[#1A2621]"
+              className="min-w-0 flex-1 bg-transparent py-1.5 text-sm uppercase tracking-[0.12em] outline-none placeholder:text-[#1A2621]"
+              suppressHydrationWarning
             />
-            <button className="bg-[#0B3C30] px-6 text-[11px] tracking-[0.22em] uppercase text-white transition-opacity hover:opacity-90">
+            <button className="bg-[#0B3C30] px-5 text-[11px] tracking-[0.22em] uppercase text-white transition-opacity hover:opacity-90 sm:px-6">
               Sign up
             </button>
           </form>
-          <p className="mx-auto max-w-xl text-xs leading-relaxed text-[#666666]">
+          <p className="mx-auto max-w-xl text-[11px] leading-relaxed text-[#666666] sm:text-xs">
             <span className="font-medium text-[#1A2621]">See What Customers Have To Say:</span>{' '}
             Real experiences from happy customers who found their perfect piece with Thangals.
           </p>
         </div>
       </div>
 
-      {/* ===== 5-COLUMN LINK GRID ===== */}
-      <div className="mx-auto grid max-w-[1400px] gap-10 px-5 py-16 sm:grid-cols-2 lg:grid-cols-5 lg:px-10">
+      {/* ===== LINK GRID (accordions on mobile, expanded on lg+) ===== */}
+      <div className="mx-auto grid max-w-[1400px] gap-0 px-5 py-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 sm:py-12 lg:grid-cols-5 lg:gap-10 lg:px-10 lg:py-16">
         {/* Shopping */}
-        <div>
-          <h3 className="eyebrow">Shopping</h3>
-          <ul className="mt-5 space-y-3 text-sm text-[#666666]">
+        <Section title="Shopping">
+          <ul className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-[#666666] sm:block sm:space-y-3 sm:gap-y-0">
             <li><Link href="/shop" className="link-underline hover:text-[#1C1C1C]">All Jewellery</Link></li>
             <li><Link href="/shop" className="link-underline hover:text-[#1C1C1C]">Gold Jewellery</Link></li>
             <li><Link href="/shop" className="link-underline hover:text-[#1C1C1C]">Diamond Jewellery</Link></li>
@@ -57,12 +123,11 @@ export const Footer: React.FC = () => {
             <li><Link href="/collections" className="link-underline hover:text-[#1C1C1C]">Collections</Link></li>
             <li><Link href="/shop" className="link-underline hover:text-[#1C1C1C]">Gifts</Link></li>
           </ul>
-        </div>
+        </Section>
 
         {/* Our Company */}
-        <div>
-          <h3 className="eyebrow">Our Company</h3>
-          <ul className="mt-5 space-y-3 text-sm text-[#666666]">
+        <Section title="Our Company">
+          <ul className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-[#666666] sm:block sm:space-y-3 sm:gap-y-0">
             <li><Link href="/" className="link-underline hover:text-[#1C1C1C]">Home</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">About Us</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Our Story</Link></li>
@@ -70,36 +135,33 @@ export const Footer: React.FC = () => {
             <li><Link href="/stores" className="link-underline hover:text-[#1C1C1C]">Boutiques</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Careers</Link></li>
           </ul>
-        </div>
+        </Section>
 
         {/* Information */}
-        <div>
-          <h3 className="eyebrow">Information</h3>
-          <ul className="mt-5 space-y-3 text-sm text-[#666666]">
+        <Section title="Information">
+          <ul className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-[#666666] sm:block sm:space-y-3 sm:gap-y-0">
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Terms &amp; Conditions</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Privacy Policy</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Shipping Policy</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Return &amp; Exchange</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Hallmarking</Link></li>
           </ul>
-        </div>
+        </Section>
 
         {/* Let Us Help You */}
-        <div>
-          <h3 className="eyebrow">Let Us Help You</h3>
-          <ul className="mt-5 space-y-3 text-sm text-[#666666]">
+        <Section title="Let Us Help You">
+          <ul className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-[#666666] sm:block sm:space-y-3 sm:gap-y-0">
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">FAQ</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Ring Size Guide</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Bangle Size Guide</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Jewellery Care</Link></li>
             <li><Link href="/contact" className="link-underline hover:text-[#1C1C1C]">Sitemap</Link></li>
           </ul>
-        </div>
+        </Section>
 
-        {/* Connect With Us */}
-        <div>
-          <h3 className="eyebrow">Connect With Us</h3>
-          <address className="not-italic mt-5 space-y-3 text-sm leading-relaxed text-[#666666]">
+        {/* Connect With Us — always visible, no toggle */}
+        <StaticSection title="Connect With Us">
+          <address className="not-italic space-y-3 text-sm leading-relaxed text-[#666666]">
             <p>
               Head Office<br />
               Gold Centre Bldg — Shop 19 &amp; 20<br />
@@ -154,12 +216,12 @@ export const Footer: React.FC = () => {
               </svg>
             </a>
           </div>
-        </div>
+        </StaticSection>
       </div>
 
       {/* ===== COPYRIGHT BAR ===== */}
       <div className="border-t border-[#E6E1DA]">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-5 py-6 text-[11px] tracking-[0.14em] uppercase text-[#666666] sm:flex-row sm:justify-between lg:px-10">
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-1 px-5 py-4 text-center text-[10px] tracking-[0.14em] uppercase text-[#666666] sm:flex-row sm:justify-between sm:gap-2 sm:py-6 sm:text-left sm:text-[11px] lg:px-10">
           <span>© 2026 Thangals Jewellery LLC, Dubai · Hallmarked 22K &amp; 18K · Made in the UAE since 1993</span>
           <span>Privacy · Terms · Hallmarking</span>
         </div>

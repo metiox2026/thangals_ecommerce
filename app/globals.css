@@ -19,6 +19,7 @@
   html {
     background-color: #ffffff;
     overflow-anchor: none;
+    height: 100%;
   }
 
   body {
@@ -26,10 +27,15 @@
     color: var(--foreground);
     font-family: var(--font-jost), sans-serif;
     overflow-x: hidden;
+    height: 100%;
   }
 
   h1, h2, h3, h4, h5, h6, .font-display {
     font-family: var(--font-cormorant), Georgia, serif;
+  }
+
+  .font-jost {
+    font-family: var(--font-jost), sans-serif;
   }
 }
 
@@ -204,4 +210,167 @@
 
 .page-scrollbar .simplebar-scrollbar.simplebar-visible::before {
   opacity: 1 !important;
+}
+
+.snap-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.snap-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* iOS Safari fix: SimpleBar's overflow:hidden kills nested horizontal scroll.
+   Switch its wrapper / mask to overflow:clip so child scroll containers work.
+   Falls back gracefully on older versions. */
+.simplebar-wrapper,
+.simplebar-mask {
+  overflow: clip !important;
+}
+
+@supports not (overflow: clip) {
+  .simplebar-wrapper,
+  .simplebar-mask {
+    overflow: hidden !important;
+  }
+}
+
+/* Mobile drawer — always rendered, CSS drives the slide. Avoids iOS Safari
+   rAF timing issues with mount-then-animate patterns. */
+.drawer-root {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+}
+
+.drawer-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: min(85vw, 420px);
+  background-color: white;
+  padding: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: translateX(-100%);
+  transition: transform 450ms cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-root.drawer-open {
+  pointer-events: auto;
+}
+
+.drawer-root.drawer-open .drawer-backdrop {
+  opacity: 1;
+}
+
+.drawer-root.drawer-open .drawer-panel {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 0.25rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid #E2E7E4;
+  opacity: 0;
+  transition: opacity 400ms ease-out 100ms;
+}
+
+.drawer-root.drawer-open .drawer-header {
+  opacity: 1;
+}
+
+.drawer-logo {
+  height: 3rem;
+  width: auto;
+}
+
+.drawer-close {
+  position: absolute;
+  right: -0.25rem;
+  top: 0.5rem;
+  transform: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: #1A2621;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 200ms, color 200ms;
+}
+
+.drawer-close:hover {
+  background-color: #F2F6F4;
+  color: #144B3C;
+}
+
+.drawer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-top: 0.5rem;
+  list-style: none;
+  margin: 0;
+}
+
+.drawer-item {
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+
+.drawer-root.drawer-open .drawer-item {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.drawer-root.drawer-open .drawer-item:nth-child(1) { transition-delay: 80ms; }
+.drawer-root.drawer-open .drawer-item:nth-child(2) { transition-delay: 115ms; }
+.drawer-root.drawer-open .drawer-item:nth-child(3) { transition-delay: 150ms; }
+.drawer-root.drawer-open .drawer-item:nth-child(4) { transition-delay: 185ms; }
+.drawer-root.drawer-open .drawer-item:nth-child(5) { transition-delay: 220ms; }
+.drawer-root.drawer-open .drawer-item:nth-child(6) { transition-delay: 255ms; }
+.drawer-root.drawer-open .drawer-item:nth-child(7) { transition-delay: 290ms; }
+.drawer-root.drawer-open .drawer-item:nth-child(8) { transition-delay: 325ms; }
+
+.drawer-link {
+  display: block;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid #E2E7E4;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #4A4A4A;
+  transition: color 200ms;
+}
+
+.drawer-link:hover {
+  color: #C89F53;
 }
