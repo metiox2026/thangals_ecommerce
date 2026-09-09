@@ -129,13 +129,13 @@ export const Header: React.FC = () => {
               </Link>
 
               <Link
-                href="/shop"
-                className="hidden flex-col items-center gap-1 text-[#1A2621] transition-colors hover:text-[#144B3C] md:flex"
+                href="/wishlist"
+                className="flex flex-col items-center gap-1 text-[#1A2621] transition-colors hover:text-[#144B3C]"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-[17px]">
                   <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
                 </svg>
-                <span className="text-[8.5px] font-normal tracking-[0.14em] uppercase">Wishlist</span>
+                <span className="hidden text-[8.5px] font-normal tracking-[0.14em] uppercase sm:inline">Wishlist</span>
               </Link>
 
               <Link
@@ -158,7 +158,7 @@ export const Header: React.FC = () => {
                   <path d="M3.103 6.034h17.794"></path>
                   <path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"></path>
                 </svg>
-                <span className="text-[8.5px] font-normal tracking-[0.14em] uppercase">Bag</span>
+                <span className="hidden text-[8.5px] font-normal tracking-[0.14em] uppercase sm:inline">Bag</span>
                 {totalCount > 0 && (
                   <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#144B3C] text-[9px] font-medium text-white">
                     {totalCount}
@@ -242,6 +242,65 @@ export const Header: React.FC = () => {
                 </li>
               ))}
             </ul>
+
+            <div className="drawer-footer">
+              <Link
+                href="/stores"
+                onClick={() => setMobileNavOpen(false)}
+                aria-label="Stores"
+                className="drawer-footer-link"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>Stores</span>
+              </Link>
+              <Link
+                href="/wishlist"
+                onClick={() => setMobileNavOpen(false)}
+                aria-label="Wishlist"
+                className="drawer-footer-link"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
+                </svg>
+                <span>Wishlist</span>
+              </Link>
+              <Link
+                href="/contact"
+                onClick={() => setMobileNavOpen(false)}
+                aria-label="Account"
+                className="drawer-footer-link"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Account</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileNavOpen(false);
+                  openBag();
+                }}
+                aria-label="Bag"
+                className="drawer-footer-link"
+              >
+                <span className="drawer-footer-icon-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    <path d="M3.103 6.034h17.794"></path>
+                    <path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"></path>
+                  </svg>
+                  {totalCount > 0 && (
+                    <span className="drawer-footer-count">{totalCount}</span>
+                  )}
+                </span>
+                <span>Bag</span>
+              </button>
+            </div>
           </div>
         </div>,
         document.body

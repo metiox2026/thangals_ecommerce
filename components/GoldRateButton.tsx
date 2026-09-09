@@ -31,9 +31,9 @@ export const GoldRateButton: React.FC = () => {
     <div
       style={{
         transition: `width ${PANEL_MS}ms ${EASE}, height ${PANEL_MS}ms ${EASE}, border-radius ${PANEL_MS}ms ${EASE}, box-shadow ${PANEL_MS}ms ${EASE}`,
-        boxShadow: open ? '0 0 0 0 rgba(0, 0, 0, 0)' : '-2px 2px 6px rgba(0, 0, 0, 0.2)',
+        boxShadow: open ? '0 0 0 0 rgba(0, 0, 0, 0)' : '-1px 1px 3px rgba(0, 0, 0, 0.12)',
       }}
-      className={`fixed bottom-24 right-0 top-auto z-40 bg-[#144B3C] text-white max-w-[320px] md:top-1/2 md:bottom-auto md:-translate-y-1/2 ${
+      className={`fixed bottom-24 right-0 top-auto z-40 bg-[#144B3C] text-white max-w-[320px] md:top-1/2 md:bottom-auto md:-translate-y-[calc(50%-43px)] ${
         open
           ? 'w-[calc(100vw-32px)] h-[420px] rounded-l-md'
           : 'w-[28px] h-[96px] rounded-tl-[12px] rounded-bl-[12px]'

@@ -4,6 +4,8 @@ import { api, Product } from '@/lib/api';
 import { ProductCard } from '@/components/ProductCard';
 import { HeroCarousel } from '@/components/HeroCarousel';
 import { SnapCarousel } from '@/components/SnapCarousel';
+import { GoldScreenButton } from '@/components/GoldScreenButton';
+import { GoldRateButton } from '@/components/GoldRateButton';
 
 type Review = {
   name: string;
@@ -213,8 +215,34 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* ===== SHOP BY CATEGORY (100% EXACT MATCH) ===== */}
+      {/* ===== NEW THIS SEASON ===== */}
       <section className="bg-white mx-auto max-w-[1400px] px-5 py-12 lg:px-10">
+        <div className="text-center">
+          <p className="eyebrow">Just In</p>
+          <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
+            New This Season
+          </h2>
+          <div className="rule-gold mt-5 mx-auto"></div>
+        </div>
+
+        <div className="mt-12 grid grid-cols-2 gap-6 lg:grid-cols-4">
+          {newThisSeason.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Link
+            href="/shop"
+            className="inline-flex border border-[#144B3C] px-8 py-3 text-[11px] tracking-[0.2em] uppercase text-[#144B3C] transition-colors hover:bg-[#144B3C] hover:text-white"
+          >
+            View all jewellery
+          </Link>
+        </div>
+      </section>
+
+      {/* ===== SHOP BY CATEGORY (100% EXACT MATCH) ===== */}
+      <section className="bg-white mx-auto max-w-[1400px] px-5 pt-0 pb-12 lg:px-10">
         <div className="text-center">
           <p className="eyebrow">Browse</p>
           <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
@@ -251,32 +279,6 @@ export default async function HomePage() {
               </p>
             </Link>
           ))}
-        </div>
-      </section>
-
-      {/* ===== NEW THIS SEASON ===== */}
-      <section className="bg-white mx-auto max-w-[1400px] px-5 py-12 lg:px-10 !pt-0">
-        <div className="text-center">
-          <p className="eyebrow">Just In</p>
-          <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
-            New This Season
-          </h2>
-          <div className="rule-gold mt-5 mx-auto"></div>
-        </div>
-
-        <div className="mt-12 grid grid-cols-2 gap-6 lg:grid-cols-4">
-          {newThisSeason.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-
-        <div className="mt-12 text-center">
-          <Link
-            href="/shop"
-            className="inline-flex border border-[#144B3C] px-8 py-3 text-[11px] tracking-[0.2em] uppercase text-[#144B3C] transition-colors hover:bg-[#144B3C] hover:text-white"
-          >
-            View all jewellery
-          </Link>
         </div>
       </section>
 
@@ -537,6 +539,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <GoldScreenButton />
+      <GoldRateButton />
     </div>
   );
 }

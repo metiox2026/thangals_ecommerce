@@ -9,10 +9,17 @@ export interface Product {
   category: 'earrings' | 'rings' | 'bracelets' | 'necklaces' | 'bangles';
   tag?: 'best-seller' | 'new' | 'signature' | 'heritage';
   image: string;
+  images?: string[];
   description: string;
   metal: string;
   stone?: string;
   inStock: boolean;
+  gender?: 'women' | 'men' | 'kids';
+  occasion?: 'bridal' | 'everyday' | 'festive' | 'wedding';
+  weightGrams?: number;
+  discountPct?: number;
+  purity?: '22K' | '18K' | '14K';
+  metalColor?: 'yellow' | 'rose' | 'white';
 }
 
 export interface Collection {
@@ -54,10 +61,16 @@ const FALLBACK_PRODUCTS: Product[] = [
     category: 'rings',
     tag: 'best-seller',
     image: '/images/cat_rings.jpg',
+    images: ['/images/cat_rings.jpg', '/images/atelier-1.jpg', '/images/emerald_suite.png', '/images/atelier-3.jpg'],
     description: 'A timeless solitaire in 18K yellow gold, set with a brilliant-cut diamond hand-selected for its fire and clarity.',
     metal: '18K Yellow Gold',
     stone: 'Diamond',
     inStock: true,
+    gender: 'women',
+    occasion: 'wedding',
+    weightGrams: 4.2,
+    purity: '18K',
+    metalColor: 'yellow',
   },
   {
     id: 'mira-diamond-studs',
@@ -68,10 +81,16 @@ const FALLBACK_PRODUCTS: Product[] = [
     category: 'earrings',
     tag: 'new',
     image: '/images/cat_earrings.jpg',
+    images: ['/images/cat_earrings.jpg', '/images/atelier-2.jpg', '/images/atelier-4.jpg', '/images/hero_bg.jpg'],
     description: 'Perfectly matched brilliant-cut diamonds in secure 18K yellow gold butterfly backs.',
     metal: '18K Yellow Gold',
     stone: 'Diamond',
     inStock: true,
+    gender: 'women',
+    occasion: 'everyday',
+    weightGrams: 2.1,
+    purity: '18K',
+    metalColor: 'yellow',
   },
   {
     id: 'zumurud-emerald-line-bracelet',
@@ -82,10 +101,17 @@ const FALLBACK_PRODUCTS: Product[] = [
     category: 'bracelets',
     tag: 'signature',
     image: '/images/cat_bracelets.jpg',
+    images: ['/images/cat_bracelets.jpg', '/images/emerald_suite.png', '/images/atelier-1.jpg', '/images/atelier-2.jpg'],
     description: 'Sixteen matched Zambian emeralds closed-set in 18K gold and separated by pavé diamonds.',
     metal: '18K Yellow Gold',
     stone: 'Emerald & Diamond',
     inStock: true,
+    gender: 'women',
+    occasion: 'festive',
+    weightGrams: 18.5,
+    discountPct: 10,
+    purity: '18K',
+    metalColor: 'yellow',
   },
   {
     id: 'amara-emerald-drop-pendant',
@@ -95,10 +121,16 @@ const FALLBACK_PRODUCTS: Product[] = [
     currency: 'AED',
     category: 'necklaces',
     image: '/images/cat_necklaces.jpg',
+    images: ['/images/cat_necklaces.jpg', '/images/atelier-3.jpg', '/images/hero_bg.jpg', '/images/atelier-4.jpg'],
     description: 'A single pear-shaped Zambian emerald suspended from an 18K gold bail on a fine curb chain.',
     metal: '18K Yellow Gold',
     stone: 'Emerald',
     inStock: true,
+    gender: 'women',
+    occasion: 'everyday',
+    weightGrams: 3.4,
+    purity: '18K',
+    metalColor: 'yellow',
   },
   {
     id: 'kanmani-filigree-bangles',
@@ -109,9 +141,15 @@ const FALLBACK_PRODUCTS: Product[] = [
     category: 'bangles',
     tag: 'heritage',
     image: '/images/cat_bangles.jpg',
+    images: ['/images/cat_bangles.jpg', '/images/atelier-1.jpg', '/images/atelier-2.jpg', '/images/hero_bg.jpg'],
     description: 'A pair of bangles worked entirely by hand with intricate filigree.',
     metal: '22K Yellow Gold',
     inStock: true,
+    gender: 'women',
+    occasion: 'bridal',
+    weightGrams: 32,
+    purity: '22K',
+    metalColor: 'yellow',
   },
   {
     id: 'noor-pave-band',
@@ -121,10 +159,16 @@ const FALLBACK_PRODUCTS: Product[] = [
     currency: 'AED',
     category: 'rings',
     image: '/images/cat_rings.jpg',
+    images: ['/images/cat_rings.jpg', '/images/atelier-4.jpg', '/images/atelier-3.jpg', '/images/emerald_suite.png'],
     description: 'Forty-two brilliant-cut diamonds set in a continuous pavé across an 18K yellow gold band.',
     metal: '18K Yellow Gold',
     stone: 'Diamond',
     inStock: true,
+    gender: 'women',
+    occasion: 'wedding',
+    weightGrams: 5.6,
+    purity: '18K',
+    metalColor: 'yellow',
   },
   {
     id: 'saira-layering-chain',
@@ -134,9 +178,16 @@ const FALLBACK_PRODUCTS: Product[] = [
     currency: 'AED',
     category: 'necklaces',
     image: '/images/cat_necklaces.jpg',
+    images: ['/images/cat_necklaces.jpg', '/images/hero_bg.jpg', '/images/atelier-1.jpg', '/images/atelier-3.jpg'],
     description: 'A featherlight 45cm curb chain in 18K yellow gold, designed specifically for layering.',
     metal: '18K Yellow Gold',
     inStock: true,
+    gender: 'women',
+    occasion: 'everyday',
+    weightGrams: 1.8,
+    discountPct: 25,
+    purity: '18K',
+    metalColor: 'yellow',
   },
   {
     id: 'ilm-emerald-studs',
@@ -146,10 +197,16 @@ const FALLBACK_PRODUCTS: Product[] = [
     currency: 'AED',
     category: 'earrings',
     image: '/images/cat_earrings.jpg',
+    images: ['/images/cat_earrings.jpg', '/images/atelier-2.jpg', '/images/emerald_suite.png', '/images/atelier-4.jpg'],
     description: 'Oval Zambian emeralds in a simple 18K gold bezel setting.',
     metal: '18K Yellow Gold',
     stone: 'Emerald',
     inStock: true,
+    gender: 'women',
+    occasion: 'festive',
+    weightGrams: 2.8,
+    purity: '18K',
+    metalColor: 'yellow',
   },
 ];
 
@@ -183,6 +240,25 @@ const FALLBACK_COLLECTIONS: Collection[] = [
   },
 ];
 
+export type GenderFilter = 'women' | 'men' | 'kids';
+export type OccasionFilter = 'bridal' | 'everyday' | 'festive' | 'wedding';
+export type PriceFilter = 'u1000' | '1000-3000' | '3000-6000' | '6000plus';
+export type WeightFilter = 'lt5' | '5-15' | '15-30' | '30plus';
+export type DiscountFilter = '10plus' | '25plus' | '50plus';
+export type PurityFilter = '22K' | '18K' | '14K';
+export type MetalColorFilter = 'yellow' | 'rose' | 'white';
+
+export interface ProductFilters {
+  category?: Product['category'] | Product['category'][];
+  gender?: GenderFilter | GenderFilter[];
+  occasion?: OccasionFilter | OccasionFilter[];
+  price?: PriceFilter | PriceFilter[];
+  weight?: WeightFilter | WeightFilter[];
+  discount?: DiscountFilter | DiscountFilter[];
+  purity?: PurityFilter | PurityFilter[];
+  metalColor?: MetalColorFilter | MetalColorFilter[];
+}
+
 const FALLBACK_STORES: Store[] = [
   { id: 's1', emirate: 'Dubai', name: 'Gold Souk, Deira', address: 'Shop 12, Sikkat Al Khail Road', hours: '10:00 – 22:00 daily', phone: '+971 4 226 1993', mapUrl: '#' },
   { id: 's2', emirate: 'Dubai', name: 'Meena Bazaar', address: 'Al Fahidi Street, Bur Dubai', hours: '10:00 – 22:00 daily', phone: '+971 4 353 4411', mapUrl: '#' },
@@ -205,15 +281,89 @@ async function get<T>(path: string, fallback: T): Promise<T> {
   }
 }
 
+function matchPrice(price: number, band: PriceFilter): boolean {
+  if (band === 'u1000') return price < 1000;
+  if (band === '1000-3000') return price >= 1000 && price <= 3000;
+  if (band === '3000-6000') return price > 3000 && price <= 6000;
+  if (band === '6000plus') return price > 6000;
+  return true;
+}
+
+function matchWeight(weight: number, band: WeightFilter): boolean {
+  if (band === 'lt5') return weight < 5;
+  if (band === '5-15') return weight >= 5 && weight <= 15;
+  if (band === '15-30') return weight > 15 && weight <= 30;
+  if (band === '30plus') return weight > 30;
+  return true;
+}
+
+function asArray<T>(v: T | T[] | undefined): T[] | undefined {
+  if (v === undefined) return undefined;
+  return Array.isArray(v) ? v : [v];
+}
+
+function includesAny<T>(productValue: T | undefined, candidates: T | T[] | undefined): boolean {
+  const list = asArray(candidates);
+  if (list === undefined) return true;
+  if (productValue === undefined) return false;
+  return list.includes(productValue);
+}
+
+function matchPriceAny(price: number, candidates: PriceFilter | PriceFilter[] | undefined): boolean {
+  const list = asArray(candidates);
+  if (list === undefined) return true;
+  return list.some((b) => matchPrice(price, b));
+}
+
+function matchWeightAny(
+  weight: number | undefined,
+  candidates: WeightFilter | WeightFilter[] | undefined,
+): boolean {
+  const list = asArray(candidates);
+  if (list === undefined) return true;
+  if (weight === undefined) return false;
+  return list.some((b) => matchWeight(weight, b));
+}
+
+function matchDiscountAny(
+  discountPct: number,
+  candidates: DiscountFilter | DiscountFilter[] | undefined,
+): boolean {
+  const list = asArray(candidates);
+  if (list === undefined) return true;
+  return list.some((d) => {
+    if (d === '10plus') return discountPct >= 10;
+    if (d === '25plus') return discountPct >= 25;
+    if (d === '50plus') return discountPct >= 50;
+    return false;
+  });
+}
+
 export const api = {
   products: {
-    list: async (params?: { category?: string; tag?: string }) => {
-      const qs = new URLSearchParams(params as Record<string, string>).toString();
+    list: async (params?: ProductFilters) => {
+      const qs = params
+        ? new URLSearchParams(
+            Object.entries(params).flatMap(([k, v]) => {
+              if (v === undefined) return [];
+              const arr = Array.isArray(v) ? v : [v];
+              return arr.map((val) => [k, String(val)]);
+            }) as [string, string][],
+          ).toString()
+        : '';
       const res = await get<Product[]>(`/products${qs ? `?${qs}` : ''}`, FALLBACK_PRODUCTS);
-      if (params?.category) {
-        return res.filter((p) => p.category === params.category);
-      }
-      return res;
+      if (!params) return res;
+      return res.filter((p) => {
+        if (!includesAny(p.category, params.category)) return false;
+        if (!includesAny(p.gender, params.gender)) return false;
+        if (!includesAny(p.occasion, params.occasion)) return false;
+        if (!includesAny(p.purity, params.purity)) return false;
+        if (!includesAny(p.metalColor, params.metalColor)) return false;
+        if (!matchPriceAny(p.price, params.price)) return false;
+        if (!matchWeightAny(p.weightGrams, params.weight)) return false;
+        if (!matchDiscountAny(p.discountPct ?? 0, params.discount)) return false;
+        return true;
+      });
     },
     get: async (id: string) => {
       const list = await get<Product[]>('/products', FALLBACK_PRODUCTS);

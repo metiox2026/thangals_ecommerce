@@ -110,20 +110,46 @@
   animation-play-state: paused;
 }
 
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-down {
+  animation: fadeDown 160ms ease-out;
+}
+
+@keyframes fadeInImage {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in-img {
+  animation: fadeInImage 280ms ease-out;
+}
+
 /* Modern scrollbar */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: #144B3C transparent;
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-track-piece {
   background: transparent;
+  display: none;
 }
 
 /* Hide every scrollbar button variant */
@@ -170,12 +196,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #144B3C;
+  background-color: transparent;
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #0E372B;
+  background-color: transparent;
 }
 
 /* SimpleBar — replaces the body scrollbar so native arrow buttons disappear */
@@ -183,21 +209,29 @@
   width: 100%;
 }
 
-.page-scrollbar .simplebar-track.simplebar-vertical {
-  width: 4px;
-  right: 2px;
-  background: transparent;
+.page-scrollbar .simplebar-track,
+.page-scrollbar .simplebar-track.simplebar-vertical,
+.page-scrollbar .simplebar-track.simplebar-horizontal {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 .page-scrollbar .simplebar-scrollbar {
-  width: 4px;
-  right: 2px;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 .page-scrollbar .simplebar-scrollbar::before {
-  background-color: #144B3C;
+  display: none !important;
+  background-color: transparent;
   border-radius: 999px;
-  opacity: 1 !important;
+  opacity: 0 !important;
   left: 0;
   right: 0;
   top: 0;
@@ -205,11 +239,11 @@
 }
 
 .page-scrollbar .simplebar-scrollbar:hover::before {
-  background-color: #0E372B;
+  background-color: transparent;
 }
 
 .page-scrollbar .simplebar-scrollbar.simplebar-visible::before {
-  opacity: 1 !important;
+  opacity: 0 !important;
 }
 
 .snap-scroll {
@@ -363,7 +397,7 @@
   padding: 0.95rem 0;
   border-bottom: 1px solid #E2E7E4;
   font-family: var(--font-jost), sans-serif;
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -373,4 +407,62 @@
 
 .drawer-link:hover {
   color: #C89F53;
+}
+
+.drawer-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+  padding-top: 1rem;
+  padding-bottom: 0.25rem;
+}
+
+.drawer-footer-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  color: #1A2621;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 200ms;
+}
+
+.drawer-footer-link:hover {
+  color: #144B3C;
+}
+
+.drawer-footer-link span {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: #60736A;
+}
+
+.drawer-footer-icon-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.drawer-footer-count {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  display: flex;
+  height: 16px;
+  width: 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: #144B3C;
+  color: white;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 9px;
+  font-weight: 500;
 }

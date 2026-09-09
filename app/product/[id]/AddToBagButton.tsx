@@ -24,7 +24,7 @@ export const AddToBagButton: React.FC<{ product: Product }> = ({ product }) => {
   return (
     <button
       onClick={handleAdd}
-      className={`w-full rounded-sm py-4 text-xs font-medium uppercase tracking-[0.2em] transition-colors ${
+      className={`w-full rounded-none py-4 text-xs font-medium uppercase tracking-[0.2em] transition-colors ${
         added
           ? 'bg-emerald-800 text-white'
           : 'bg-[#1A3A2A] text-white hover:bg-[#2D5A3D]'

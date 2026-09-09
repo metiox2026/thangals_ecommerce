@@ -221,9 +221,12 @@ export const Footer: React.FC = () => {
 
       {/* ===== COPYRIGHT BAR ===== */}
       <div className="border-t border-[#E6E1DA]">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-1 px-5 py-4 text-center text-[10px] tracking-[0.14em] uppercase text-[#666666] sm:flex-row sm:justify-between sm:gap-2 sm:py-6 sm:text-left sm:text-[11px] lg:px-10">
-          <span>© 2026 Thangals Jewellery LLC, Dubai · Hallmarked 22K &amp; 18K · Made in the UAE since 1993</span>
-          <span>Privacy · Terms · Hallmarking</span>
+        <div className="mx-auto max-w-[1400px] px-5 py-5 text-center text-[11px] leading-relaxed text-[#666666] sm:py-6 sm:text-xs lg:px-10">
+          <p>© 2026 <a href="https://metiox.com" className="text-[#1A2621] hover:underline">METIOX SOLUTIONS</a>. All rights reserved.</p>
+          <p className="mt-1.5">
+            The product/service names listed in this document are marks and/or registered marks of
+            their respective owners and used under license. Unauthorized use strictly prohibited.
+          </p>
         </div>
       </div>
     </footer>
