@@ -73,7 +73,7 @@ const StaticSection: React.FC<{ title: string; children: React.ReactNode }> = ({
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="mt-16 border-t border-[#E6E1DA] bg-[#F5F2EC] lg:mt-24">
+    <footer id="site-footer" className="mt-16 border-t border-[#E6E1DA] bg-[#F5F2EC] lg:mt-24">
       {/* ===== NEWSLETTER BAND ===== */}
       <div className="border-b border-[#E6E1DA]">
         <div className="mx-auto flex max-w-[1400px] flex-col items-center gap-2 px-5 py-6 text-center sm:gap-3 sm:py-8 lg:px-10">
@@ -101,7 +101,7 @@ export const Footer: React.FC = () => {
               suppressHydrationWarning
             />
             <button className="bg-[#0B3C30] px-5 text-[11px] tracking-[0.22em] uppercase text-white transition-opacity hover:opacity-90 sm:px-6">
-              Sign up
+              Subscribe
             </button>
           </form>
           <p className="mx-auto max-w-xl text-[11px] leading-relaxed text-[#666666] sm:text-xs">

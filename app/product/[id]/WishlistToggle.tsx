@@ -15,14 +15,14 @@ export const WishlistToggle: React.FC<{ product: Product }> = ({ product }) => {
       aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
       aria-pressed={wished}
       title={wished ? 'Saved to wishlist' : 'Save to wishlist'}
-      className="flex h-[50px] w-[50px] shrink-0 items-center justify-center border border-[#E5DDD0] bg-white text-[#1A2621] transition-colors hover:border-[#144B3C] hover:text-[#144B3C] cursor-pointer"
+      className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full border border-[#E5DDD0] text-[#C89F53] transition-colors hover:border-[#C89F53] cursor-pointer"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="22"
-        height="22"
+        width="30"
+        height="30"
         viewBox="0 0 24 24"
-        fill={wished ? '#144B3C' : 'none'}
+        fill={wished ? '#C89F53' : 'none'}
         stroke="currentColor"
         strokeWidth="1.25"
         strokeLinecap="round"

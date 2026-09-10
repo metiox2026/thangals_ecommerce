@@ -62,7 +62,6 @@ export const BagProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       return [...prev, { ...newItem, quantity: 1 }];
     });
-    setIsOpen(true);
   };
 
   const removeItem = (id: string) => {

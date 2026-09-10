@@ -329,10 +329,8 @@ export const FilterTrigger: React.FC = () => {
         aria-label="Filter"
         aria-expanded={isOpen}
         onClick={openDrawer}
-        className={`flex shrink-0 items-center justify-center border bg-white text-[#1A3A2A] outline-none transition-colors cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[48px] sm:min-w-[48px] h-10 w-10 sm:h-12 sm:w-12 ${
-          isHighlighted
-            ? 'border-[#1A3A2A] bg-[#F2F6F4]'
-            : 'border-[#E5DDD0] hover:border-[#1A3A2A] hover:bg-[#F2F6F4]'
+        className={`flex shrink-0 items-center justify-center text-[#1A3A2A] outline-none transition-colors cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[48px] sm:min-w-[48px] h-10 w-10 sm:h-12 sm:w-12 ${
+          isHighlighted ? 'text-[#C89F53]' : 'hover:text-[#C89F53]'
         }`}
       >
         {FILTER_ICON}

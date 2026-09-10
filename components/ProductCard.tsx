@@ -102,14 +102,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
           onClick={toggleWishlist}
           aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
           aria-pressed={wished}
-          className="absolute right-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#1A2621] transition-colors hover:text-[#144B3C] md:right-2 md:bottom-2 md:size-10"
+          className="absolute right-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-colors hover:text-[#C89F53] md:right-2 md:bottom-2 md:size-10"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="18"
             height="18"
             viewBox="0 0 24 24"
-            fill={wished ? '#144B3C' : 'none'}
+            fill={wished ? '#C89F53' : 'none'}
             stroke="currentColor"
             strokeWidth="1.25"
             strokeLinecap="round"

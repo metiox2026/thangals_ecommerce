@@ -40,6 +40,8 @@ export interface Store {
   hours: string;
   phone: string;
   mapUrl: string;
+  lat: number;
+  lng: number;
 }
 
 export interface Testimonial {
@@ -61,7 +63,7 @@ const FALLBACK_PRODUCTS: Product[] = [
     category: 'rings',
     tag: 'best-seller',
     image: '/images/cat_rings.jpg',
-    images: ['/images/cat_rings.jpg', '/images/atelier-1.jpg', '/images/emerald_suite.png', '/images/atelier-3.jpg'],
+    images: ['/images/cat_rings.jpg', '/images/veda-solitaire-2.png', '/images/veda-solitaire-3.png', '/images/veda-solitaire-4.png'],
     description: 'A timeless solitaire in 18K yellow gold, set with a brilliant-cut diamond hand-selected for its fire and clarity.',
     metal: '18K Yellow Gold',
     stone: 'Diamond',
@@ -260,9 +262,26 @@ export interface ProductFilters {
 }
 
 const FALLBACK_STORES: Store[] = [
-  { id: 's1', emirate: 'Dubai', name: 'Gold Souk, Deira', address: 'Shop 12, Sikkat Al Khail Road', hours: '10:00 – 22:00 daily', phone: '+971 4 226 1993', mapUrl: '#' },
-  { id: 's2', emirate: 'Dubai', name: 'Meena Bazaar', address: 'Al Fahidi Street, Bur Dubai', hours: '10:00 – 22:00 daily', phone: '+971 4 353 4411', mapUrl: '#' },
-  { id: 's3', emirate: 'Dubai', name: 'Dubai Marina Mall', address: 'Level 1, Marina Mall', hours: '10:00 – 23:00 daily', phone: '+971 4 399 2277', mapUrl: '#' },
+  { id: 's1', emirate: 'Dubai', name: 'Gold Land Building, Deira', address: 'Gold Land Building, Shop No G 3-4, Deira, Dubai, UAE', hours: '10:00 – 22:30, Sun–Sat', phone: '+971 4 547 6633', mapUrl: '#', lat: 25.2697, lng: 55.2974 },
+  { id: 's2', emirate: 'Dubai', name: 'Meena Bazaar, Bur Dubai', address: 'Manzoor Building, Meena Bazar, Bur Dubai, Dubai, UAE', hours: '10:00 – 22:30, Sun–Sat', phone: '+971 4 284 4115', mapUrl: '#', lat: 25.2637, lng: 55.2979 },
+  { id: 's3', emirate: 'Dubai', name: 'Satwa', address: 'Shop 3, Khatija Building, Al Hudaiba Road, Al Satwa, Dubai, UAE', hours: '10:00 – 22:30, Sun–Sat', phone: '+971 4 320 8779', mapUrl: '#', lat: 25.2280, lng: 55.2634 },
+  { id: 's4', emirate: 'Dubai', name: 'Ithra, Al Ras', address: 'Hind Plaza 5, Shop No.7, Plot no. 635, Al Ras, Dubai, UAE', hours: '10:00 – 23:00, Sun–Sat', phone: '+971 4 334 5150', mapUrl: '#', lat: 25.2709, lng: 55.2959 },
+  { id: 's5', emirate: 'Dubai', name: 'Dubai Investment Park', address: 'Fakhree Center, Shop No. 6, Plot no. 597-350, DIP 2, Dubai, UAE', hours: '10:00 – 22:30, Sun–Sat', phone: '+971 4 256 1876', mapUrl: '#', lat: 24.9846, lng: 55.1609 },
+  { id: 's6', emirate: 'Dubai', name: 'Al Ras, Deira', address: 'Shamaal Building, Near Al Ras Metro, Deira, Dubai, UAE', hours: '10:00 – 22:30, Sun–Sat', phone: '+971 4 348 1833', mapUrl: '#', lat: 25.2681, lng: 55.2942 },
+  { id: 's7', emirate: 'Dubai', name: 'Al Fahidi Street, Bur Dubai', address: 'BCCI Building, Shop No.1, Al Souk Al Kabir, Al Fahidi Street, Bur Dubai, Dubai, UAE', hours: '10:00 – 22:30, Sun–Sat', phone: '+971 4 337 7176', mapUrl: '#', lat: 25.2638, lng: 55.2993 },
+  { id: 's8', emirate: 'Dubai', name: 'Royal Diamond, Deira Gold Souq', address: 'Royal Diamond Building, Opp Multi Level Parking, Deira Gold Souq, Dubai, UAE', hours: '10:00 – 22:30, Sun–Sat', phone: '+971 4 547 7779', mapUrl: '#', lat: 25.2706, lng: 55.2978 },
+  { id: 's9', emirate: 'Dubai', name: 'Al Shamal, Deira Gold Souq', address: 'Shop 15, Al Shamal Building, Opp Multi Level Parking, Deira Gold Souq, Dubai, UAE', hours: '10:00 – 22:30, Sun–Sat', phone: '+971 4 349 8379', mapUrl: '#', lat: 25.2698, lng: 55.2969 },
+  { id: 's10', emirate: 'Dubai', name: 'Marhaba, Deira', address: 'Shop No. 8, Marhaba Plaza Building, Al Dhagaya Street, Dubai Gold Souk, Deira, Dubai, UAE', hours: '09:30 – 22:30, Sun–Sat', phone: '+971 42 694 202', mapUrl: '#', lat: 25.2701, lng: 55.2974 },
+  { id: 's11', emirate: 'Dubai', name: 'Karama Center, Al Karama', address: 'Shop No. 38A, Ground Floor, Karama Center, Al Karama, Dubai, UAE', hours: '09:30 – 22:30, Sun–Sat', phone: '+971 4 330 8664', mapUrl: '#', lat: 25.2456, lng: 55.3037 },
+  { id: 's12', emirate: 'Sharjah', name: 'Rolla, Sharjah', address: 'Mutawa Building, Shop No. 03, Al Ghuwair Street, Sharjah, UAE', hours: '10:00 – 22:30, Sun–Sat', phone: '+971 6 523 4996', mapUrl: '#', lat: 25.3598, lng: 55.3935 },
+  { id: 's13', emirate: 'Sharjah', name: 'Thangals Manufacturing (Thangals Gold FZE)', address: 'Warehouse A2 – 049, SAIF Zone, Sharjah, UAE', hours: '09:00 – 20:00', phone: '+971 6 542 5240', mapUrl: '#', lat: 25.3216, lng: 55.6437 },
+  { id: 's14', emirate: 'Dubai', name: 'Thangals Wholesale', address: 'Office M10, Mezzanine Floor, Gold Land Building, Al Khaleej Street, Deira, Dubai, UAE', hours: '10:00 – 20:00', phone: '+971 4 343 3006', mapUrl: '#', lat: 25.2697, lng: 55.2974 },
+  { id: 's15', emirate: 'Doha', name: 'Doha Gold Souq', address: 'Shop 81, Ganam Center, Gold Souq, Doha, Qatar', hours: 'Sat–Thu 10:00 – 22:00; Fri 14:30 – 22:00', phone: '+974 4417 1395', mapUrl: '#', lat: 25.2865, lng: 51.5349 },
+  { id: 's16', emirate: 'Trivandrum', name: 'Kaniyapuram, Trivandrum', address: 'S.H Building, near KSRTC Depot, Kaniyapuram, Trivandrum, Kerala 695301, India', hours: '09:30 – 20:30, Sun–Sat', phone: '+91 471 299 4916', mapUrl: '#', lat: 8.5892, lng: 76.8536 },
+  { id: 's17', emirate: 'Kozhikode', name: 'Koduvally, Kozhikode', address: 'Ground Floor, 29/41, OK Building, Ottakanjira, Koduvally, Kozhikkode, Kerala 673572, India', hours: '09:30 – 20:30, Sun–Sat', phone: '+91 495 296 3916', mapUrl: '#', lat: 11.3713, lng: 75.9132 },
+  { id: 's18', emirate: 'Muscat', name: 'Muscat, Al Qurum', address: 'Fanja House, Near Sabco Shopping Center, Al Qurum, Muscat, Oman', hours: 'Sat–Thu 10:00 – 13:00 & 16:30 – 22:00; Fri 16:30 – 22:00', phone: '+968 9820 8558', mapUrl: '#', lat: 23.6143, lng: 58.4675 },
+  { id: 's19', emirate: 'Kuala Lumpur', name: 'Kuala Lumpur', address: 'Suite 6, Sentral Suites, Wisma C&S Jasani, 21-2 Jalan Tuanku Abdul Rahman, 50100 Kuala Lumpur, Malaysia', hours: '09:00 – 21:00, Sun–Sat', phone: '+603 2202 7136', mapUrl: '#', lat: 3.1578, lng: 101.6947 },
+  { id: 's20', emirate: 'Singapore', name: 'Centrium Square', address: '320 Serangoon Road 02-10, Centrium Square, Singapore 218108', hours: '10:30 – 18:30, Mon–Sat', phone: '+65 9476 3003', mapUrl: '#', lat: 1.3067, lng: 103.8536 },
 ];
 
 const FALLBACK_TESTIMONIALS: Testimonial[] = [

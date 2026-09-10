@@ -18,19 +18,19 @@ export const AddToBagButton: React.FC<{ product: Product }> = ({ product }) => {
       image: product.image,
     });
     setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    setTimeout(() => setAdded(false), 1500);
   };
 
   return (
     <button
       onClick={handleAdd}
-      className={`w-full rounded-none py-4 text-xs font-medium uppercase tracking-[0.2em] transition-colors ${
+      className={`w-full rounded-sm py-4 text-xs font-medium uppercase tracking-[0.2em] transition-colors ${
         added
-          ? 'bg-emerald-800 text-white'
+          ? 'bg-[#C89F53] text-white'
           : 'bg-[#1A3A2A] text-white hover:bg-[#2D5A3D]'
       }`}
     >
-      {added ? '✓ Added to Bag' : 'Add to Bag'}
+      {added ? 'Added to Cart' : 'Add to Cart'}
     </button>
   );
 };

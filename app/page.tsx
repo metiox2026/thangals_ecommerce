@@ -6,6 +6,7 @@ import { HeroCarousel } from '@/components/HeroCarousel';
 import { SnapCarousel } from '@/components/SnapCarousel';
 import { GoldScreenButton } from '@/components/GoldScreenButton';
 import { GoldRateButton } from '@/components/GoldRateButton';
+import { WhatsAppButton } from '@/components/WhatsAppButton';
 
 type Review = {
   name: string;
@@ -393,7 +394,7 @@ export default async function HomePage() {
           loop
           playsInline
           preload="metadata"
-          className="w-full object-contain"
+          className="mb-12 w-full object-contain"
         />
       </section>
 
@@ -402,7 +403,7 @@ export default async function HomePage() {
         <div className="mx-auto grid max-w-[1400px] items-center gap-12 px-5 py-12 lg:grid-cols-2 lg:px-10">
           <img
             src="/images/gifting.jpg"
-            alt="White gift box tied with a deep green ribbon beside gold earrings"
+            alt="Green jewellery gift box with a matching ribbon, holding an emerald pendant, earrings and ring"
             loading="lazy"
             width={1200}
             height={800}
@@ -542,6 +543,8 @@ export default async function HomePage() {
 
       <GoldScreenButton />
       <GoldRateButton />
+
+      <WhatsAppButton />
     </div>
   );
 }

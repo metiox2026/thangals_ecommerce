@@ -4,12 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useBag } from '@/context/BagContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { usePageScroll } from '@/context/ScrollContext';
 
 const HEADER_HEIGHT = 115;
 
 export const Header: React.FC = () => {
   const { totalCount, openBag } = useBag();
+  const { totalCount: wishlistCount } = useWishlist();
   const { scrollY } = usePageScroll();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -132,9 +134,16 @@ export const Header: React.FC = () => {
                 href="/wishlist"
                 className="flex flex-col items-center gap-1 text-[#1A2621] transition-colors hover:text-[#144B3C]"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-[17px]">
-                  <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
-                </svg>
+                <span className="relative inline-flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-[17px]">
+                    <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
+                  </svg>
+                  {wishlistCount > 0 && (
+                    <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#C89F53] text-[9px] font-medium text-white">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </span>
                 <span className="hidden text-[8.5px] font-normal tracking-[0.14em] uppercase sm:inline">Wishlist</span>
               </Link>
 
@@ -262,9 +271,14 @@ export const Header: React.FC = () => {
                 aria-label="Wishlist"
                 className="drawer-footer-link"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
-                </svg>
+                <span className="drawer-footer-icon-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
+                  </svg>
+                  {wishlistCount > 0 && (
+                    <span className="drawer-footer-count !bg-[#C89F53]">{wishlistCount}</span>
+                  )}
+                </span>
                 <span>Wishlist</span>
               </Link>
               <Link

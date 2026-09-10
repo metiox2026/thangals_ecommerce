@@ -134,6 +134,11 @@
   animation: fadeInImage 280ms ease-out;
 }
 
+@keyframes thangals-pulse {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
 /* Modern scrollbar */
 * {
   scrollbar-width: none;
@@ -443,6 +448,10 @@
   text-transform: uppercase;
   font-weight: 400;
   color: #60736A;
+}
+
+.drawer-footer-link .drawer-footer-count {
+  color: white;
 }
 
 .drawer-footer-icon-wrap {

@@ -1,20 +1,51 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { ShareButton } from './ShareButton';
 
 interface ProductGalleryProps {
   images: string[];
   name: string;
 }
 
-const SWIPE_THRESHOLD = 40;
+const SWIPE_THRESHOLD_PCT = 12;
+const SWIPE_ANIM_MS = 240;
 
 export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) => {
   const [active, setActive] = useState(0);
   const total = images.length;
   const startXRef = useRef<number | null>(null);
-  const deltaXRef = useRef(0);
+  const dragPctRef = useRef(0);
+  const animatingRef = useRef(false);
+  const containerWidthRef = useRef(0);
+  const [pct, setPct] = useState(0);
+  const [animated, setAnimated] = useState(false);
+  const [size, setSize] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => {
+      const w = el.clientWidth;
+      containerWidthRef.current = w;
+      setSize(w);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+      if (typeof img.decode === 'function') {
+        img.decode().catch(() => {});
+      }
+    });
+  }, [images]);
 
   const goTo = useCallback(
     (idx: number) => {
@@ -24,111 +55,178 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) 
     [total],
   );
 
-  const prev = useCallback(() => goTo(active - 1), [active, goTo]);
-  const next = useCallback(() => goTo(active + 1), [active, goTo]);
+  const animateTo = useCallback(
+    (newIdx: number) => {
+      if (animatingRef.current) return;
+      if (newIdx === active) return;
+
+      const forward = (newIdx - active + total) % total;
+      const backward = (active - newIdx + total) % total;
+      const direction: 1 | -1 = forward <= backward ? 1 : -1;
+      const isAdjacent = forward === 1 || backward === 1;
+
+      if (!isAdjacent) {
+        animatingRef.current = true;
+        goTo(newIdx);
+        window.setTimeout(() => {
+          animatingRef.current = false;
+        }, 60);
+        return;
+      }
+
+      animatingRef.current = true;
+      setAnimated(true);
+      setPct(-direction * 100);
+      window.setTimeout(() => {
+        goTo(newIdx);
+        setPct(0);
+        setAnimated(false);
+        animatingRef.current = false;
+      }, SWIPE_ANIM_MS);
+    },
+    [active, goTo, total],
+  );
+
+  const prev = useCallback(() => animateTo(active - 1), [active, animateTo]);
+  const next = useCallback(() => animateTo(active + 1), [active, animateTo]);
 
   const onTouchStart = (e: React.TouchEvent) => {
+    if (animatingRef.current) return;
     startXRef.current = e.touches[0].clientX;
-    deltaXRef.current = 0;
+    dragPctRef.current = 0;
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
-    if (startXRef.current === null) return;
-    deltaXRef.current = e.touches[0].clientX - startXRef.current;
+    if (startXRef.current === null || containerWidthRef.current === 0) return;
+    const delta = e.touches[0].clientX - startXRef.current;
+    dragPctRef.current = (delta / containerWidthRef.current) * 100;
+    setPct(dragPctRef.current);
   };
 
   const onTouchEnd = () => {
     if (startXRef.current === null) return;
-    if (deltaXRef.current > SWIPE_THRESHOLD) prev();
-    else if (deltaXRef.current < -SWIPE_THRESHOLD) next();
+    const dragged = dragPctRef.current;
     startXRef.current = null;
-    deltaXRef.current = 0;
+    dragPctRef.current = 0;
+
+    if (Math.abs(dragged) > SWIPE_THRESHOLD_PCT) {
+      const direction = dragged < 0 ? 1 : -1;
+      animatingRef.current = true;
+      setAnimated(true);
+      setPct(-direction * 100);
+      window.setTimeout(() => {
+        goTo(active + direction);
+        setPct(0);
+        setAnimated(false);
+        animatingRef.current = false;
+      }, SWIPE_ANIM_MS);
+    } else {
+      animatingRef.current = true;
+      setAnimated(true);
+      setPct(0);
+      window.setTimeout(() => {
+        setAnimated(false);
+        animatingRef.current = false;
+      }, SWIPE_ANIM_MS);
+    }
   };
 
   if (total === 0) return null;
+
+  const transitionStyle = animated ? `transform ${SWIPE_ANIM_MS}ms ease-out` : 'none';
+
+  const trackStyle: React.CSSProperties = {
+    width: size ? `${size * total}px` : '100%',
+    height: size ? `${size}px` : '100%',
+    transform: `translate3d(${-active * size + (size ? (pct / 100) * size : 0)}px, 0, 0)`,
+    transition: transitionStyle,
+    willChange: 'transform',
+    backfaceVisibility: 'hidden',
+  };
 
   return (
     <div className="w-full">
       <div
         ref={containerRef}
         className="group relative w-full overflow-hidden rounded-sm border border-[#E5DDD0] bg-[#FAF8F5]"
-        style={{ paddingBottom: '100%', boxSizing: 'border-box' }}
+        style={size ? { height: `${size}px` } : { height: 0 }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <img
-          key={active}
-          src={images[active]}
-          alt={`${name} — view ${active + 1}`}
-          width={800}
-          height={800}
-          decoding="async"
-          className="absolute top-0 left-0 h-full w-full object-cover"
-          draggable={false}
-        />
-
+        <div className="absolute inset-0 flex" style={trackStyle}>
+          {images.map((src, i) => (
+            <div
+              key={src + i}
+              style={size ? { width: `${size}px`, height: `${size}px` } : undefined}
+              className="relative shrink-0 grow-0"
+            >
+              <img
+                src={src}
+                alt={i === active ? `${name} — view ${i + 1}` : ''}
+                aria-hidden={i !== active}
+                width={800}
+                height={800}
+                loading="eager"
+                decoding="async"
+                draggable={false}
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ backfaceVisibility: 'hidden' }}
+              />
+            </div>
+          ))}
+        </div>
         {total > 1 && (
           <>
             <button
               type="button"
               onClick={prev}
               aria-label="Previous image"
-              className="absolute left-2 top-1/2 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/50 text-[#1A2621] opacity-60 transition-opacity duration-200 hover:opacity-100 hover:text-[#144B3C] focus-visible:opacity-100 sm:left-3 sm:size-10 sm:opacity-0 sm:group-hover:opacity-60 sm:group-hover:hover:opacity-100"
+              className="absolute left-3 top-1/2 z-10 hidden -translate-y-1/2 flex items-center justify-center p-2 text-white opacity-0 mix-blend-difference transition-opacity duration-200 group-hover:opacity-60 sm:flex"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="m15 18-6-6 6-6" />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
             <button
               type="button"
               onClick={next}
               aria-label="Next image"
-              className="absolute right-2 top-1/2 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/50 text-[#1A2621] opacity-60 transition-opacity duration-200 hover:opacity-100 hover:text-[#144B3C] focus-visible:opacity-100 sm:right-3 sm:size-10 sm:opacity-0 sm:group-hover:opacity-60 sm:group-hover:hover:opacity-100"
+              className="absolute right-3 top-1/2 z-10 hidden -translate-y-1/2 flex items-center justify-center p-2 text-white opacity-0 mix-blend-difference transition-opacity duration-200 group-hover:opacity-60 sm:flex"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="m9 18 6-6-6-6" />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 6l6 6-6 6" />
               </svg>
             </button>
-
-            <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5 bg-transparent px-2.5 py-1 opacity-60 transition-opacity duration-200 focus-within:opacity-100 sm:bottom-4 sm:opacity-0 sm:group-hover:opacity-60 sm:group-hover:focus-within:opacity-100">
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => goTo(i)}
-                  aria-label={`Go to image ${i + 1}`}
-                  className={`size-1.5 cursor-pointer rounded-full transition-all ${
-                    i === active ? 'w-4 bg-[#144B3C]' : 'bg-[#1A2621]/40 hover:bg-[#1A2621]/70'
-                  }`}
-                />
-              ))}
-            </div>
           </>
         )}
+        <ShareButton
+          productName={name}
+          className="absolute right-2 top-2 z-10 flex size-7 items-center justify-center text-[#144B3C] opacity-60 transition-opacity hover:opacity-100 sm:hidden"
+        />
       </div>
 
       {total > 1 && (
-        <div className="mt-3 grid w-full grid-cols-4 gap-2 sm:mt-4 sm:gap-3">
+        <div className="mx-auto mt-3 grid w-[224px] grid-cols-4 gap-2 sm:mt-4 sm:w-[236px] sm:gap-3">
           {images.map((src, i) => (
             <button
               key={src + i}
               type="button"
-              onClick={() => goTo(i)}
+              onClick={() => animateTo(i)}
               aria-label={`View image ${i + 1}`}
               aria-pressed={i === active}
-              className={`relative block w-full cursor-pointer overflow-hidden border bg-[#FAF8F5] transition-colors ${
+              className={`block h-[50px] w-[50px] cursor-pointer overflow-hidden border bg-[#FAF8F5] transition-colors ${
                 i === active ? 'border-[#144B3C]' : 'border-[#E5DDD0] hover:border-[#1A2621]'
               }`}
-              style={{ paddingBottom: '100%', boxSizing: 'border-box' }}
             >
               <img
                 src={src}
                 alt=""
-                width={200}
-                height={200}
+                width={50}
+                height={50}
+                loading="eager"
                 decoding="async"
-                className="absolute top-0 left-0 h-full w-full object-cover"
+                className="h-full w-full object-cover"
                 draggable={false}
               />
             </button>

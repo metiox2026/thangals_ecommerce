@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { BagProvider } from '@/context/BagContext';
@@ -6,7 +6,7 @@ import { WishlistProvider } from '@/context/WishlistContext';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { BagDrawer } from '@/components/BagDrawer';
-import { WhatsAppButton } from '@/components/WhatsAppButton';
+import { InitialLoader } from '@/components/InitialLoader';
 import { PageScroll } from '@/components/PageScroll';
 import { SearchBar } from '@/components/SearchBar';
 
@@ -29,6 +29,13 @@ export const metadata: Metadata = {
   description: 'Hallmarked gold, diamond and emerald jewellery, hand-finished in Dubai.',
 };
 
+export const viewport: Viewport = {
+  themeColor: '#ffffff',
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -37,6 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${jost.variable}`} suppressHydrationWarning>
       <body className="bg-white text-[#1C1C1C] antialiased font-sans overflow-hidden">
+        <InitialLoader />
         <BagProvider>
           <WishlistProvider>
             <PageScroll>
@@ -47,7 +55,6 @@ export default function RootLayout({
               <Footer />
             </PageScroll>
             <BagDrawer />
-            <WhatsAppButton />
           </WishlistProvider>
         </BagProvider>
       </body>
