@@ -6,7 +6,7 @@ export const SearchBar: React.FC = () => {
   return (
     <div className="border-b border-[#E2E7E4] bg-white lg:hidden">
       <div className="mx-auto flex max-w-[1400px] items-center px-3 py-2">
-        <label className="flex w-full items-center gap-2 border border-[#EAEAEA] bg-[#FAF8F4] px-4 py-2 text-[#1A2621] transition-colors focus-within:border-[#144B3C] focus-within:bg-white">
+        <label className="flex w-full items-center gap-2 border border-[#EAEAEA] bg-[#FCFBF8] px-4 py-2 text-[#1A2621] transition-colors focus-within:border-[#144B3C]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"

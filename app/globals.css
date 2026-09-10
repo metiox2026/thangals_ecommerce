@@ -20,6 +20,13 @@
     background-color: #ffffff;
     overflow-anchor: none;
     height: 100%;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
@@ -474,4 +481,8 @@
   font-family: var(--font-jost), sans-serif;
   font-size: 9px;
   font-weight: 500;
+}
+
+body[data-modal-open="true"] [data-mobile-action-bar] {
+  display: none;
 }

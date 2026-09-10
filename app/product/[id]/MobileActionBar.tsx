@@ -9,7 +9,19 @@ import { WishlistToggle } from './WishlistToggle';
 
 const SCROLL_THRESHOLD = 10;
 
-export const MobileActionBar: React.FC<{ product: Product }> = ({ product }) => {
+interface MobileActionBarProps {
+  product: Product;
+  size: string | null;
+  disabled: boolean;
+  onDisabledClick?: () => void;
+}
+
+export const MobileActionBar: React.FC<MobileActionBarProps> = ({
+  product,
+  size,
+  disabled,
+  onDisabledClick,
+}) => {
   const [mounted, setMounted] = useState(false);
   const [atRelated, setAtRelated] = useState(false);
   const [atFooter, setAtFooter] = useState(false);
@@ -43,13 +55,20 @@ export const MobileActionBar: React.FC<{ product: Product }> = ({ product }) => 
   return createPortal(
     <div
       aria-hidden={!visible}
-      className={`fixed inset-x-0 bottom-0 z-[60] rounded-t-2xl border-t border-[#E5DDD0] bg-white px-4 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur transition-transform duration-300 ease-out sm:hidden ${
+      data-mobile-action-bar
+      className={`fixed inset-x-0 bottom-0 z-[60] rounded-t-2xl border-t border-[#E5DDD0] bg-white px-4 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur transition-transform duration-300 ease-out sm:hidden ${
         visible ? 'translate-y-0' : 'translate-y-full'
       }`}
     >
       <div className="flex items-center gap-3 py-1.5">
         <div className="flex-1">
-          <AddToBagButton product={product} />
+          <AddToBagButton
+            product={product}
+            size={size}
+            disabled={disabled}
+            disabledLabel="Select size"
+            onDisabledClick={onDisabledClick}
+          />
         </div>
         <WishlistToggle product={product} />
       </div>

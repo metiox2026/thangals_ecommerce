@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import SimpleBar from 'simplebar-react';
 import type SimpleBarCore from 'simplebar-core';
 import 'simplebar-react/dist/simplebar.min.css';
@@ -9,6 +10,7 @@ import { ScrollProvider } from '@/context/ScrollContext';
 export const PageScroll: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [scrollY, setScrollY] = useState(0);
   const ref = useRef<SimpleBarCore | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const core = ref.current;
@@ -28,6 +30,12 @@ export const PageScroll: React.FC<{ children: React.ReactNode }> = ({ children }
       el.removeEventListener('scroll', handler);
     };
   }, []);
+
+  useEffect(() => {
+    const el = ref.current?.getScrollElement();
+    if (!el) return;
+    if (el.scrollTop !== 0) el.scrollTop = 0;
+  }, [pathname]);
 
   return (
     <ScrollProvider value={{ scrollY }}>

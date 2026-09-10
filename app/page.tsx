@@ -437,7 +437,7 @@ export default async function HomePage() {
             <div>
               <p className="eyebrow">Visit Us</p>
               <h2 className="mt-3 font-display text-3xl md:text-[2.6rem] md:leading-[1.15]">
-                Nine boutiques across the Emirates
+                20 boutiques across the world
               </h2>
               <div className="rule-gold mt-5"></div>
               <p className="mt-5 text-sm leading-relaxed text-[#60736A] max-w-xl">

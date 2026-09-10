@@ -3,7 +3,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useBag } from '@/context/BagContext';
-import { api, Product } from '@/lib/api';
+import { api, Product, getPriceForSize } from '@/lib/api';
+import { SizeSelector } from '@/components/SizeSelector';
 
 function formatSku(id: string): string {
   const cleaned = id.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
@@ -313,12 +314,13 @@ function PaymentOption({
 }
 
 export default function CheckoutPage() {
-  const { items } = useBag();
+  const { items, setItemSize } = useBag();
   const [productMap, setProductMap] = useState<Record<string, Product>>({});
   const [payment, setPayment] = useState<'card' | 'tabby' | 'tamara'>('card');
   const [openStep, setOpenStep] = useState<2 | 3 | null>(2);
   const [step1Open, setStep1Open] = useState(false);
   const [step2Completed, setStep2Completed] = useState(false);
+  const [editingSizeFor, setEditingSizeFor] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -346,10 +348,23 @@ export default function CheckoutPage() {
     () => items.reduce((sum, i) => sum + i.quantity, 0),
     [items],
   );
+  const missingSizeCount = useMemo(
+    () =>
+      items.filter((i) => {
+        const p = productMap[i.id];
+        return p?.sizes && p.sizes.length > 0 && !i.size;
+      }).length,
+    [items, productMap],
+  );
+  const canPlaceOrder = items.length > 0 && missingSizeCount === 0;
 
   const onPlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) return;
+    if (missingSizeCount > 0) {
+      setStep1Open(true);
+      return;
+    }
     alert('Demo: order would be placed here.');
   };
 
@@ -590,9 +605,44 @@ export default function CheckoutPage() {
 
             {/* Place Order + trust signals */}
             <div className="pt-2">
+              {missingSizeCount > 0 && (
+                <div
+                  role="alert"
+                  className="mb-3 flex items-start gap-2 rounded-sm border border-[#E5DDD0] bg-[#FBF1DF] px-3 py-2.5 text-[11px] leading-relaxed text-[#7A5320]"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    className="mt-px shrink-0"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                  <span>
+                    {missingSizeCount === 1
+                      ? 'One item needs a size'
+                      : `${missingSizeCount} items need a size`}
+                    {' '}before you can place your order.
+                  </span>
+                </div>
+              )}
               <button
                 type="submit"
-                className="block w-full bg-[#1A3A2A] py-3.5 text-[11px] font-medium uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-90 sm:text-[12px]"
+                disabled={!canPlaceOrder}
+                aria-disabled={!canPlaceOrder}
+                className={`block w-full py-3.5 text-[11px] font-medium uppercase tracking-[0.22em] transition-opacity sm:text-[12px] ${
+                  canPlaceOrder
+                    ? 'bg-[#1A3A2A] text-white hover:opacity-90'
+                    : 'cursor-not-allowed bg-[#E2E0DA] text-[#9CA39F]'
+                }`}
               >
                 Place Order
               </button>
@@ -628,8 +678,13 @@ export default function CheckoutPage() {
                       const product = productMap[item.id];
                       const subtitle = item.subtitle || product?.metal || '';
                       const weight = product?.weightGrams?.toFixed(4);
+                      const sizes = product?.sizes ?? [];
+                      const requiresSize = sizes.length > 0;
+                      const missingSize = requiresSize && !item.size;
+                      const editingKey = `${item.id}::${item.size ?? ''}`;
+                      const isEditing = editingSizeFor === editingKey;
                       return (
-                        <li key={item.id} className="flex gap-4 py-4">
+                        <li key={editingKey} className="flex gap-4 py-4">
                           <img
                             src={item.image}
                             alt={item.name}
@@ -652,10 +707,26 @@ export default function CheckoutPage() {
                                   {item.quantity}
                                 </span>
                               </span>
-                              <span>
-                                Size:{' '}
-                                <span className="text-[#1A2621]">Standard</span>
-                              </span>
+                              {requiresSize ? (
+                                <button
+                                  type="button"
+                                  onClick={() => setEditingSizeFor(isEditing ? null : editingKey)}
+                                  className={`inline-flex items-center gap-1 rounded-sm border px-1.5 py-0.5 text-[11px] transition-colors ${
+                                    missingSize
+                                      ? 'border-[#C89F53] bg-[#FBF1DF] text-[#7A5320] hover:border-[#A87B33]'
+                                      : 'border-[#E5DDD0] bg-white text-[#1A2621] hover:border-[#1A3A2A]'
+                                  }`}
+                                >
+                                  Size:{' '}
+                                  <span className="font-medium">
+                                    {item.size ?? 'Select size'}
+                                  </span>
+                                </button>
+                              ) : (
+                                <span>
+                                  Size: <span className="text-[#1A2621]">One size</span>
+                                </span>
+                              )}
                               {subtitle && (
                                 <span>
                                   Metal:{' '}
@@ -669,6 +740,23 @@ export default function CheckoutPage() {
                                 </span>
                               )}
                             </div>
+                            {isEditing && requiresSize && (
+                              <div className="mt-2 space-y-1.5">
+                                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#60736A]">
+                                  {item.size ? 'Change size' : 'Select size'}
+                                </p>
+                                <SizeSelector
+                                  sizes={sizes}
+                                  value={item.size ?? null}
+                                  onChange={(s) => {
+                                    const newPrice = product ? getPriceForSize(product, s) : undefined;
+                                    setItemSize(item.id, item.size ?? null, s, newPrice);
+                                    setEditingSizeFor(null);
+                                  }}
+                                  variant="compact"
+                                />
+                              </div>
+                            )}
                           </div>
                           <div className="flex shrink-0 flex-col items-end justify-between">
                             <button

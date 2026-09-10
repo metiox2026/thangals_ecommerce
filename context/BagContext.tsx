@@ -10,6 +10,7 @@ export interface BagItem {
   currency: string;
   image: string;
   quantity: number;
+  size?: string | null;
 }
 
 interface BagContextType {
@@ -19,13 +20,23 @@ interface BagContextType {
   closeBag: () => void;
   toggleBag: () => void;
   addItem: (item: Omit<BagItem, 'quantity'>) => void;
-  removeItem: (id: string) => void;
-  updateQuantity: (id: string, delta: number) => void;
+  removeItem: (id: string, size?: string | null) => void;
+  updateQuantity: (id: string, size: string | null | undefined, delta: number) => void;
+  setItemSize: (
+    id: string,
+    currentSize: string | null | undefined,
+    nextSize: string,
+    nextPrice?: number,
+  ) => void;
   totalPrice: number;
   totalCount: number;
 }
 
 const BagContext = createContext<BagContextType | undefined>(undefined);
+
+function sameSize(a: string | null | undefined, b: string | null | undefined): boolean {
+  return (a ?? null) === (b ?? null);
+}
 
 export const BagProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<BagItem[]>([]);
@@ -54,32 +65,67 @@ export const BagProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const addItem = (newItem: Omit<BagItem, 'quantity'>) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === newItem.id);
+      const existing = prev.find(
+        (i) => i.id === newItem.id && sameSize(i.size, newItem.size),
+      );
       if (existing) {
         return prev.map((i) =>
-          i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === newItem.id && sameSize(i.size, newItem.size)
+            ? { ...i, quantity: i.quantity + 1 }
+            : i,
         );
       }
       return [...prev, { ...newItem, quantity: 1 }];
     });
   };
 
-  const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
+  const removeItem = (id: string, size?: string | null) => {
+    setItems((prev) => prev.filter((i) => !(i.id === id && sameSize(i.size, size))));
   };
 
-  const updateQuantity = (id: string, delta: number) => {
+  const updateQuantity = (
+    id: string,
+    size: string | null | undefined,
+    delta: number,
+  ) => {
     setItems((prev) =>
       prev
         .map((i) => {
-          if (i.id === id) {
+          if (i.id === id && sameSize(i.size, size)) {
             const newQty = i.quantity + delta;
             return newQty > 0 ? { ...i, quantity: newQty } : null;
           }
           return i;
         })
-        .filter(Boolean) as BagItem[]
+        .filter(Boolean) as BagItem[],
     );
+  };
+
+  const setItemSize = (
+    id: string,
+    currentSize: string | null | undefined,
+    nextSize: string,
+    nextPrice?: number,
+  ) => {
+    setItems((prev) => {
+      const collision = prev.find(
+        (i) => i.id === id && sameSize(i.size, nextSize) && !sameSize(i.size, currentSize),
+      );
+      if (collision) {
+        return prev
+          .map((i) =>
+            i.id === id && sameSize(i.size, currentSize)
+              ? { ...i, quantity: i.quantity + collision.quantity }
+              : i,
+          )
+          .filter((i) => !(i.id === id && sameSize(i.size, nextSize) && !sameSize(i.size, currentSize)));
+      }
+      return prev.map((i) =>
+        i.id === id && sameSize(i.size, currentSize)
+          ? { ...i, size: nextSize, ...(nextPrice !== undefined ? { price: nextPrice } : {}) }
+          : i,
+      );
+    });
   };
 
   const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -96,6 +142,7 @@ export const BagProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addItem,
         removeItem,
         updateQuantity,
+        setItemSize,
         totalPrice,
         totalCount,
       }}

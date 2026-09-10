@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Product } from '@/lib/api';
 import { useWishlist } from '@/context/WishlistContext';
+import { useBag } from '@/context/BagContext';
+import { Rating } from './Rating';
 
 interface ProductCardProps {
   product: Product;
@@ -12,7 +14,9 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid' }) => {
   const { isWished, toggleItem } = useWishlist();
+  const { addItem } = useBag();
   const wished = isWished(product.id);
+  const [added, setAdded] = useState(false);
 
   const toggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -20,9 +24,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
     toggleItem(product);
   };
 
+  const addToBag = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({
+      id: product.id,
+      name: product.name,
+      subtitle: product.subtitle,
+      price: product.price,
+      currency: product.currency,
+      image: product.image,
+    });
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 1500);
+  };
+
   const getTagLabel = (tag?: string) => {
     switch (tag) {
-      case 'best-seller': return 'Best seller';
+      case 'best-seller': return 'Best Seller';
       case 'new': return 'New';
       case 'signature': return 'Signature';
       case 'heritage': return 'Heritage';
@@ -46,10 +65,61 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
               className="aspect-square w-full object-cover sm:h-full sm:aspect-auto"
             />
             {tagLabel && (
-              <span className="absolute left-2 top-2 bg-white px-2 py-1 text-[9px] tracking-[0.16em] uppercase text-[#144B3C] font-semibold md:left-4 md:top-4 md:px-3 md:py-1 md:text-[10px] md:tracking-[0.18em]">
+              <span className="absolute left-2 top-2 inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-[#FBE7B6] via-[#E8CB85] to-[#C89F53] px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-widest text-black shadow-sm md:left-3 md:top-3 md:px-2 md:py-1 md:text-[9px]">
                 {tagLabel}
               </span>
             )}
+            <button
+              type="button"
+              onClick={addToBag}
+              aria-label={added ? 'Added to bag' : 'Add to bag'}
+              className={`absolute right-1 top-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:top-2 md:size-10 ${
+                added ? 'opacity-100' : 'opacity-60'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill={added ? '#C89F53' : 'none'}
+                stroke={added ? '#1A3A2A' : 'currentColor'}
+                strokeWidth="1.25"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className="md:h-5 md:w-5"
+              >
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={toggleWishlist}
+              aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
+              aria-pressed={wished}
+              className={`absolute right-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:bottom-2 md:size-10 ${
+                wished ? 'opacity-100' : 'opacity-60'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill={wished ? '#C89F53' : 'none'}
+                stroke="currentColor"
+                strokeWidth="1.25"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className="md:h-5 md:w-5"
+              >
+                <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+              </svg>
+            </button>
           </div>
           <div className="flex flex-1 flex-col justify-center gap-2 p-5 sm:p-6 lg:p-8">
             <h3 className="font-display text-xl leading-snug text-[#1A2621] transition-colors group-hover:text-[#144B3C] sm:text-2xl">
@@ -59,6 +129,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
             <p className="mt-1 text-sm text-[#1A2621] sm:text-base">
               {product.currency}&nbsp;{product.price.toLocaleString()}
             </p>
+            {product.rating !== undefined && (
+              <Rating
+                value={product.rating}
+                size="sm"
+                reviewCount={product.reviewCount}
+                className="mt-1.5"
+              />
+            )}
             {product.description && (
               <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[#60736A] sm:mt-3 sm:text-sm">
                 {product.description}
@@ -91,7 +169,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
               className="h-full w-full object-cover"
             />
             {tagLabel && (
-              <span className="absolute left-2 top-2 bg-white px-2 py-1 text-[9px] tracking-[0.16em] uppercase text-[#144B3C] font-semibold md:left-4 md:top-4 md:px-3 md:py-1 md:text-[10px] md:tracking-[0.18em]">
+              <span className="absolute left-2 top-2 inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-[#FBE7B6] via-[#E8CB85] to-[#C89F53] px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-widest text-black shadow-sm md:left-3 md:top-3 md:px-2 md:py-1 md:text-[9px]">
                 {tagLabel}
               </span>
             )}
@@ -99,10 +177,39 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
         </Link>
         <button
           type="button"
+          onClick={addToBag}
+          aria-label={added ? 'Added to bag' : 'Add to bag'}
+          aria-live="polite"
+          className={`absolute right-1 top-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:top-2 md:size-10 ${
+            added ? 'opacity-100' : 'opacity-60'
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill={added ? '#C89F53' : 'none'}
+            stroke={added ? '#1A3A2A' : 'currentColor'}
+            strokeWidth="1.25"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+            className="md:h-5 md:w-5"
+          >
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+        </button>
+        <button
+          type="button"
           onClick={toggleWishlist}
           aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
           aria-pressed={wished}
-          className="absolute right-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-colors hover:text-[#C89F53] md:right-2 md:bottom-2 md:size-10"
+          className={`absolute right-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:bottom-2 md:size-10 ${
+            wished ? 'opacity-100' : 'opacity-60'
+          }`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -129,6 +236,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
         <p className="mt-2 text-sm text-[#1A2621]">
           {product.currency}&nbsp;{product.price.toLocaleString()}
         </p>
+        {product.rating !== undefined && (
+          <Rating
+            value={product.rating}
+            size="xs"
+            reviewCount={product.reviewCount}
+            className="mt-1.5"
+          />
+        )}
       </Link>
     </div>
   );
