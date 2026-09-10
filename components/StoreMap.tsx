@@ -269,14 +269,59 @@ export const StoreMap: React.FC<Props> = ({ stores }) => {
           const validStores = stores.filter(
             (s) => typeof s.lat === 'number' && typeof s.lng === 'number'
           );
-          const storeBounds = validStores.length
-            ? L.default.latLngBounds(validStores.map((s) => [s.lat, s.lng] as [number, number]))
-            : null;
+
+          // Haversine distance to find the nearest boutique
+          const toRad = (d: number) => (d * Math.PI) / 180;
+          const haversine = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) => {
+            const R = 6371;
+            const dLat = toRad(b.lat - a.lat);
+            const dLng = toRad(b.lng - a.lng);
+            const lat1 = toRad(a.lat);
+            const lat2 = toRad(b.lat);
+            const x =
+              Math.sin(dLat / 2) ** 2 +
+              Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+            return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+          };
+
+          let nearest: Store | null = null;
+          let nearestKm = Infinity;
+          for (const s of validStores) {
+            const d = haversine({ lat: latitude, lng: longitude }, { lat: s.lat!, lng: s.lng! });
+            if (d < nearestKm) {
+              nearestKm = d;
+              nearest = s;
+            }
+          }
+
           const userPoint = L.default.latLng(latitude, longitude);
-          const combined = storeBounds?.isValid?.()
-            ? storeBounds.extend(userPoint)
-            : L.default.latLngBounds(userPoint, userPoint);
-          map.fitBounds(combined, { padding: [80, 80], maxZoom: 10 });
+          if (nearest) {
+            const nearestPoint = L.default.latLng(nearest.lat!, nearest.lng!);
+            map.fitBounds(L.default.latLngBounds(userPoint, nearestPoint), {
+              padding: [80, 80],
+              maxZoom: 13,
+            });
+            // Open the nearest store's popup after the pan finishes
+            window.setTimeout(() => {
+              clusterRef.current &&
+                (clusterRef.current as {
+                  eachLayer: (cb: (l: L.Layer) => void) => void;
+                }).eachLayer((layer: L.Layer) => {
+                  const m = layer as L.Marker & {
+                    getLatLng?: () => L.LatLng;
+                    openPopup?: () => void;
+                  };
+                  if (m.getLatLng && m.openPopup) {
+                    const ll = m.getLatLng();
+                    if (ll.lat === nearest!.lat && ll.lng === nearest!.lng) {
+                      m.openPopup();
+                    }
+                  }
+                });
+            }, 600);
+          } else {
+            map.setView(userPoint, 12);
+          }
         });
       },
       (err) => {
