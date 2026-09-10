@@ -126,17 +126,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
               {product.name}
             </h3>
             <p className="text-xs tracking-wide text-[#60736A] sm:text-sm">{product.subtitle}</p>
-            <p className="mt-1 text-sm text-[#1A2621] sm:text-base">
-              {product.currency}&nbsp;{product.price.toLocaleString()}
-            </p>
             {product.rating !== undefined && (
               <Rating
                 value={product.rating}
                 size="sm"
+                showValue
+                showReviewCount={false}
                 reviewCount={product.reviewCount}
                 className="mt-1.5"
               />
             )}
+            <p className="mt-1 text-sm text-[#1A2621] sm:text-base">
+              {product.currency}&nbsp;{product.price.toLocaleString()}
+            </p>
             {product.description && (
               <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[#60736A] sm:mt-3 sm:text-sm">
                 {product.description}
@@ -233,17 +235,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
           {product.name}
         </h3>
         <p className="mt-1 text-xs tracking-wide text-[#60736A]">{product.subtitle}</p>
-        <p className="mt-2 text-sm text-[#1A2621]">
-          {product.currency}&nbsp;{product.price.toLocaleString()}
-        </p>
         {product.rating !== undefined && (
           <Rating
             value={product.rating}
             size="xs"
+            showValue
+            showReviewCount={false}
             reviewCount={product.reviewCount}
-            className="mt-1.5"
+            className="mt-2"
           />
         )}
+        <p className="mt-2 text-sm text-[#1A2621]">
+          {product.currency}&nbsp;{product.price.toLocaleString()}
+        </p>
       </Link>
     </div>
   );

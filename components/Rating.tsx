@@ -4,6 +4,7 @@ interface RatingProps {
   value: number;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   showValue?: boolean;
+  showReviewCount?: boolean;
   reviewCount?: number;
   className?: string;
 }
@@ -61,6 +62,7 @@ export const Rating: React.FC<RatingProps> = ({
   value,
   size = 'sm',
   showValue = false,
+  showReviewCount = true,
   reviewCount,
   className = '',
 }) => {
@@ -88,8 +90,8 @@ export const Rating: React.FC<RatingProps> = ({
       {showValue && (
         <span className={`${textClass} text-[#60736A]`}>
           <span className="font-medium text-[#1A2621]">{value.toFixed(1)}</span>
-          {reviewCount !== undefined && <span className="mx-1">·</span>}
-          {reviewCount !== undefined && (
+          {showReviewCount && reviewCount !== undefined && <span className="mx-1">·</span>}
+          {showReviewCount && reviewCount !== undefined && (
             <span>
               {reviewCount.toLocaleString()} review{reviewCount === 1 ? '' : 's'}
             </span>
