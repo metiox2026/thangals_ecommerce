@@ -168,32 +168,38 @@ export const SizeGuideModal: React.FC<SizeGuideModalProps> = ({
             </ul>
           )}
 
-          {(category === 'bracelets' || category === 'bangles') && (
-            <table className="w-full table-fixed border-collapse text-[11px] sm:table-auto sm:text-xs">
-              <colgroup>
-                <col className="w-[36%] sm:w-auto" />
-                <col className="w-[64%] sm:w-auto" />
-              </colgroup>
-              <thead>
-                <tr className="border-b border-[#E5DDD0] text-[9px] uppercase tracking-[0.12em] text-[#60736A] sm:text-[10px] sm:tracking-[0.16em]">
-                  <th className="py-1.5 pr-2 text-left font-medium sm:py-2 sm:pr-4">
-                    {category === 'bracelets' ? 'Length' : 'Inner dia.'}
-                  </th>
-                  <th className="py-1.5 pl-2 text-left font-medium sm:py-2 sm:pl-4">Fits wrist</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(category === 'bracelets' ? BRACELET_CHART : BANGLE_CHART).map((row) => (
-                  <tr key={row.length ?? row.diameter} className="border-b border-[#EAEAEA] text-[#1A2621]">
-                    <td className="py-2 pr-2 font-medium tabular-nums lining-nums sm:py-2.5 sm:pr-4">
-                      {row.length ?? row.diameter}
-                    </td>
-                    <td className="py-2 pl-2 text-[#60736A] sm:py-2.5 sm:pl-4">{row.wristSize}</td>
+          {(category === 'bracelets' || category === 'bangles') && (() => {
+            const rows: { size: string; wristSize: string }[] =
+              category === 'bracelets'
+                ? BRACELET_CHART.map((r) => ({ size: r.length, wristSize: r.wristSize }))
+                : BANGLE_CHART.map((r) => ({ size: r.diameter, wristSize: r.wristSize }));
+            return (
+              <table className="w-full table-fixed border-collapse text-[11px] sm:table-auto sm:text-xs">
+                <colgroup>
+                  <col className="w-[36%] sm:w-auto" />
+                  <col className="w-[64%] sm:w-auto" />
+                </colgroup>
+                <thead>
+                  <tr className="border-b border-[#E5DDD0] text-[9px] uppercase tracking-[0.12em] text-[#60736A] sm:text-[10px] sm:tracking-[0.16em]">
+                    <th className="py-1.5 pr-2 text-left font-medium sm:py-2 sm:pr-4">
+                      {category === 'bracelets' ? 'Length' : 'Inner dia.'}
+                    </th>
+                    <th className="py-1.5 pl-2 text-left font-medium sm:py-2 sm:pl-4">Fits wrist</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody>
+                  {rows.map((row) => (
+                    <tr key={row.size} className="border-b border-[#EAEAEA] text-[#1A2621]">
+                      <td className="py-2 pr-2 font-medium tabular-nums lining-nums sm:py-2.5 sm:pr-4">
+                        {row.size}
+                      </td>
+                      <td className="py-2 pl-2 text-[#60736A] sm:py-2.5 sm:pl-4">{row.wristSize}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            );
+          })()}
 
           <div className="mt-4 border-t border-[#E5DDD0] pt-3 sm:mt-6 sm:pt-5">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#1A3A2A]">

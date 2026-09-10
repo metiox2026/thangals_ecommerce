@@ -163,7 +163,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       </section>
 
       {/* Reviews */}
-      {reviews.length > 0 && product.rating !== undefined && (
+      {reviews.length > 0 && product.rating !== undefined && product.reviewCount !== undefined && (
         <section id="reviews" className="mt-16 border-t border-[#E5DDD0] pt-12 lg:mt-20 lg:pt-14">
           <div className="text-center">
             <p className="text-[10px] uppercase tracking-[0.28em] text-[#C89F53] sm:text-[11px]">
@@ -195,7 +195,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
               <div className="mt-5 space-y-1.5 border-t border-[#E5DDD0] pt-5">
                 {(() => {
-                  const totalReviews = product.reviewCount;
+                  const totalReviews = product.reviewCount ?? 0;
                   const distribution = [5, 4, 3, 2, 1].map((stars) => {
                     const actualCount = reviews.filter((r) => Math.round(r.rating) === stars).length;
                     const proportion = reviews.length > 0 ? actualCount / reviews.length : 0;
