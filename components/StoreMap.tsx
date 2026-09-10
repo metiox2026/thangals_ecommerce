@@ -5,9 +5,10 @@ import type { Store } from '@/lib/api';
 
 interface Props {
   stores: Store[];
+  onLocate?: (coords: { lat: number; lng: number } | null) => void;
 }
 
-export const StoreMap: React.FC<Props> = ({ stores }) => {
+export const StoreMap: React.FC<Props> = ({ stores, onLocate }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<unknown>(null);
   const userMarkerRef = useRef<unknown>(null);
@@ -218,6 +219,7 @@ export const StoreMap: React.FC<Props> = ({ stores }) => {
       (pos) => {
         setLocating(false);
         const { latitude, longitude } = pos.coords;
+        onLocate?.({ lat: latitude, lng: longitude });
         const map = mapRef.current as
           | (L.Map & { setView: (c: [number, number], z: number) => L.Map; fitBounds: (b: L.LatLngBounds, o?: unknown) => L.Map })
           | null;
@@ -346,10 +348,7 @@ export const StoreMap: React.FC<Props> = ({ stores }) => {
       <div className="pointer-events-none absolute left-4 top-4 z-[1000] rounded-sm bg-white/90 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-[#1A3A2A] shadow-sm backdrop-blur">
         {stores.length} Boutiques · {countryCount} Countries
       </div>
-      <div
-        className="absolute right-0 z-[9999] flex flex-col items-end gap-0"
-        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 0px)' }}
-      >
+      <div className="absolute bottom-0 right-0 z-[9999] flex flex-col items-end gap-0">
         <button
           type="button"
           onClick={handleLocate}
