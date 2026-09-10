@@ -68,6 +68,12 @@ const TRUST_ICONS = {
       <path d="M21 3 9 15" />
     </svg>
   ),
+  engrave: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L11 16l-4 1 1-4Z" />
+    </svg>
+  ),
   exchange: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
@@ -94,9 +100,9 @@ function TrustItem({
   className?: string;
 }) {
   return (
-    <div className={`flex w-[88px] flex-col items-center gap-1.5 text-center sm:w-auto ${className}`}>
-      <span className="flex size-9 items-center justify-center text-[#1A3A2A]">{icon}</span>
-      <span className="whitespace-nowrap text-[10px] leading-tight text-[#555]">{label}</span>
+    <div className={`flex w-full min-w-0 flex-row items-center justify-start gap-0.5 text-left ${className}`}>
+      <span className="flex size-9 shrink-0 items-center justify-center text-[#1A3A2A]">{icon}</span>
+      <span className="text-[10px] leading-tight text-[#555] [text-wrap:balance]">{label}</span>
     </div>
   );
 }
@@ -279,8 +285,8 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
           />
         </div>
 
-        <div className="mt-4 flex flex-col lg:mt-6">
-          <div className="order-1 mt-4 flex flex-row items-center justify-between gap-1.5 text-[10px] text-[#555] lg:order-2 lg:mt-4">
+        <div className="mt-4 flex flex-col pb-2 lg:mt-6 lg:pb-3">
+          <div className="order-1 mt-4 flex flex-row items-center justify-between gap-1.5 text-[10px] text-[#555]">
             <span className="inline-flex items-center gap-0.5">
               <svg
                 width="12"
@@ -305,12 +311,12 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
             <span>Free UAE delivery in 1-2 business days</span>
           </div>
 
-          <div className="order-2 mt-6 grid grid-cols-2 justify-items-center gap-3 sm:grid sm:grid-cols-5 sm:gap-2 lg:order-1 lg:mt-0">
-            <TrustItem icon={TRUST_ICONS.hallmark} label="Hallmark Certified" />
-            <TrustItem icon={TRUST_ICONS.shipping} label="Free UAE Shipping" />
-            <TrustItem icon={TRUST_ICONS.resize} label="Complimentary Resizing" />
-            <TrustItem icon={TRUST_ICONS.exchange} label="Lifetime Exchange" />
-            <TrustItem icon={TRUST_ICONS.returns} label="14-Day Returns" />
+          <div className="order-2 mt-2 grid grid-cols-1 gap-0 sm:gap-0 lg:grid-cols-2 lg:gap-x-3 lg:gap-y-1">
+            <TrustItem icon={TRUST_ICONS.hallmark} label="International Jewellery Certification" />
+            <TrustItem icon={TRUST_ICONS.shipping} label="Free Shipping" />
+            <TrustItem icon={TRUST_ICONS.engrave} label="Complimentary Engraving" />
+            <TrustItem icon={TRUST_ICONS.exchange} label="Lifetime Complimentary Jewellery Maintenance" />
+            <TrustItem icon={TRUST_ICONS.returns} label="5 Days Return Policy" />
           </div>
         </div>
 

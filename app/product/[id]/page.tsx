@@ -138,7 +138,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </div>
             </Disclosure>
           </div>
-          <div className="pt-6 lg:border-l lg:pl-8 lg:pt-0">
+          <div className="pt-6 lg:border-l lg:border-[#E5DDD0] lg:pl-8 lg:pt-0">
             <p className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-[#1A2621]">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 14h2a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a1 1 0 0 1-1-1v-6Z" />

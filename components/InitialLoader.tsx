@@ -71,7 +71,7 @@ export const InitialLoader: React.FC = () => {
       <img
         src="/loader-logo.gif"
         alt="Thangals"
-        className="w-40 sm:w-48 md:w-56 lg:w-64"
+        className="w-40 sm:w-48 md:w-56 lg:w-48"
         draggable={false}
       />
     </div>
