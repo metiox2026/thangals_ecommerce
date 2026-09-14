@@ -1,15 +1,21 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 const MIN_VISIBLE_MS = 2000;
 const FADE_OUT_MS = 500;
 
 export const InitialLoader: React.FC = () => {
-  const [visible, setVisible] = useState(true);
+  const pathname = usePathname();
+  const [visible, setVisible] = useState(() => !pathname?.startsWith('/product/'));
   const [hiding, setHiding] = useState(false);
 
   useEffect(() => {
+    if (pathname?.startsWith('/product/')) {
+      setVisible(false);
+      return;
+    }
     if (typeof window === 'undefined') return;
 
     if (sessionStorage.getItem('thangals_loader_shown') === '1') {
@@ -54,7 +60,7 @@ export const InitialLoader: React.FC = () => {
         window.cancelAnimationFrame(raf);
       };
     }
-  }, []);
+  }, [pathname]);
 
   if (!visible) return null;
 

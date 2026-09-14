@@ -527,7 +527,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) 
                   WebkitUserDrag: 'none',
                   WebkitUserSelect: 'none',
                   userSelect: 'none',
-                }}
+                } as React.CSSProperties}
               />
               {phase === 'transitioning' && phantomSrc && (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -548,7 +548,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) 
                     WebkitUserDrag: 'none',
                     WebkitUserSelect: 'none',
                     userSelect: 'none',
-                  }}
+                  } as React.CSSProperties}
                 />
               )}
             </div>
