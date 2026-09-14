@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "chrome-remote-interface": "^0.34.0",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
     "next": "16.3.4",

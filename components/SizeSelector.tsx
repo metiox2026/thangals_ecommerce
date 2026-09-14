@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { SizeGuideModal } from '@/components/SizeGuideModal';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { localizeDigits } from '@/lib/format';
 
 interface SizeSelectorProps {
   sizes: string[];
@@ -20,6 +22,7 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
   note,
   category,
 }) => {
+  const { t, lang } = useLanguage();
   const [guideOpen, setGuideOpen] = useState(false);
 
   if (sizes.length === 0) return null;
@@ -31,7 +34,7 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
           const selected = s === value;
           return (
             <button
-              key={s}
+              key={localizeDigits(s, lang)}
               type="button"
               onClick={() => onChange(s)}
               aria-pressed={selected}
@@ -41,7 +44,7 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
                   : 'border-[#E5DDD0] bg-white text-[#1A2621] hover:border-[#1A3A2A]'
               }`}
             >
-              {s}
+              {localizeDigits(s, lang)}
             </button>
           );
         })}
@@ -53,7 +56,7 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#60736A]">
-          Select Size
+          {t('size.selectSize')}
         </p>
         {category && (
           <button
@@ -61,7 +64,7 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
             onClick={() => setGuideOpen(true)}
             className="cursor-pointer text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-800 underline underline-offset-4 transition-colors hover:text-emerald-700"
           >
-            Size guide
+            {t('size.sizeGuide')}
           </button>
         )}
       </div>
@@ -70,7 +73,7 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
           const selected = s === value;
           return (
             <button
-              key={s}
+              key={localizeDigits(s, lang)}
               type="button"
               onClick={() => onChange(s)}
               aria-pressed={selected}
@@ -80,7 +83,7 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
                   : 'border-[#E5DDD0] bg-white text-[#1A2621] hover:border-[#1A3A2A]'
               }`}
             >
-              {s}
+              {localizeDigits(s, lang)}
             </button>
           );
         })}

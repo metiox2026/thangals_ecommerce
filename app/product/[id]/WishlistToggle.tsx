@@ -3,18 +3,20 @@
 import React from 'react';
 import { Product } from '@/lib/api';
 import { useWishlist } from '@/context/WishlistContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const WishlistToggle: React.FC<{ product: Product }> = ({ product }) => {
   const { isWished, toggleItem } = useWishlist();
+  const { t } = useLanguage();
   const wished = isWished(product.id);
 
   return (
     <button
       type="button"
       onClick={() => toggleItem(product)}
-      aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
+      aria-label={wished ? t('card.removeFromWishlist') : t('card.addToWishlist')}
       aria-pressed={wished}
-      title={wished ? 'Saved to wishlist' : 'Save to wishlist'}
+      title={wished ? t('pdp.wishlistSaved') : t('pdp.wishlistSave')}
       className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full border border-[#E5DDD0] text-[#C89F53] transition-colors hover:border-[#C89F53] cursor-pointer"
     >
       <svg

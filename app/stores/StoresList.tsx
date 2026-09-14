@@ -4,6 +4,8 @@ import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Store } from '@/lib/api';
 import { StoreMap } from '@/components/StoreMap';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { formatDecimal, formatNumber, localizeDigits } from '@/lib/format';
 
 interface Props {
   stores: Store[];
@@ -25,14 +27,15 @@ const haversine = (
   return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
 };
 
-const formatDistance = (km: number): string => {
-  if (km < 1) return `${Math.round(km * 1000)} m`;
-  if (km < 10) return `${km.toFixed(1)} km`;
-  return `${Math.round(km)} km`;
-};
-
 export const StoresList: React.FC<Props> = ({ stores }) => {
+  const { lang, t } = useLanguage();
   const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+
+  const formatDistance = (km: number): string => {
+    if (km < 1) return `${formatNumber(Math.round(km * 1000), lang)} m`;
+    if (km < 10) return `${formatDecimal(km, lang, 1)} km`;
+    return `${formatNumber(Math.round(km), lang)} km`;
+  };
 
   const sortedStores = useMemo(() => {
     if (!userLoc) return stores;
@@ -61,6 +64,15 @@ export const StoresList: React.FC<Props> = ({ stores }) => {
 
   return (
     <>
+      <div className="text-center">
+        <p className="text-xs uppercase tracking-[0.2em] text-[#B8975A]">{t('stores.eyebrow')}</p>
+        <h1 className="mt-2 font-serif text-4xl font-normal text-[#1C1C1C] sm:text-5xl">
+          {t('stores.title')}
+        </h1>
+        <div className="mx-auto mt-3 h-[1px] w-12 bg-[#B8975A]" />
+        <p className="mt-3 text-xs text-[#777]">{t('stores.subtitle')}</p>
+      </div>
+
       <div className="mt-10">
         <StoreMap stores={stores} onLocate={setUserLoc} />
       </div>
@@ -70,13 +82,13 @@ export const StoresList: React.FC<Props> = ({ stores }) => {
           const mapHref =
             store.mapUrl && store.mapUrl !== '#'
               ? store.mapUrl
-              : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${store.name} ${store.address} ${store.emirate}`)}`;
+              : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${t(`store.${store.id}.name`)} ${t(`store.${store.id}.address`)} ${t(`store.${store.id}.emirate`)}`)}`;
           const distance = distances.get(store.id);
           return (
             <div key={store.id} className="border-t border-[#E5DDD0] pt-6">
               <div className="flex items-baseline justify-between gap-2">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[#B8975A]">
-                  {store.emirate}
+                  {t(`store.${store.id}.emirate`)}
                 </p>
                 {typeof distance === 'number' && (
                   <p className="text-[10px] uppercase tracking-[0.15em] text-[#1A3A2A]">
@@ -84,15 +96,15 @@ export const StoresList: React.FC<Props> = ({ stores }) => {
                   </p>
                 )}
               </div>
-              <h2 className="mt-1 font-jost text-2xl text-[#1C1C1C]">{store.name}</h2>
-              <p className="mt-2 text-xs text-[#444]">{store.address}</p>
-              <p className="mt-1 text-xs text-[#777]">{store.hours}</p>
+              <h2 className="mt-1 font-jost text-2xl text-[#1C1C1C]">{t(`store.${store.id}.name`)}</h2>
+              <p className="mt-2 text-xs text-[#444]">{t(`store.${store.id}.address`)}</p>
+              <p className="mt-1 text-xs text-[#777]">{t(`store.${store.id}.hours`)}</p>
               <div className="mt-3 flex items-center gap-4">
                 <a
                   href={`tel:${store.phone}`}
                   className="text-xs font-medium text-[#1A3A2A] hover:underline"
                 >
-                  {store.phone}
+                  {localizeDigits(store.phone, lang)}
                 </a>
                 <a
                   href={mapHref}
@@ -100,7 +112,7 @@ export const StoresList: React.FC<Props> = ({ stores }) => {
                   rel="noopener noreferrer"
                   className="text-xs font-medium uppercase tracking-[0.15em] text-[#B8975A] hover:underline"
                 >
-                  View on map →
+                  {t('stores.viewOnMap')}
                 </a>
               </div>
             </div>
@@ -113,7 +125,7 @@ export const StoresList: React.FC<Props> = ({ stores }) => {
           href="/contact"
           className="inline-block rounded-sm bg-[#1A3A2A] px-10 py-3.5 text-xs font-medium uppercase tracking-[0.2em] text-white hover:bg-[#2D5A3D]"
         >
-          Book a Private Viewing
+          {t('stores.bookViewing')}
         </Link>
       </div>
     </>

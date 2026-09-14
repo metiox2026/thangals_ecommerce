@@ -11,16 +11,20 @@ import {
 import { InstallmentPlansModal } from '@/components/InstallmentPlansModal';
 import { ProductActionArea } from './ProductActionArea';
 import { Rating } from '@/components/Rating';
+import { useLocalizedProduct } from '@/lib/hooks/useLocalizedProduct';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { formatNumber, NumberText, localizeDigits } from '@/lib/format';
 
 interface ProductRightColumnProps {
   product: Product;
 }
 
 function Aed({ value }: { value: number }) {
+  const { lang } = useLanguage();
   return (
     <span className="inline-flex items-baseline gap-0.5 tabular-nums lining-nums">
       <img src="/aed-symbol.svg" alt="" aria-hidden className="inline-block h-[0.85em] w-auto" />
-      {value.toLocaleString()}
+      <NumberText value={value} lang={lang} />
     </span>
   );
 }
@@ -107,34 +111,36 @@ function TrustItem({
   );
 }
 
-const TAG_LABELS: Record<string, string> = {
-  'best-seller': 'Best Seller',
-  new: 'New',
-  signature: 'Signature',
-  heritage: 'Heritage',
+const TAG_KEYS: Record<string, string> = {
+  'best-seller': 'tag.bestSeller',
+  new: 'tag.new',
+  signature: 'tag.signature',
+  heritage: 'tag.heritage',
 };
 
 export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product }) => {
+  const { t, lang } = useLanguage();
+  const p = useLocalizedProduct(product);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [tabbyOpen, setTabbyOpen] = useState(false);
 
-  const hasSizes = (product.sizes?.length ?? 0) > 0;
-  const tagLabel = product.tag ? TAG_LABELS[product.tag] ?? product.tag : null;
-  const metalColorLabel = product.metalColor
-    ? product.metalColor.charAt(0).toUpperCase() + product.metalColor.slice(1) + ' Gold'
+  const hasSizes = (p.sizes?.length ?? 0) > 0;
+  const tagLabel = p.tag ? t(TAG_KEYS[p.tag] ?? '') || p.tag : null;
+  const metalColorLabel = p.metalColor
+    ? `${p.metalColor.charAt(0).toUpperCase()}${p.metalColor.slice(1)} ${t('pdp.gold')}`
     : null;
-  const productCode = `THG-${product.id.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
+  const productCode = `THG-${p.id.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
 
-  const currentPrice = getPriceForSize(product, selectedSize);
-  const minSizePrice = getMinSizePrice(product);
-  const sizeDimension = getDimensionForSize(product, selectedSize);
+  const currentPrice = getPriceForSize(p, selectedSize);
+  const minSizePrice = getMinSizePrice(p);
+  const sizeDimension = getDimensionForSize(p, selectedSize);
   const installmentAmount = Math.round(currentPrice / 4);
 
   const isShowingFrom = hasSizes && !selectedSize && minSizePrice !== null;
   const headlinePrice = isShowingFrom && minSizePrice !== null ? minSizePrice : currentPrice;
   const showStrikeThrough =
-    product.discountPct !== undefined &&
-    product.discountPct > 0 &&
+    p.discountPct !== undefined &&
+    p.discountPct > 0 &&
     !isShowingFrom;
 
   return (
@@ -148,31 +154,31 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
           )}
         </div>
         <h1 className="mt-3 font-serif text-2xl font-normal text-[#1C1C1C] sm:text-3xl">
-          {product.name}
+          {p.name}
         </h1>
-        {product.rating !== undefined && (
+        {p.rating !== undefined && (
           <Link
             href="#reviews"
             className="mt-2 inline-flex rounded-sm transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89F53] focus-visible:ring-offset-2"
-            aria-label={`${product.reviewCount ?? 0} reviews — jump to reviews section`}
+            aria-label={t('pdp.jumpToReviews', { n: p.reviewCount ?? 0 })}
           >
             <Rating
-              value={product.rating}
+              value={p.rating}
               size="sm"
               showValue
-              reviewCount={product.reviewCount}
+              reviewCount={p.reviewCount}
             />
           </Link>
         )}
-        <p className="mt-2 text-sm text-[#777]">{product.subtitle}</p>
+        <p className="mt-2 text-sm text-[#777]">{p.subtitle}</p>
         <p className="mt-1.5 text-[10px] uppercase tracking-[0.16em] text-[#999]">
-          Code: {productCode}
+          {t('pdp.codePrefix')} {productCode}
         </p>
 
         <div className="mt-6 flex items-baseline gap-3 font-jost text-2xl font-medium text-black">
           {isShowingFrom && (
             <span className="text-xs font-medium uppercase tracking-[0.12em] text-[#60736A]">
-              From
+              {t('pdp.from')}
             </span>
           )}
           <span className="flex items-baseline gap-1.5 tabular-nums lining-nums">
@@ -181,9 +187,9 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
               alt="AED"
               className="inline-block h-[0.85em] w-auto translate-y-[0.05em]"
             />
-            {headlinePrice.toLocaleString()}
+            <NumberText value={headlinePrice} lang={lang} />
           </span>
-          {showStrikeThrough && product.price !== currentPrice && (
+          {showStrikeThrough && p.price !== currentPrice && (
             <span className="flex items-baseline gap-1 text-sm text-[#999] line-through">
               <img
                 src="/aed-symbol.svg"
@@ -191,19 +197,19 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
                 aria-hidden
                 className="inline-block h-[0.85em] w-auto opacity-80"
               />
-              {product.price.toLocaleString()}
+              <NumberText value={p.price} lang={lang} />
             </span>
           )}
-          {product.discountPct !== undefined && product.discountPct > 0 && !isShowingFrom && (
+          {p.discountPct !== undefined && p.discountPct > 0 && !isShowingFrom && (
             <span className="text-xs font-medium text-[#C89F53]">
-              {product.discountPct}% off
+              <NumberText value={p.discountPct} lang={lang} />% {t('pdp.off')}
             </span>
           )}
         </div>
 
         <p className="mt-2 text-[10px] tracking-wide text-[#777]">
-          {isShowingFrom ? 'Final price depends on selected size. ' : ''}
-          Price excludes VAT (5%).
+          {isShowingFrom ? `${t('pdp.finalPriceDepends')} ` : ''}
+          {t('pdp.priceExcludesVat')}
         </p>
 
         <div className="mt-2 flex w-full items-center gap-3 rounded-sm border border-[#E5DDD0] bg-[#FAF8F5] px-4 py-3 text-xs text-[#555] lg:hidden">
@@ -224,15 +230,16 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
             />
           </div>
           <p className="ml-auto text-right leading-snug">
-            As low as <strong className="font-semibold text-[#1A2621]"><Aed value={installmentAmount} /></strong>
+            {t('pdp.asLowAs')}{' '}
+            <strong className="font-semibold text-[#1A2621]"><Aed value={installmentAmount} /></strong>
             <span className="block text-[11px] text-[#777]">
-              or 4 interest-free payments.{' '}
+              {t('pdp.installmentsMobile')}{' '}
               <button
                 type="button"
                 onClick={() => setTabbyOpen(true)}
                 className="cursor-pointer font-semibold text-emerald-800 underline-offset-4 hover:underline"
               >
-                Learn more
+                {t('pdp.learnMore')}
               </button>
             </span>
           </p>
@@ -255,17 +262,17 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
             />
           </div>
           <p className="ml-auto text-right leading-snug">
-            As low as{' '}
+            {t('pdp.asLowAs')}{' '}
             <strong className="font-semibold text-[#1A2621]">
               <Aed value={installmentAmount} />
             </strong>{' '}
-            /month or 4 interest-free payments.{' '}
+            {t('pdp.installmentsDesktop')}{' '}
             <button
               type="button"
               onClick={() => setTabbyOpen(true)}
               className="cursor-pointer font-semibold text-emerald-800 underline-offset-4 hover:underline"
             >
-              Learn more
+              {t('pdp.learnMore')}
             </button>
           </p>
         </div>
@@ -278,7 +285,7 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
 
         <div className="mt-6">
           <ProductActionArea
-            product={product}
+            product={p}
             selectedSize={selectedSize}
             onSelectSize={setSelectedSize}
           />
@@ -302,25 +309,24 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
                 <circle cx="12" cy="10" r="3" />
               </svg>
               <span>
-                <span className="font-medium text-emerald-700">Available</span> for Store
-                Pickup
+                <span className="font-medium text-emerald-700">{t('pdp.pickupAvailable')}</span> {t('pdp.pickupSuffix')}
               </span>
             </span>
             <span className="inline text-[#C89F53]">·</span>
-            <span>Free UAE delivery in 1-2 business days</span>
+            <span>{t('pdp.freeDelivery')}</span>
           </div>
 
-          <div className="order-2 mt-2 grid grid-cols-1 gap-0 sm:gap-0 lg:grid-cols-2 lg:gap-x-3 lg:gap-y-1">
-            <TrustItem icon={TRUST_ICONS.hallmark} label="International Jewellery Certification" />
-            <TrustItem icon={TRUST_ICONS.shipping} label="Free Shipping" />
-            <TrustItem icon={TRUST_ICONS.engrave} label="Complimentary Engraving" />
-            <TrustItem icon={TRUST_ICONS.exchange} label="Lifetime Complimentary Jewellery Maintenance" />
-            <TrustItem icon={TRUST_ICONS.returns} label="5 Days Return Policy" />
+          <div className="order-2 mt-2 grid grid-cols-1 gap-0 sm:gap-0 lg:grid-cols-2 lg:gap-x-3 lg:gap-y-1 lg:[direction:ltr]">
+            <TrustItem icon={TRUST_ICONS.hallmark} label={t('pdp.trust.hallmark')} />
+            <TrustItem icon={TRUST_ICONS.shipping} label={t('pdp.trust.shipping')} />
+            <TrustItem icon={TRUST_ICONS.engrave} label={t('pdp.trust.engrave')} />
+            <TrustItem icon={TRUST_ICONS.exchange} label={t('pdp.trust.maintenance')} />
+            <TrustItem icon={TRUST_ICONS.returns} label={t('pdp.trust.returns')} />
           </div>
         </div>
 
         <div className="mt-6 space-y-3 border-t border-[#E5DDD0] pt-6">
-          {product.description.split(/\n\s*\n/).map((para, i) => (
+          {p.description.split(/\n\s*\n/).map((para, i) => (
             <p key={i} className="text-xs leading-relaxed text-[#444]">
               {para}
             </p>
@@ -329,28 +335,28 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
 
         {/* Specifications */}
         <div className="mt-6 space-y-2 border-t border-[#E5DDD0] pt-6 text-xs text-[#444]">
-          <SpecRow label="Brand" value="Thangals" />
-          <SpecRow label="Metal" value={product.metal} />
-          {product.stone && <SpecRow label="Main Gemstone" value={product.stone} />}
+          <SpecRow label={t('pdp.spec.brand')} value="Thangals" />
+          <SpecRow label={t('pdp.spec.metal')} value={p.metal} />
+          {p.stone && <SpecRow label={t('pdp.spec.stone')} value={p.stone} />}
           {sizeDimension ? (
-            <SpecRow label="Dimensions" value={sizeDimension} highlight />
+            <SpecRow label={t('pdp.spec.dimensions')} value={localizeDigits(sizeDimension, lang)} highlight />
           ) : (
-            product.weightGrams !== undefined && (
-              <SpecRow label="Weight" value={`${product.weightGrams} g`} />
+            p.weightGrams !== undefined && (
+              <SpecRow label={t('pdp.spec.weight')} value={`${localizeDigits(String(p.weightGrams), lang)} g`} />
             )
           )}
-          {product.purity && <SpecRow label="Purity" value={product.purity} />}
-          {metalColorLabel && <SpecRow label="Metal Colour" value={metalColorLabel} />}
-          {product.occasion && (
+          {p.purity && <SpecRow label={t('pdp.spec.purity')} value={p.purity} />}
+          {metalColorLabel && <SpecRow label={t('pdp.spec.metalColor')} value={metalColorLabel} />}
+          {p.occasion && (
             <SpecRow
-              label="Designed For"
-              value={product.occasion.charAt(0).toUpperCase() + product.occasion.slice(1)}
+              label={t('pdp.spec.designedFor')}
+              value={p.occasion.charAt(0).toUpperCase() + p.occasion.slice(1)}
             />
           )}
-          <SpecRow label="Certification" value="UAE Central Hallmark Certified" />
+          <SpecRow label={t('pdp.spec.certification')} value={t('pdp.certHallmark')} />
           <SpecRow
-            label="Availability"
-            value="In Stock (Boutique & Online)"
+            label={t('pdp.spec.availability')}
+            value={t('pdp.availability')}
             highlight
           />
         </div>

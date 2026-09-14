@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import type { Store } from '@/lib/api';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { formatDecimal } from '@/lib/format';
 
 interface Props {
   stores: Store[];
@@ -15,6 +17,7 @@ export const StoreMap: React.FC<Props> = ({ stores, onLocate }) => {
   const clusterRef = useRef<unknown>(null);
   const [locating, setLocating] = useState(false);
   const [locateError, setLocateError] = useState<string | null>(null);
+  const { t, lang } = useLanguage();
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -154,13 +157,13 @@ export const StoreMap: React.FC<Props> = ({ stores, onLocate }) => {
         marker.bindPopup(
           `
             <div style="font-family: inherit; min-width: 220px; max-width: 260px;">
-              <p style="margin:0; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:#B8975A;">${store.emirate}</p>
-              <h3 style="margin:6px 0 4px; font-family: 'Cormorant Garamond', serif; font-size:18px; color:#1C1C1C; font-weight:500; line-height:1.2;">${store.name}</h3>
-              <p style="margin:0; font-size:12px; color:#444; line-height:1.5;">${store.address}</p>
-              <p style="margin:6px 0 0; font-size:11px; color:#777;">${store.hours}</p>
+              <p style="margin:0; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:#B8975A;">${t(`store.${store.id}.emirate`)}</p>
+              <h3 style="margin:6px 0 4px; font-size:18px; color:#1C1C1C; font-weight:500; line-height:1.2;">${t(`store.${store.id}.name`)}</h3>
+              <p style="margin:0; font-size:12px; color:#444; line-height:1.5;">${t(`store.${store.id}.address`)}</p>
+              <p style="margin:6px 0 0; font-size:11px; color:#777;">${t(`store.${store.id}.hours`)}</p>
               <div style="margin-top:10px; display:flex; gap:12px; align-items:center;">
                 <a href="tel:${store.phone}" style="font-size:12px; color:#1A3A2A; font-weight:500; text-decoration:none;">${store.phone}</a>
-                <a href="${mapHref}" target="_blank" rel="noopener noreferrer" style="font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#B8975A; font-weight:500; text-decoration:none;">Directions →</a>
+                <a href="${mapHref}" target="_blank" rel="noopener noreferrer" style="font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#B8975A; font-weight:500; text-decoration:none;">${t('stores.directions')}</a>
               </div>
             </div>
           `,
@@ -208,7 +211,7 @@ export const StoreMap: React.FC<Props> = ({ stores, onLocate }) => {
 
   const handleLocate = () => {
     if (typeof window === 'undefined' || !('geolocation' in navigator)) {
-      setLocateError('Geolocation is not supported by your browser.');
+      setLocateError(t('stores.geoUnsupported'));
       return;
     }
 
@@ -261,8 +264,8 @@ export const StoreMap: React.FC<Props> = ({ stores, onLocate }) => {
           const marker = L.default.marker([latitude, longitude], { icon: userIcon }).addTo(map);
           marker.bindPopup(
             `<div style="font-family: inherit; min-width:160px;">
-              <p style="margin:0; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:#1A3A2A;">You are here</p>
-              <p style="margin:6px 0 0; font-size:11px; color:#777;">Lat ${latitude.toFixed(4)}, Lng ${longitude.toFixed(4)}</p>
+              <p style="margin:0; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:#1A3A2A;">${t('stores.youAreHere')}</p>
+              <p style="margin:6px 0 0; font-size:11px; color:#777;">Lat ${formatDecimal(latitude, lang, 4)}, Lng ${formatDecimal(longitude, lang, 4)}</p>
             </div>`,
             { closeButton: false }
           );
@@ -329,11 +332,11 @@ export const StoreMap: React.FC<Props> = ({ stores, onLocate }) => {
       (err) => {
         setLocating(false);
         if (err.code === err.PERMISSION_DENIED) {
-          setLocateError('Location access denied. Please enable it in your browser settings.');
+          setLocateError(t('stores.geoDenied'));
         } else if (err.code === err.POSITION_UNAVAILABLE) {
-          setLocateError('Location is currently unavailable.');
+          setLocateError(t('stores.geoUnavailable'));
         } else {
-          setLocateError('Unable to retrieve your location.');
+          setLocateError(t('stores.geoFailed'));
         }
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
@@ -343,18 +346,18 @@ export const StoreMap: React.FC<Props> = ({ stores, onLocate }) => {
   const countryCount = new Set(stores.map((s) => s.emirate.split(/[,\s]/)[0])).size;
 
   return (
-    <div className="relative overflow-hidden rounded-sm border border-[#E5DDD0] bg-[#F5F0E8]">
+    <div className="relative z-0 overflow-hidden rounded-sm border border-[#E5DDD0] bg-[#F5F0E8]">
       <div ref={containerRef} className="h-[420px] w-full" />
-      <div className="pointer-events-none absolute left-4 top-4 z-[1000] rounded-sm bg-white/90 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-[#1A3A2A] shadow-sm backdrop-blur">
-        {stores.length} Boutiques · {countryCount} Countries
+      <div data-map-overlay className="pointer-events-none absolute left-4 top-4 z-[1000] rounded-sm bg-white/90 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-[#1A3A2A] shadow-sm backdrop-blur">
+        {t('stores.summary', { n: stores.length, m: countryCount })}
       </div>
-      <div className="absolute bottom-0 right-0 z-[9999] flex flex-col items-end gap-0">
+      <div data-map-overlay className="absolute bottom-0 right-0 z-[9999] flex flex-col items-end gap-0">
         <button
           type="button"
           onClick={handleLocate}
           disabled={locating}
           className="inline-flex items-center gap-2 rounded-sm bg-white px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#1A3A2A] shadow-md transition-opacity hover:opacity-90 disabled:opacity-60"
-          aria-label="Show my location on the map"
+          aria-label={t('aria.locateMap')}
         >
           <svg
             width="14"
@@ -370,7 +373,7 @@ export const StoreMap: React.FC<Props> = ({ stores, onLocate }) => {
             <circle cx="12" cy="12" r="3" />
             <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
           </svg>
-          {locating ? 'Locating…' : 'Use my location'}
+          {locating ? t('stores.locating') : t('stores.useMyLocation')}
         </button>
         {locateError && (
           <div className="max-w-[220px] rounded-sm bg-white/95 px-3 py-2 text-[10px] leading-relaxed text-[#7a3a3a] shadow-md">

@@ -7,6 +7,7 @@ import { WishlistToggle } from './WishlistToggle';
 import { ShareButton } from './ShareButton';
 import { MobileActionBar } from './MobileActionBar';
 import { SizeSelector } from '@/components/SizeSelector';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ProductActionAreaProps {
   product: Product;
@@ -19,6 +20,7 @@ export const ProductActionArea: React.FC<ProductActionAreaProps> = ({
   selectedSize,
   onSelectSize,
 }) => {
+  const { t } = useLanguage();
   const sizes = product.sizes ?? [];
   const requiresSize = sizes.length > 0;
   const sizeSelectorRef = useRef<HTMLDivElement | null>(null);
@@ -56,7 +58,7 @@ export const ProductActionArea: React.FC<ProductActionAreaProps> = ({
             product={product}
             size={selectedSize}
             disabled={disabled}
-            disabledLabel="Select a size"
+            disabledLabel={t('pdp.selectSize')}
             onDisabledClick={handleSelectSizeClick}
           />
         </div>

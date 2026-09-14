@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Product, getPriceForSize } from '@/lib/api';
 import { useBag } from '@/context/BagContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AddToBagButtonProps {
   product: Product;
@@ -20,6 +21,7 @@ export const AddToBagButton: React.FC<AddToBagButtonProps> = ({
   onDisabledClick,
 }) => {
   const { addItem } = useBag();
+  const { t } = useLanguage();
   const [added, setAdded] = useState(false);
 
   const trulyDisabled = disabled && !onDisabledClick;
@@ -43,10 +45,10 @@ export const AddToBagButton: React.FC<AddToBagButtonProps> = ({
   };
 
   const label = disabled
-    ? disabledLabel ?? 'Select a size'
+    ? disabledLabel ?? t('pdp.selectSize')
     : added
-    ? 'Added to Bag'
-    : 'Add to Bag';
+    ? t('pdp.addedToBag')
+    : t('pdp.addToBag');
 
   const stateClass = disabled
     ? 'border border-[#E5DDD0] bg-[#F3F1EC] text-[#9CA39F] sm:py-3.5'

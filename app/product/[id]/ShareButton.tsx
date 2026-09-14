@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ShareButtonProps {
   productName: string;
@@ -8,6 +9,7 @@ interface ShareButtonProps {
 }
 
 export const ShareButton: React.FC<ShareButtonProps> = ({ productName, className = '' }) => {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
@@ -34,8 +36,8 @@ export const ShareButton: React.FC<ShareButtonProps> = ({ productName, className
     <button
       type="button"
       onClick={handleShare}
-      aria-label="Share on WhatsApp"
-      title={copied ? 'Link copied' : 'Share on WhatsApp'}
+      aria-label={t('pdp.share')}
+      title={copied ? t('pdp.linkCopied') : t('pdp.share')}
       className={`flex items-center justify-center transition-colors cursor-pointer ${className}`}
     >
       {copied ? (

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useSyncExternalStore } from 'react';
+import React, { useEffect, useMemo, useSyncExternalStore } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type {
   GenderFilter,
@@ -12,6 +12,7 @@ import type {
   MetalColorFilter,
   Product,
 } from '@/lib/api';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type FilterKey =
   | 'category'
@@ -112,102 +113,6 @@ interface OptionGroup<T extends string> {
   options: { value: T; label: string }[];
 }
 
-const CATEGORY_OPTIONS: OptionGroup<Product['category']> = {
-  label: 'Shop by category',
-  param: 'category',
-  options: [
-    { value: 'earrings', label: 'Earrings' },
-    { value: 'rings', label: 'Rings' },
-    { value: 'bracelets', label: 'Bracelets' },
-    { value: 'necklaces', label: 'Necklaces' },
-    { value: 'bangles', label: 'Bangles' },
-  ],
-};
-
-const GENDER_OPTIONS: OptionGroup<GenderFilter> = {
-  label: 'Shop for',
-  param: 'gender',
-  options: [
-    { value: 'women', label: 'Women' },
-    { value: 'men', label: 'Men' },
-    { value: 'kids', label: 'Kids & Teen' },
-  ],
-};
-
-const OCCASION_OPTIONS: OptionGroup<OccasionFilter> = {
-  label: 'Shop for occasion',
-  param: 'occasion',
-  options: [
-    { value: 'bridal', label: 'Bridal' },
-    { value: 'everyday', label: 'Everyday Fine' },
-    { value: 'festive', label: 'Festive' },
-    { value: 'wedding', label: 'Wedding' },
-  ],
-};
-
-const PRICE_OPTIONS: OptionGroup<PriceFilter> = {
-  label: 'Price range',
-  param: 'price',
-  options: [
-    { value: 'u1000', label: 'Under AED 1,000' },
-    { value: '1000-3000', label: 'AED 1,000 – 3,000' },
-    { value: '3000-6000', label: 'AED 3,000 – 6,000' },
-    { value: '6000plus', label: 'AED 6,000 & above' },
-  ],
-};
-
-const WEIGHT_OPTIONS: OptionGroup<WeightFilter> = {
-  label: 'Weight range',
-  param: 'weight',
-  options: [
-    { value: 'lt5', label: 'Under 5 g' },
-    { value: '5-15', label: '5 – 15 g' },
-    { value: '15-30', label: '15 – 30 g' },
-    { value: '30plus', label: '30 g & above' },
-  ],
-};
-
-const DISCOUNT_OPTIONS: OptionGroup<DiscountFilter> = {
-  label: 'Discount',
-  param: 'discount',
-  options: [
-    { value: '10plus', label: '10% & above' },
-    { value: '25plus', label: '25% & above' },
-    { value: '50plus', label: '50% & above' },
-  ],
-};
-
-const PURITY_OPTIONS: OptionGroup<PurityFilter> = {
-  label: 'Purity',
-  param: 'purity',
-  options: [
-    { value: '22K', label: '22K' },
-    { value: '18K', label: '18K' },
-    { value: '14K', label: '14K' },
-  ],
-};
-
-const METAL_COLOR_OPTIONS: OptionGroup<MetalColorFilter> = {
-  label: 'Metal colour',
-  param: 'metalColor',
-  options: [
-    { value: 'yellow', label: 'Yellow Gold' },
-    { value: 'rose', label: 'Rose Gold' },
-    { value: 'white', label: 'White Gold' },
-  ],
-};
-
-const SECTIONS: OptionGroup<string>[] = [
-  CATEGORY_OPTIONS,
-  GENDER_OPTIONS,
-  OCCASION_OPTIONS,
-  PRICE_OPTIONS,
-  WEIGHT_OPTIONS,
-  DISCOUNT_OPTIONS,
-  PURITY_OPTIONS,
-  METAL_COLOR_OPTIONS,
-] as OptionGroup<string>[];
-
 const FILTER_KEYS: FilterKey[] = [
   'category',
   'gender',
@@ -218,6 +123,88 @@ const FILTER_KEYS: FilterKey[] = [
   'purity',
   'metalColor',
 ];
+
+function buildSections(t: (key: string) => string): OptionGroup<string>[] {
+  return [
+    {
+      label: t('filter.section.category'),
+      param: 'category',
+      options: [
+        { value: 'earrings', label: t('filter.option.earrings') },
+        { value: 'rings', label: t('filter.option.rings') },
+        { value: 'bracelets', label: t('filter.option.bracelets') },
+        { value: 'necklaces', label: t('filter.option.necklaces') },
+        { value: 'bangles', label: t('filter.option.bangles') },
+      ],
+    },
+    {
+      label: t('filter.section.gender'),
+      param: 'gender',
+      options: [
+        { value: 'women', label: t('filter.option.women') },
+        { value: 'men', label: t('filter.option.men') },
+        { value: 'kids', label: t('filter.option.kids') },
+      ],
+    },
+    {
+      label: t('filter.section.occasion'),
+      param: 'occasion',
+      options: [
+        { value: 'bridal', label: t('filter.option.bridal') },
+        { value: 'everyday', label: t('filter.option.everyday') },
+        { value: 'festive', label: t('filter.option.festive') },
+        { value: 'wedding', label: t('filter.option.wedding') },
+      ],
+    },
+    {
+      label: t('filter.section.price'),
+      param: 'price',
+      options: [
+        { value: 'u1000', label: t('filter.price.u1000') },
+        { value: '1000-3000', label: t('filter.price.1000_3000') },
+        { value: '3000-6000', label: t('filter.price.3000_6000') },
+        { value: '6000plus', label: t('filter.price.6000plus') },
+      ],
+    },
+    {
+      label: t('filter.section.weight'),
+      param: 'weight',
+      options: [
+        { value: 'lt5', label: t('filter.weight.lt5') },
+        { value: '5-15', label: t('filter.weight.5_15') },
+        { value: '15-30', label: t('filter.weight.15_30') },
+        { value: '30plus', label: t('filter.weight.30plus') },
+      ],
+    },
+    {
+      label: t('filter.section.discount'),
+      param: 'discount',
+      options: [
+        { value: '10plus', label: t('filter.discount.10plus') },
+        { value: '25plus', label: t('filter.discount.25plus') },
+        { value: '50plus', label: t('filter.discount.50plus') },
+      ],
+    },
+    {
+      label: t('filter.section.purity'),
+      param: 'purity',
+      options: [
+        { value: '22K', label: '22K' },
+        { value: '18K', label: '18K' },
+        { value: '14K', label: '14K' },
+      ],
+    },
+    {
+      label: t('filter.section.metalColor'),
+      param: 'metalColor',
+      options: [
+        { value: 'yellow', label: t('filter.metalColor.yellow') },
+        { value: 'rose', label: t('filter.metalColor.rose') },
+        { value: 'white', label: t('filter.metalColor.white') },
+      ],
+    },
+  ];
+}
 
 function readActiveFilters(
   searchParams: URLSearchParams,
@@ -244,16 +231,20 @@ interface FilterSectionsProps {
   activeFilters: Partial<Record<FilterKey, string>>;
   onOptionClick: (param: FilterKey, value: string) => void;
   onClearAll: () => void;
+  sections: OptionGroup<string>[];
+  clearAllLabel: string;
 }
 
 function FilterSections({
   activeFilters,
   onOptionClick,
   onClearAll,
+  sections,
+  clearAllLabel,
 }: FilterSectionsProps) {
   return (
     <div>
-      {SECTIONS.map((section) => (
+      {sections.map((section) => (
         <div
           key={section.param}
           className="border-b border-[#E5DDD0] px-5 py-4"
@@ -301,7 +292,7 @@ function FilterSections({
           onClick={onClearAll}
           className="text-[10px] uppercase tracking-[0.2em] text-[#144B3C] underline-offset-4 transition-colors hover:text-[#0E372B] hover:underline sm:text-[11px]"
         >
-          Clear all filters
+          {clearAllLabel}
         </button>
       </div>
     </div>
@@ -315,6 +306,7 @@ export const FilterTrigger: React.FC = () => {
     getServerSnapshot,
   );
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
 
   const filterCount = FILTER_KEYS.reduce(
     (acc, key) => acc + (searchParams.get(key) ? 1 : 0),
@@ -326,7 +318,7 @@ export const FilterTrigger: React.FC = () => {
     <div className="relative inline-flex">
       <button
         type="button"
-        aria-label="Filter"
+        aria-label={t('shop.filter')}
         aria-expanded={isOpen}
         onClick={openDrawer}
         className={`flex shrink-0 items-center justify-center text-[#1A3A2A] outline-none transition-colors cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[48px] sm:min-w-[48px] h-10 w-10 sm:h-12 sm:w-12 ${
@@ -348,7 +340,9 @@ export const FilterDrawer: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
 
+  const sections = useMemo(() => buildSections(t), [t]);
   const activeFilters = readActiveFilters(searchParams);
 
   const updateParam = (param: FilterKey, value: string | null) => {
@@ -369,7 +363,7 @@ export const FilterDrawer: React.FC = () => {
 
   const clearAll = () => {
     const sp = new URLSearchParams(searchParams.toString());
-    SECTIONS.forEach((s) => sp.delete(s.param));
+    sections.forEach((s) => sp.delete(s.param));
     const qs = sp.toString();
     router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   };
@@ -409,22 +403,22 @@ export const FilterDrawer: React.FC = () => {
       />
 
       <div
-        className={`absolute top-0 left-0 flex h-full w-[min(85vw,360px)] flex-col bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] transition-transform duration-300 ease-out lg:w-[min(90vw,400px)] ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`absolute top-0 start-0 flex h-full w-[min(85vw,360px)] flex-col bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] transition-transform duration-300 ease-out lg:w-[min(90vw,400px)] ${
+          isOpen ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full'
         }`}
         role="dialog"
-        aria-label="Filter jewellery"
+        aria-label={t('shop.filter')}
         aria-modal="true"
       >
         {/* Header — flex layout so the close button gets a reliable tap target */}
         <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[#E5DDD0] px-2 py-3 sm:px-3 sm:py-4">
           <div className="w-10 shrink-0 sm:w-12" />
           <h2 className="flex-1 text-center font-display text-base text-[#1A2621] sm:text-lg">
-            Filter
+            {t('filter.title')}
           </h2>
           <button
             type="button"
-            aria-label="Close filter"
+            aria-label={t('aria.closeFilter')}
             onClick={closeDrawer}
             className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-[#1A2621] transition-colors hover:bg-[#F2F6F4] hover:text-[#144B3C] active:bg-[#E5F0EB] sm:size-12"
           >
@@ -437,6 +431,8 @@ export const FilterDrawer: React.FC = () => {
             activeFilters={activeFilters}
             onOptionClick={handleOptionClick}
             onClearAll={clearAll}
+            sections={sections}
+            clearAllLabel={t('filter.clearAll')}
           />
         </div>
 
@@ -447,7 +443,7 @@ export const FilterDrawer: React.FC = () => {
             onClick={closeDrawer}
             className="w-full cursor-pointer bg-[#144B3C] py-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#0E372B] active:bg-[#0E372B] sm:py-3.5 sm:text-[12px]"
           >
-            Done
+            {t('filter.done')}
           </button>
         </div>
       </div>

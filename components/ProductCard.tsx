@@ -6,6 +6,9 @@ import { Product } from '@/lib/api';
 import { useWishlist } from '@/context/WishlistContext';
 import { useBag } from '@/context/BagContext';
 import { Rating } from './Rating';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useLocalizedProduct } from '@/lib/hooks/useLocalizedProduct';
+import { formatNumber, NumberText } from '@/lib/format';
 
 interface ProductCardProps {
   product: Product;
@@ -15,6 +18,8 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid' }) => {
   const { isWished, toggleItem } = useWishlist();
   const { addItem } = useBag();
+  const { t, lang } = useLanguage();
+  const localized = useLocalizedProduct(product);
   const wished = isWished(product.id);
   const [added, setAdded] = useState(false);
 
@@ -39,12 +44,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
     window.setTimeout(() => setAdded(false), 1500);
   };
 
+  // Bag/wishlist always store the canonical (English) product so switching
+  // language later doesn't mutate persisted data. Display reads from `localized`.
+  const p = localized;
+
   const getTagLabel = (tag?: string) => {
     switch (tag) {
-      case 'best-seller': return 'Best Seller';
-      case 'new': return 'New';
-      case 'signature': return 'Signature';
-      case 'heritage': return 'Heritage';
+      case 'best-seller': return t('tag.bestSeller');
+      case 'new': return t('tag.new');
+      case 'signature': return t('tag.signature');
+      case 'heritage': return t('tag.heritage');
       default: return null;
     }
   };
@@ -57,8 +66,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
         <div className="flex flex-col border border-[#EAEAEA] bg-white transition-colors hover:border-[#1A3A2A] sm:flex-row">
           <div className="media-zoom relative shrink-0 border-b border-[#EAEAEA] bg-[#F2F6F4] sm:border-b-0 sm:border-r sm:w-72 lg:w-80">
             <img
-              src={product.image}
-              alt={product.name}
+              src={p.image}
+              alt={p.name}
               loading="eager"
               width={800}
               height={800}
@@ -72,7 +81,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
             <button
               type="button"
               onClick={addToBag}
-              aria-label={added ? 'Added to bag' : 'Add to bag'}
+              aria-label={added ? t('card.addedToBag') : t('card.addToBag')}
               className={`absolute right-1 top-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:top-2 md:size-10 ${
                 added ? 'opacity-100' : 'opacity-60'
               }`}
@@ -98,7 +107,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
             <button
               type="button"
               onClick={toggleWishlist}
-              aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
+              aria-label={wished ? t('card.removeFromWishlist') : t('card.addToWishlist')}
               aria-pressed={wished}
               className={`absolute right-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:bottom-2 md:size-10 ${
                 wished ? 'opacity-100' : 'opacity-60'
@@ -123,29 +132,29 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
           </div>
           <div className="flex flex-1 flex-col justify-center gap-2 p-5 sm:p-6 lg:p-8">
             <h3 className="font-display text-xl leading-snug text-[#1A2621] transition-colors group-hover:text-[#144B3C] sm:text-2xl">
-              {product.name}
+              {p.name}
             </h3>
-            <p className="text-xs tracking-wide text-[#60736A] sm:text-sm">{product.subtitle}</p>
-            {product.rating !== undefined && (
+            <p className="text-xs tracking-wide text-[#60736A] sm:text-sm">{p.subtitle}</p>
+            {p.rating !== undefined && (
               <Rating
-                value={product.rating}
+                value={p.rating}
                 size="sm"
                 showValue
                 showReviewCount={false}
-                reviewCount={product.reviewCount}
+                reviewCount={p.reviewCount}
                 className="mt-1.5"
               />
             )}
             <p className="mt-1 text-sm text-[#1A2621] sm:text-base">
-              {product.currency}&nbsp;{product.price.toLocaleString()}
+              {p.currency}&nbsp;<NumberText value={p.price} lang={lang} />
             </p>
-            {product.description && (
+            {p.description && (
               <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[#60736A] sm:mt-3 sm:text-sm">
-                {product.description}
+                {p.description}
               </p>
             )}
             <span className="mt-3 inline-flex w-fit items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[#1A3A2A] sm:mt-4 sm:text-[11px]">
-              View details
+              {t('card.viewDetails')}
               <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
@@ -163,8 +172,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
         <Link href={`/product/${product.id}`} target="_blank" rel="noopener noreferrer" className="absolute inset-0 block">
           <div className="media-zoom h-full w-full border border-[#EAEAEA] bg-[#F2F6F4]">
             <img
-              src={product.image}
-              alt={product.name}
+              src={p.image}
+              alt={p.name}
               loading="eager"
               width={800}
               height={800}
@@ -180,7 +189,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
         <button
           type="button"
           onClick={addToBag}
-          aria-label={added ? 'Added to bag' : 'Add to bag'}
+          aria-label={added ? t('card.addedToBag') : t('card.addToBag')}
           aria-live="polite"
           className={`absolute right-1 top-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:top-2 md:size-10 ${
             added ? 'opacity-100' : 'opacity-60'
@@ -207,7 +216,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
         <button
           type="button"
           onClick={toggleWishlist}
-          aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
+          aria-label={wished ? t('card.removeFromWishlist') : t('card.addToWishlist')}
           aria-pressed={wished}
           className={`absolute right-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:bottom-2 md:size-10 ${
             wished ? 'opacity-100' : 'opacity-60'
@@ -232,21 +241,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
       </div>
       <Link href={`/product/${product.id}`} target="_blank" rel="noopener noreferrer" className="block pt-4">
         <h3 className="font-display text-lg leading-snug text-[#1A2621] group-hover:text-[#144B3C] transition-colors">
-          {product.name}
+          {p.name}
         </h3>
-        <p className="mt-1 text-xs tracking-wide text-[#60736A]">{product.subtitle}</p>
-        {product.rating !== undefined && (
+        <p className="mt-1 text-xs tracking-wide text-[#60736A]">{p.subtitle}</p>
+        {p.rating !== undefined && (
           <Rating
-            value={product.rating}
+            value={p.rating}
             size="xs"
             showValue
             showReviewCount={false}
-            reviewCount={product.reviewCount}
+            reviewCount={p.reviewCount}
             className="mt-2"
           />
         )}
         <p className="mt-2 text-sm text-[#1A2621]">
-          {product.currency}&nbsp;{product.price.toLocaleString()}
+          {p.currency}&nbsp;<NumberText value={p.price} lang={lang} />
         </p>
       </Link>
     </div>

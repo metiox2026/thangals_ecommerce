@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { CustomSelect, SelectOption } from '@/components/CustomSelect';
 import { openDrawer } from '@/components/FilterPanel';
 import { setStickyBarType } from '@/components/StickyBarVisibility';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type SortValue = 'featured' | 'price-asc' | 'price-desc' | 'name-asc';
 type ViewValue = 'grid' | 'list';
@@ -14,13 +15,6 @@ interface ShopControlsProps {
   activeSort: SortValue;
   activeView: ViewValue;
 }
-
-const SORT_OPTIONS: SelectOption<SortValue>[] = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'name-asc', label: 'Name: A → Z' },
-];
 
 const SORT_ICON = (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="sm:h-6 sm:w-6">
@@ -92,9 +86,20 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const [inlineRowInView, setInlineRowInView] = useState(true);
   const [atFooter, setAtFooter] = useState(false);
   const inlineRowRef = useRef<HTMLDivElement>(null);
+
+  const SORT_OPTIONS: SelectOption<SortValue>[] = useMemo(
+    () => [
+      { value: 'featured', label: t('sort.featured') },
+      { value: 'price-asc', label: t('sort.priceAsc') },
+      { value: 'price-desc', label: t('sort.priceDesc') },
+      { value: 'name-asc', label: t('sort.nameAsc') },
+    ],
+    [t],
+  );
 
   useEffect(() => {
     const row = inlineRowRef.current;
@@ -152,12 +157,12 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
       >
         <p className="text-[10px] uppercase tracking-[0.18em] text-[#60736A] sm:text-[11px]">
           <span className="font-semibold text-[#1A2621]">{totalCount}</span>{' '}
-          {totalCount === 1 ? 'piece' : 'pieces'}
+          {totalCount === 1 ? t('shop.piece') : t('shop.pieces')}
         </p>
 
         <div className="flex items-center gap-2 sm:gap-3">
           <CustomSelect
-            label="Sort"
+            label={t('shop.sort')}
             value={activeSort}
             options={SORT_OPTIONS}
             onChange={handleSort}
@@ -167,7 +172,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
 
           <button
             type="button"
-            aria-label="Filter"
+            aria-label={t('shop.filter')}
             onClick={openDrawer}
             className="flex shrink-0 items-center justify-center text-[#1A3A2A] outline-none transition-colors cursor-pointer min-h-[40px] min-w-[40px] hover:text-[#C89F53] sm:min-h-[48px] sm:min-w-[48px] h-10 w-10 sm:h-12 sm:w-12"
           >
@@ -179,7 +184,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
           <button
             type="button"
             onClick={toggleView}
-            aria-label={activeView === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
+            aria-label={activeView === 'grid' ? t('shop.view.list') : t('shop.view.grid')}
             aria-pressed={activeView === 'list'}
             className={`flex shrink-0 items-center justify-center text-[#1A3A2A] outline-none transition-colors cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[48px] sm:min-w-[48px] h-10 w-10 sm:h-12 sm:w-12 ${
               activeView === 'list' ? 'text-[#C89F53]' : 'hover:text-[#C89F53]'
@@ -202,7 +207,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
           className="flex items-center justify-around border-t border-[#E5DDD0] bg-white rounded-t-2xl px-6 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
         >
           <CustomSelect
-            label="Sort"
+            label={t('shop.sort')}
             value={activeSort}
             options={SORT_OPTIONS}
             onChange={handleSort}
@@ -217,7 +222,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
 
           <button
             type="button"
-            aria-label="Filter"
+            aria-label={t('shop.filter')}
             onClick={openDrawer}
             className="flex h-11 w-11 items-center justify-center text-[#144B3C] transition-colors hover:text-[#C89F53] cursor-pointer"
           >
@@ -229,7 +234,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
           <button
             type="button"
             onClick={toggleView}
-            aria-label={activeView === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
+            aria-label={activeView === 'grid' ? t('shop.view.list') : t('shop.view.grid')}
             aria-pressed={activeView === 'list'}
             className={`flex h-11 w-11 items-center justify-center text-[#144B3C] transition-colors hover:text-[#C89F53] cursor-pointer ${
               activeView === 'list' ? 'text-[#C89F53]' : ''
@@ -252,7 +257,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
           className="flex flex-col items-center gap-0 border border-[#E8CB85] bg-white py-0.5 text-[#144B3C] rounded-l-md w-8"
         >
           <CustomSelect
-            label="Sort"
+            label={t('shop.sort')}
             value={activeSort}
             options={SORT_OPTIONS}
             onChange={handleSort}
@@ -266,7 +271,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
 
           <button
             type="button"
-            aria-label="Filter"
+            aria-label={t('shop.filter')}
             onClick={openDrawer}
             className="flex h-8 w-8 items-center justify-center text-[#144B3C] transition-colors hover:text-[#C89F53] cursor-pointer"
           >
@@ -276,7 +281,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
           <button
             type="button"
             onClick={toggleView}
-            aria-label={activeView === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
+            aria-label={activeView === 'grid' ? t('shop.view.list') : t('shop.view.grid')}
             aria-pressed={activeView === 'list'}
             className={`flex h-8 w-8 items-center justify-center text-[#144B3C] transition-colors hover:text-[#C89F53] cursor-pointer ${
               activeView === 'list' ? 'text-[#C89F53]' : ''

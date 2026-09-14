@@ -5,10 +5,15 @@ import Link from 'next/link';
 import { Product } from '@/lib/api';
 import { useWishlist } from '@/context/WishlistContext';
 import { useBag } from '@/context/BagContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useLocalizedProduct } from '@/lib/hooks/useLocalizedProduct';
+import { formatNumber, NumberText } from '@/lib/format';
 
 const WishlistItem: React.FC<{ product: Product }> = ({ product }) => {
   const { removeItem } = useWishlist();
   const { addItem } = useBag();
+  const { t, lang } = useLanguage();
+  const p = useLocalizedProduct(product);
   const [added, setAdded] = useState(false);
 
   const handleAdd = () => {
@@ -28,8 +33,8 @@ const WishlistItem: React.FC<{ product: Product }> = ({ product }) => {
     <div className="group">
       <Link href={`/product/${product.id}`} className="media-zoom relative block border border-[#EAEAEA] bg-[#F2F6F4]">
         <img
-          src={product.image}
-          alt={product.name}
+          src={p.image}
+          alt={p.name}
           loading="eager"
           width={800}
           height={800}
@@ -42,7 +47,7 @@ const WishlistItem: React.FC<{ product: Product }> = ({ product }) => {
             e.stopPropagation();
             removeItem(product.id);
           }}
-          aria-label={`Remove ${product.name} from wishlist`}
+          aria-label={t('aria.removeFromWishlist', { name: p.name })}
           className="absolute right-0 bottom-0 flex size-9 cursor-pointer items-center justify-center text-[#1A2621] transition-colors hover:text-[#144B3C] md:right-px md:bottom-px md:size-10"
         >
           <svg
@@ -65,12 +70,12 @@ const WishlistItem: React.FC<{ product: Product }> = ({ product }) => {
       <div className="pt-4">
         <h3 className="font-display text-lg leading-snug text-[#1A2621]">
           <Link href={`/product/${product.id}`} className="transition-colors hover:text-[#144B3C]">
-            {product.name}
+            {p.name}
           </Link>
         </h3>
-        <p className="mt-1 text-xs tracking-wide text-[#60736A]">{product.subtitle}</p>
+        <p className="mt-1 text-xs tracking-wide text-[#60736A]">{p.subtitle}</p>
         <p className="mt-2 text-sm text-[#1A2621]">
-          {product.currency}&nbsp;{product.price.toLocaleString()}
+          {p.currency}&nbsp;<NumberText value={p.price} lang={lang} />
         </p>
         <button
           type="button"
@@ -97,7 +102,7 @@ const WishlistItem: React.FC<{ product: Product }> = ({ product }) => {
             <line x1="3" y1="6" x2="21" y2="6" />
             <path d="M16 10a4 4 0 0 1-8 0" />
           </svg>
-          {added ? 'Added to Bag' : 'Add to Bag'}
+          {added ? t('pdp.addedToBag') : t('pdp.addToBag')}
         </button>
       </div>
     </div>
@@ -106,6 +111,7 @@ const WishlistItem: React.FC<{ product: Product }> = ({ product }) => {
 
 export const WishlistContents: React.FC = () => {
   const { items, clearAll, totalCount } = useWishlist();
+  const { t, lang } = useLanguage();
 
   if (items.length === 0) {
     return (
@@ -120,15 +126,17 @@ export const WishlistContents: React.FC = () => {
         >
           <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
         </svg>
-        <p className="font-display text-xl text-[#1A2621] sm:text-2xl">Your wishlist is empty</p>
+        <p className="font-display text-xl text-[#1A2621] sm:text-2xl">
+          {t('wishlist.empty.title')}
+        </p>
         <p className="mt-2 max-w-sm px-4 text-[12px] text-[#60736A] sm:text-sm">
-          Tap the heart on any piece to save it for later. Your selection will appear here.
+          {t('wishlist.empty.body')}
         </p>
         <Link
           href="/shop"
           className="mt-6 border border-[#1A3A2A] px-6 py-2.5 text-[11px] uppercase tracking-[0.2em] text-[#1A3A2A] transition-colors hover:bg-[#1A3A2A] hover:text-white sm:mt-8 sm:text-[12px]"
         >
-          Explore Jewellery
+          {t('wishlist.empty.cta')}
         </Link>
       </div>
     );
@@ -138,15 +146,15 @@ export const WishlistContents: React.FC = () => {
     <div className="mt-6 sm:mt-8">
       <div className="flex items-center justify-between gap-3 border-y border-[#E5DDD0] py-4">
         <p className="text-[10px] uppercase tracking-[0.18em] text-[#60736A] sm:text-[11px]">
-          <span className="font-semibold text-[#1A2621]">{totalCount}</span>{' '}
-          {totalCount === 1 ? 'piece saved' : 'pieces saved'}
+          <span className="font-semibold text-[#1A2621]"><NumberText value={totalCount} lang={lang} /></span>{' '}
+          {totalCount === 1 ? t('wishlist.pieceSaved') : t('wishlist.piecesSaved')}
         </p>
         <button
           type="button"
           onClick={clearAll}
           className="text-[10px] uppercase tracking-[0.2em] text-[#144B3C] underline-offset-4 transition-colors hover:text-[#0E372B] hover:underline sm:text-[11px]"
         >
-          Clear wishlist
+          {t('wishlist.clear')}
         </button>
       </div>
 

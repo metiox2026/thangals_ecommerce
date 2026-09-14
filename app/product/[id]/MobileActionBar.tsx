@@ -7,6 +7,7 @@ import { usePageScroll } from '@/context/ScrollContext';
 import { setStickyBarType } from '@/components/StickyBarVisibility';
 import { AddToBagButton } from './AddToBagButton';
 import { WishlistToggle } from './WishlistToggle';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const SCROLL_THRESHOLD = 10;
 
@@ -23,6 +24,7 @@ export const MobileActionBar: React.FC<MobileActionBarProps> = ({
   disabled,
   onDisabledClick,
 }) => {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [atRelated, setAtRelated] = useState(false);
   const [atReviews, setAtReviews] = useState(false);
@@ -76,7 +78,7 @@ export const MobileActionBar: React.FC<MobileActionBarProps> = ({
             product={product}
             size={size}
             disabled={disabled}
-            disabledLabel="Select size"
+            disabledLabel={t('pdp.selectSizeMobile')}
             onDisabledClick={onDisabledClick}
           />
         </div>

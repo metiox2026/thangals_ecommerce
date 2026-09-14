@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useBag, BagItem } from '@/context/BagContext';
 import { api, Product, getPriceForSize } from '@/lib/api';
 import { SizeSelector } from './SizeSelector';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useLocalizedProduct } from '@/lib/hooks/useLocalizedProduct';
+import { formatDecimal, formatNumber, NumberText, localizeDigits } from '@/lib/format';
 
 function formatSku(id: string): string {
   const cleaned = id.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
@@ -13,6 +16,7 @@ function formatSku(id: string): string {
 }
 
 function AedPrice({ value }: { value: number }) {
+  const { lang } = useLanguage();
   return (
     <span className="inline-flex items-baseline gap-0.5 tabular-nums lining-nums">
       <img
@@ -21,7 +25,7 @@ function AedPrice({ value }: { value: number }) {
         aria-hidden
         className="inline-block h-[0.85em] w-auto"
       />
-      {value.toLocaleString()}
+      <NumberText value={value} lang={lang} />
     </span>
   );
 }
@@ -77,11 +81,17 @@ interface ItemRowProps {
 }
 
 const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, onPickSize }) => {
+  const { t, lang } = useLanguage();
+  const localized = useLocalizedProduct(product ?? ({} as Product));
+  const p = product ? localized : null;
   const sku = formatSku(item.id);
+  // Prefer the localized product name when we have it; otherwise fall back
+  // to the canonical English name stored on the bag item.
+  const displayName = p?.name ?? item.name;
   const subtitle =
     item.subtitle ||
-    (product
-      ? `${product.metal}${product.weightGrams ? ` • ${product.weightGrams.toFixed(4)} g` : ''}`
+    (p
+      ? `${p.metal}${p.weightGrams ? ` • ${formatDecimal(p.weightGrams, lang, 4)} g` : ''}`
       : '');
   const sizes = product?.sizes ?? [];
   const requiresSize = sizes.length > 0;
@@ -97,7 +107,7 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, 
       >
         <img
           src={item.image}
-          alt={item.name}
+          alt={displayName}
           width={180}
           height={180}
           loading="eager"
@@ -112,17 +122,17 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, 
               href={`/product/${item.id}`}
               className="block truncate text-sm font-medium text-[#1A2621] transition-colors hover:text-[#144B3C]"
             >
-              {item.name}
+              {displayName}
             </Link>
             <p className="mt-0.5 text-[10px] tracking-[0.14em] text-[#60736A] uppercase">
-              SKU : {sku}
+              {t('bag.skuPrefix')} {sku}
             </p>
           </div>
           <button
             type="button"
             onClick={onRemove}
-            aria-label={`Remove ${item.name} from bag`}
-            title="Remove"
+            aria-label={t('aria.removeFromBag', { name: displayName })}
+            title={t('bag.remove')}
             className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-sm text-[#60736A] transition-colors hover:text-[#144B3C]"
           >
             <TrashIcon />
@@ -143,17 +153,17 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, 
                     ? 'border-[#C89F53] bg-[#FBF1DF] text-[#7A5320] hover:border-[#A87B33]'
                     : 'border-[#E5DDD0] bg-white text-[#1A2621] hover:border-[#1A3A2A]'
                 }`}
-                aria-label={item.size ? `Change size, currently ${item.size}` : 'Select size'}
+                aria-label={item.size ? t('bag.changeSize', { size: item.size }) : t('bag.selectSize')}
               >
                 <RulerIcon />
                 {missingSize ? (
                   <>
-                    Select size
+                    {t('size.selectSize')}
                     <span className="ml-1 inline-block size-1.5 rounded-full bg-[#C89F53]" />
                   </>
                 ) : (
                   <>
-                    Size: <span className="font-semibold">{item.size}</span>
+                    {t('bag.sizePrefix')} <span className="font-semibold">{item.size ? localizeDigits(item.size, lang) : ''}</span>
                   </>
                 )}
               </button>
@@ -161,7 +171,7 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#60736A]">
-                    {item.size ? 'Change size' : 'Select size'}
+                    {item.size ? t('bag.changeSize', { size: item.size }) : t('size.selectSize')}
                   </p>
                   {!missingSize && (
                     <button
@@ -169,7 +179,7 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, 
                       onClick={() => setEditingSize(false)}
                       className="text-[10px] uppercase tracking-[0.16em] text-[#9CA39F] hover:text-[#1A2621]"
                     >
-                      Cancel
+                      {t('bag.cancel')}
                     </button>
                   )}
                 </div>
@@ -187,14 +197,14 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, 
           </div>
         )}
 
-        <p className="mt-1 text-[11px] text-[#C89F53]">Only 1 left</p>
+        <p className="mt-1 text-[11px] text-[#C89F53]">{t('bag.lowStock')}</p>
 
         <div className="mt-1.5 flex items-center justify-between gap-2">
           <div className="flex h-7 items-center border border-[#E5DDD0] bg-white">
             <button
               type="button"
               onClick={() => onQuantity(-1)}
-              aria-label="Decrease quantity"
+              aria-label={t('aria.decreaseQty')}
               className="flex h-full w-7 shrink-0 cursor-pointer items-center justify-center text-[#444] transition-colors hover:bg-[#F3F7F4]"
             >
               −
@@ -205,7 +215,7 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, 
             <button
               type="button"
               onClick={() => onQuantity(1)}
-              aria-label="Increase quantity"
+              aria-label={t('aria.increaseQty')}
               className="flex h-full w-7 shrink-0 cursor-pointer items-center justify-center text-[#444] transition-colors hover:bg-[#F3F7F4]"
             >
               +
@@ -223,6 +233,7 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, 
 
 export const BagDrawer: React.FC = () => {
   const { items, isOpen, closeBag, removeItem, updateQuantity, setItemSize } = useBag();
+  const { t, lang } = useLanguage();
   const [productMap, setProductMap] = useState<Record<string, Product>>({});
 
   useEffect(() => {
@@ -264,7 +275,7 @@ export const BagDrawer: React.FC = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex justify-end">
+    <div className="fixed inset-0 z-[100] flex justify-end rtl:justify-start">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
@@ -275,13 +286,13 @@ export const BagDrawer: React.FC = () => {
       <aside className="relative z-10 flex h-full w-full max-w-md flex-col bg-[#FAF8F5] shadow-2xl transition-transform">
         <div className="flex items-center justify-between border-b border-[#E5DDD0] px-6 py-5">
           <h2 className="font-jost text-base font-semibold tracking-[0.18em] uppercase text-[#1A3A2A]">
-            Shopping Cart{' '}
-            <span className="text-[#60736A]">({itemCount})</span>
+            {t('bag.title')}{' '}
+            <span className="text-[#60736A]">(<NumberText value={itemCount} lang={lang} />)</span>
           </h2>
           <button
             onClick={closeBag}
             className="text-2xl text-[#777] transition-colors hover:text-[#1C1C1C]"
-            aria-label="Close bag"
+            aria-label={t('aria.closeBag')}
           >
             ×
           </button>
@@ -303,12 +314,12 @@ export const BagDrawer: React.FC = () => {
                   d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                 />
               </svg>
-              <p className="font-serif text-lg text-[#444]">Your bag is empty</p>
+              <p className="font-serif text-lg text-[#444]">{t('bag.empty')}</p>
               <button
                 onClick={closeBag}
                 className="mt-4 rounded-sm border border-[#1A3A2A] px-6 py-2 text-xs uppercase tracking-widest text-[#1A3A2A] transition-colors hover:bg-[#1A3A2A] hover:text-white"
               >
-                Explore Jewellery
+                {t('bag.cta.explore')}
               </button>
             </div>
           ) : (
@@ -334,7 +345,7 @@ export const BagDrawer: React.FC = () => {
         {items.length > 0 && (
           <div className="border-t border-[#E5DDD0] bg-[#FAF8F4] px-6 py-4">
             <h3 className="font-display text-base font-medium text-[#1A2621]">
-              Order Summary
+              {t('bag.orderSummary')}
             </h3>
 
             {missingSizeCount > 0 && (
@@ -360,9 +371,10 @@ export const BagDrawer: React.FC = () => {
                 </svg>
                 <span>
                   {missingSizeCount === 1
-                    ? 'One item needs a size'
-                    : `${missingSizeCount} items need a size`}
-                  {' '}before checkout.
+                    ? t('bag.sizeWarning.one')
+                    : t('bag.sizeWarning.many', { n: missingSizeCount })}
+                  {' '}
+                  {t('bag.sizeWarning.suffix')}
                 </span>
               </div>
             )}
@@ -370,14 +382,16 @@ export const BagDrawer: React.FC = () => {
             <dl className="mt-3 space-y-2 text-xs">
               <div className="flex items-baseline justify-between gap-3">
                 <dt className="text-[#444]">
-                  Price ({itemCount} {itemCount === 1 ? 'Item' : 'Items'})
+                  {itemCount === 1
+                    ? `1 ${t('bag.item')}`
+                    : `${itemCount} ${t('bag.items')}`}
                 </dt>
                 <dd className="font-medium tabular-nums lining-nums text-[#1A2621]">
                   <AedPrice value={subtotal} />
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-3">
-                <dt className="text-[#444]">Delivery Charge</dt>
+                <dt className="text-[#444]">{t('bag.deliveryCharge')}</dt>
                 <dd className="flex items-center gap-2">
                   <span className="relative inline-flex items-baseline gap-0.5 text-[11px] text-[#A0A0A0] tabular-nums lining-nums">
                     <img
@@ -390,11 +404,11 @@ export const BagDrawer: React.FC = () => {
                       50
                     </span>
                   </span>
-                  <span className="font-medium text-emerald-700">Free</span>
+                  <span className="font-medium text-emerald-700">{t('bag.free')}</span>
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-3">
-                <dt className="text-[#444]">VAT (5%)</dt>
+                <dt className="text-[#444]">{t('bag.vat')}</dt>
                 <dd className="font-medium tabular-nums lining-nums text-[#1A2621]">
                   <AedPrice value={Math.round(subtotal * 0.05)} />
                 </dd>
@@ -404,14 +418,14 @@ export const BagDrawer: React.FC = () => {
             <div className="mt-3 border-t border-[#E5DDD0] pt-2.5">
               <div className="flex items-baseline justify-between gap-3">
                 <dt className="text-xs font-medium text-[#1A2621]">
-                  Estimated Total
+                  {t('bag.estimatedTotal')}
                 </dt>
                 <dd className="text-sm font-semibold tabular-nums lining-nums text-[#1A2621]">
                   <AedPrice value={subtotal + Math.round(subtotal * 0.05)} />
                 </dd>
               </div>
               <p className="mt-0.5 text-right text-[9px] text-[#60736A]">
-                VAT included in total
+                {t('bag.vatIncluded')}
               </p>
             </div>
 
@@ -431,7 +445,7 @@ export const BagDrawer: React.FC = () => {
                   : 'bg-[#1A3A2A] text-white hover:opacity-90'
               }`}
             >
-              Proceed to Checkout
+              {t('bag.checkout')}
             </Link>
             <div className="mt-0.5 text-center">
               <Link
@@ -439,7 +453,7 @@ export const BagDrawer: React.FC = () => {
                 onClick={closeBag}
                 className="text-[9px] font-medium uppercase tracking-[0.18em] text-[#1A3A2A] underline-offset-4 transition-colors hover:underline sm:text-[10px]"
               >
-                Continue Shopping
+                {t('bag.continueShopping')}
               </Link>
             </div>
           </div>

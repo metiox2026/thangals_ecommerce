@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const RING_CHART: { us: string; uk: string; eu: string; diameterMm: string; circumferenceMm: string }[] = [
   { us: '5', uk: 'J½', eu: '49', diameterMm: '15.7', circumferenceMm: '49.3' },
@@ -67,6 +68,7 @@ export const SizeGuideModal: React.FC<SizeGuideModalProps> = ({
   category,
   note,
 }) => {
+  const { t } = useLanguage();
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -109,7 +111,7 @@ export const SizeGuideModal: React.FC<SizeGuideModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close size guide"
+            aria-label={t('aria.closeSizeGuide')}
             className="flex size-8 items-center justify-center rounded-full text-[#60736A] transition-colors hover:bg-[#F2F6F4] hover:text-[#1A2621]"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

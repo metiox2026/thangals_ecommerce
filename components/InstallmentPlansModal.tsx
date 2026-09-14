@@ -2,6 +2,8 @@
 
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { formatDecimal, NumberText } from '@/lib/format';
 
 interface InstallmentPlansModalProps {
   open: boolean;
@@ -13,10 +15,11 @@ const TABBY_FEE_TOTAL = 115.5;
 const TAMARA_FEE_TOTAL = 60;
 
 function Aed({ value, decimals = 2 }: { value: number; decimals?: number }) {
+  const { lang } = useLanguage();
   return (
     <span className="inline-flex items-baseline gap-0.5 tabular-nums lining-nums">
       <img src="/aed-symbol.svg" alt="" aria-hidden className="inline-block h-[0.85em] w-auto" />
-      {value.toFixed(decimals)}
+      <NumberText value={value} lang={lang} fractionDigits={decimals} />
     </span>
   );
 }
@@ -74,6 +77,7 @@ const ProviderSection: React.FC<ProviderSectionProps> = ({
   tagline,
   plans,
 }) => {
+  const { t } = useLanguage();
   const featured = plans[0];
   const others = plans.slice(1);
 
@@ -94,25 +98,25 @@ const ProviderSection: React.FC<ProviderSectionProps> = ({
         <div className="relative flex items-start justify-between gap-3">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7A5320]">
-              Recommended
+              {t('installment.recommended')}
             </p>
             <div className="mt-2 flex items-baseline gap-1.5">
               <span className="font-jost text-4xl font-semibold tracking-tight tabular-nums lining-nums text-[#1A2621]">
                 {featured.n}
               </span>
-              <span className="text-sm font-medium text-[#60736A]">payments</span>
+              <span className="text-sm font-medium text-[#60736A]">{t('installment.payments')}</span>
             </div>
-            <p className="mt-0.5 text-xs text-[#60736A]">No interest. No fees.</p>
+            <p className="mt-0.5 text-xs text-[#60736A]">{t('installment.noFees')}</p>
           </div>
           <span className="shrink-0 rounded-full bg-[#C89F53]/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#7A5320] ring-1 ring-[#C89F53]/40">
-            Free
+            {t('installment.free')}
           </span>
         </div>
         <div className="relative mt-3 flex items-baseline gap-1">
           <span className="font-jost text-2xl font-semibold tabular-nums lining-nums text-[#1A2621]">
             <Aed value={featured.monthlyPayment} />
           </span>
-          <span className="text-sm text-[#777]">/mo</span>
+          <span className="text-sm text-[#777]">{t('installment.perMonth')}</span>
         </div>
       </div>
 
@@ -125,13 +129,13 @@ const ProviderSection: React.FC<ProviderSectionProps> = ({
             <p className="font-jost text-lg font-semibold tabular-nums lining-nums text-[#1A2621]">
               {plan.n}
             </p>
-            <p className="text-[10px] uppercase tracking-[0.1em] text-[#60736A]">payments</p>
+            <p className="text-[10px] uppercase tracking-[0.1em] text-[#60736A]">{t('installment.payments')}</p>
             <p className="mt-2.5 text-[10px] text-[#777]">
               +<Aed value={plan.monthlyFee} /> fee
             </p>
             <div className="mt-1.5 flex items-baseline gap-0.5 font-jost text-sm font-semibold tabular-nums lining-nums text-[#1A2621]">
               <Aed value={plan.monthlyPayment} />
-              <span className="text-[10px] font-normal text-[#777]">/mo</span>
+              <span className="text-[10px] font-normal text-[#777]">{t('installment.perMonth')}</span>
             </div>
           </div>
         ))}
@@ -145,6 +149,8 @@ export const InstallmentPlansModal: React.FC<InstallmentPlansModalProps> = ({
   onClose,
   price,
 }) => {
+  const { t } = useLanguage();
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -182,7 +188,7 @@ export const InstallmentPlansModal: React.FC<InstallmentPlansModalProps> = ({
       className="fixed inset-0 z-[500] flex items-stretch justify-center sm:items-center"
       role="dialog"
       aria-modal="true"
-      aria-label="Installment payment plans"
+      aria-label={t('installment.eyebrow')}
     >
       <div
         className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/55 to-black/65 backdrop-blur-md"
@@ -192,19 +198,19 @@ export const InstallmentPlansModal: React.FC<InstallmentPlansModalProps> = ({
         <div className="flex shrink-0 items-start justify-between gap-3 px-6 pb-5 pt-6 sm:px-8 sm:pb-6 sm:pt-7">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#60736A]">
-              Installment plans
+              {t('installment.eyebrow')}
             </p>
             <h2 className="mt-1 font-jost text-xl font-semibold tracking-tight text-[#1A2621] sm:text-2xl">
-              Get more time to pay
+              {t('installment.title')}
             </h2>
             <p className="mt-1 text-sm text-[#60736A]">
-              Split your purchase with Tabby or Tamara
+              {t('installment.subtitle')}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close installment details"
+            aria-label={t('aria.closeInstallment')}
             className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/60 text-[#60736A] shadow-sm ring-1 ring-white/40 backdrop-blur-md transition-all hover:bg-white hover:text-[#1A2621]"
           >
             <svg
@@ -230,9 +236,9 @@ export const InstallmentPlansModal: React.FC<InstallmentPlansModalProps> = ({
         >
           <ProviderSection
             logoSrc="/tabby-logo.avif"
-            logoAlt="Tabby"
-            name="Tabby"
-            tagline="Split your purchase in up to 12 payments"
+            logoAlt={t('provider.tabby')}
+            name={t('provider.tabby')}
+            tagline={t('provider.tabby.tagline')}
             plans={tabbyPlans(price)}
           />
 
@@ -240,15 +246,15 @@ export const InstallmentPlansModal: React.FC<InstallmentPlansModalProps> = ({
 
           <ProviderSection
             logoSrc="/tamara-logo.jpg"
-            logoAlt="Tamara"
-            name="Tamara"
-            tagline="Pay later in 4, 6, 8 or 12 installments"
+            logoAlt={t('provider.tamara')}
+            name={t('provider.tamara')}
+            tagline={t('provider.tamara.tagline')}
             plans={tamaraPlans(price)}
           />
 
           <div className="rounded-3xl border border-[#E5DDD0] bg-white p-5 shadow-sm shadow-black/10">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#1A3A2A]">
-              How it works
+              {t('installment.howItWorks')}
             </p>
             <ol className="mt-4 space-y-3 text-[13px] leading-relaxed text-[#444]">
               <Step n={1}>Choose Tabby or Tamara at checkout to select a payment plan</Step>
@@ -261,26 +267,26 @@ export const InstallmentPlansModal: React.FC<InstallmentPlansModalProps> = ({
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-2xl border border-[#E5DDD0] bg-white p-4 shadow-sm shadow-black/10">
               <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1A3A2A]">
-                Trusted by millions
+                {t('installment.trusted.title')}
               </p>
               <p className="mt-1.5 text-[12px] leading-relaxed text-[#444]">
-                Over 30 million shoppers discover products and pay their way with Tabby and Tamara.
+                {t('installment.trusted.body')}
               </p>
             </div>
 
             <div className="rounded-2xl border border-[#E5DDD0] bg-white p-4 shadow-sm shadow-black/10">
               <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#1A3A2A]">
-                Shop safely
+                {t('installment.safe.title')}
               </p>
               <p className="mt-1.5 text-[12px] leading-relaxed text-[#444]">
-                Buyer protection is included with every Tabby and Tamara purchase.
+                {t('installment.safe.body')}
               </p>
             </div>
           </div>
 
           <details className="group overflow-hidden rounded-2xl border border-[#E5DDD0] bg-white shadow-sm shadow-black/10">
             <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-3.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#1A3A2A] [&::-webkit-details-marker]:hidden">
-              Terms &amp; Conditions
+              {t('installment.terms')}
               <svg
                 width="12"
                 height="12"
@@ -297,8 +303,7 @@ export const InstallmentPlansModal: React.FC<InstallmentPlansModalProps> = ({
               </svg>
             </summary>
             <p className="px-5 pb-4 text-[11px] leading-relaxed text-[#777]">
-              Tabby and Tamara payment plans are subject to eligibility and a soft
-              credit check. Terms apply.{' '}
+              {t('installment.termsBody')}{' '}
               <a
                 href="https://tabby.ai"
                 target="_blank"

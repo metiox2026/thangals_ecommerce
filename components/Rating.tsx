@@ -1,4 +1,8 @@
+'use client';
+
 import React from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { formatDecimal, formatNumber, NumberText } from '@/lib/format';
 
 interface RatingProps {
   value: number;
@@ -66,6 +70,7 @@ export const Rating: React.FC<RatingProps> = ({
   reviewCount,
   className = '',
 }) => {
+  const { t, lang } = useLanguage();
   const px = SIZE_MAP[size];
   const textClass =
     size === 'xs'
@@ -84,16 +89,16 @@ export const Rating: React.FC<RatingProps> = ({
 
   return (
     <div className={`inline-flex items-center gap-1 ${className}`}>
-      <div className="flex items-center gap-0.5" role="img" aria-label={`${value} out of 5 stars`}>
+      <div className="flex items-center gap-0.5" role="img" aria-label={t('aria.rating', { value })}>
         {stars}
       </div>
       {showValue && (
         <span className={`${textClass} text-[#60736A]`}>
-          <span className="font-medium text-[#1A2621]">{value.toFixed(1)}</span>
+          <span className="font-medium text-[#1A2621]"><NumberText value={value} lang={lang} fractionDigits={1} /></span>
           {showReviewCount && reviewCount !== undefined && <span className="mx-1">·</span>}
           {showReviewCount && reviewCount !== undefined && (
             <span>
-              {reviewCount.toLocaleString()} review{reviewCount === 1 ? '' : 's'}
+              <NumberText value={reviewCount} lang={lang} /> {reviewCount === 1 ? t('rating.review') : t('rating.reviews')}
             </span>
           )}
         </span>

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useBag } from '@/context/BagContext';
 import { api, Product, getPriceForSize } from '@/lib/api';
 import { SizeSelector } from '@/components/SizeSelector';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { formatDecimal, formatNumber, NumberText, localizeDigits } from '@/lib/format';
 
 function formatSku(id: string): string {
   const cleaned = id.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
@@ -13,6 +15,7 @@ function formatSku(id: string): string {
 }
 
 function AedPrice({ value }: { value: number }) {
+  const { lang } = useLanguage();
   return (
     <span className="inline-flex items-baseline gap-0.5 tabular-nums lining-nums">
       <img
@@ -21,7 +24,7 @@ function AedPrice({ value }: { value: number }) {
         aria-hidden
         className="inline-block h-[0.85em] w-auto"
       />
-      {value.toLocaleString()}
+      <NumberText value={value} lang={lang} />
     </span>
   );
 }
@@ -315,6 +318,7 @@ function PaymentOption({
 
 export default function CheckoutPage() {
   const { items, setItemSize } = useBag();
+  const { lang } = useLanguage();
   const [productMap, setProductMap] = useState<Record<string, Product>>({});
   const [payment, setPayment] = useState<'card' | 'tabby' | 'tamara'>('card');
   const [openStep, setOpenStep] = useState<2 | 3 | null>(2);
@@ -677,7 +681,10 @@ export default function CheckoutPage() {
                     {items.map((item) => {
                       const product = productMap[item.id];
                       const subtitle = item.subtitle || product?.metal || '';
-                      const weight = product?.weightGrams?.toFixed(4);
+                      const weight =
+                        typeof product?.weightGrams === 'number'
+                          ? formatDecimal(product.weightGrams, lang, 4)
+                          : undefined;
                       const sizes = product?.sizes ?? [];
                       const requiresSize = sizes.length > 0;
                       const missingSize = requiresSize && !item.size;
@@ -719,7 +726,7 @@ export default function CheckoutPage() {
                                 >
                                   Size:{' '}
                                   <span className="font-medium">
-                                    {item.size ?? 'Select size'}
+                                    {item.size ? localizeDigits(item.size, lang) : 'Select size'}
                                   </span>
                                 </button>
                               ) : (
