@@ -74,7 +74,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
               className="aspect-square w-full object-cover sm:h-full sm:aspect-auto"
             />
             {tagLabel && (
-              <span className="absolute left-2 top-2 inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-[#FBE7B6] via-[#E8CB85] to-[#C89F53] px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-widest text-black shadow-sm md:left-3 md:top-3 md:px-2 md:py-1 md:text-[9px]">
+              <span className="absolute start-2 top-2 inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-[#FBE7B6] via-[#E8CB85] to-[#C89F53] px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-widest text-black shadow-sm md:start-3 md:top-3 md:px-2 md:py-1 md:text-[9px]">
                 {tagLabel}
               </span>
             )}
@@ -82,7 +82,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
               type="button"
               onClick={addToBag}
               aria-label={added ? t('card.addedToBag') : t('card.addToBag')}
-              className={`absolute right-1 top-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:top-2 md:size-10 ${
+              className={`absolute end-1 top-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:end-2 md:top-2 md:size-10 ${
                 added ? 'opacity-100' : 'opacity-60'
               }`}
             >
@@ -109,7 +109,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
               onClick={toggleWishlist}
               aria-label={wished ? t('card.removeFromWishlist') : t('card.addToWishlist')}
               aria-pressed={wished}
-              className={`absolute right-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:bottom-2 md:size-10 ${
+              className={`absolute end-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:end-2 md:bottom-2 md:size-10 ${
                 wished ? 'opacity-100' : 'opacity-60'
               }`}
             >
@@ -180,7 +180,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
               className="h-full w-full object-cover"
             />
             {tagLabel && (
-              <span className="absolute left-2 top-2 inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-[#FBE7B6] via-[#E8CB85] to-[#C89F53] px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-widest text-black shadow-sm md:left-3 md:top-3 md:px-2 md:py-1 md:text-[9px]">
+              <span className="absolute start-2 top-2 inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-[#FBE7B6] via-[#E8CB85] to-[#C89F53] px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-widest text-black shadow-sm md:start-3 md:top-3 md:px-2 md:py-1 md:text-[9px]">
                 {tagLabel}
               </span>
             )}
@@ -191,7 +191,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
           onClick={addToBag}
           aria-label={added ? t('card.addedToBag') : t('card.addToBag')}
           aria-live="polite"
-          className={`absolute right-1 top-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:top-2 md:size-10 ${
+          className={`absolute end-1 top-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:end-2 md:top-2 md:size-10 ${
             added ? 'opacity-100' : 'opacity-60'
           }`}
         >
@@ -218,7 +218,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
           onClick={toggleWishlist}
           aria-label={wished ? t('card.removeFromWishlist') : t('card.addToWishlist')}
           aria-pressed={wished}
-          className={`absolute right-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:right-2 md:bottom-2 md:size-10 ${
+          className={`absolute end-1 bottom-1 z-10 flex size-9 cursor-pointer items-center justify-center text-[#C89F53] transition-opacity hover:opacity-100 md:end-2 md:bottom-2 md:size-10 ${
             wished ? 'opacity-100' : 'opacity-60'
           }`}
         >
