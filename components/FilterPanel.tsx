@@ -44,13 +44,13 @@ function getServerSnapshot(): boolean {
   return false;
 }
 
-const openDrawer = (): void => {
+export const openDrawer = (): void => {
   if (_isOpen) return;
   _isOpen = true;
   _listeners.forEach((cb) => cb());
 };
 
-const closeDrawer = (): void => {
+export const closeDrawer = (): void => {
   if (!_isOpen) return;
   _isOpen = false;
   _listeners.forEach((cb) => cb());
