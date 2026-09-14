@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { CustomSelect, SelectOption } from '@/components/CustomSelect';
 import { openDrawer } from '@/components/FilterPanel';
-import { setStickyBarVisible } from '@/components/StickyBarVisibility';
+import { setStickyBarType } from '@/components/StickyBarVisibility';
 
 type SortValue = 'featured' | 'price-asc' | 'price-desc' | 'name-asc';
 type ViewValue = 'grid' | 'list';
@@ -92,22 +92,34 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [showTab, setShowTab] = useState(false);
+  const [inlineRowInView, setInlineRowInView] = useState(true);
+  const [atFooter, setAtFooter] = useState(false);
   const inlineRowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const row = inlineRowRef.current;
-    if (!row) return;
+    const footer = document.getElementById('site-footer');
+    if (!row && !footer) return;
+
     const io = new IntersectionObserver(
-      ([entry]) => setShowTab(!entry.isIntersecting),
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.target === row) setInlineRowInView(entry.isIntersecting);
+          if (entry.target === footer) setAtFooter(entry.isIntersecting);
+        }
+      },
+      { rootMargin: '0px 0px -60px 0px' },
     );
-    io.observe(row);
+    if (row) io.observe(row);
+    if (footer) io.observe(footer);
     return () => io.disconnect();
   }, []);
 
+  const showTab = !inlineRowInView && !atFooter;
+
   useEffect(() => {
-    setStickyBarVisible(showTab);
-    return () => setStickyBarVisible(false);
+    setStickyBarType(showTab ? 'shop' : null);
+    return () => setStickyBarType(null);
   }, [showTab]);
 
   const pushParams = (mutate: (sp: URLSearchParams) => void) => {
@@ -231,12 +243,12 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
       {/* sm+: vertical right-edge side tab (gold-rate styling); visible after inline row scrolls out */}
       <div
         aria-hidden={!showTab}
-        className={`fixed bottom-24 right-0 top-auto z-40 hidden transition-all duration-300 ease-out sm:block md:top-1/2 md:bottom-auto md:-translate-y-[calc(50%-43px)] ${
+        className={`fixed bottom-24 right-0 top-auto z-40 hidden transition-all duration-300 ease-out sm:block md:top-1/2 md:bottom-auto md:-translate-y-1/2 ${
           showTab ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'
         }`}
       >
         <div
-          style={{ boxShadow: '-1px 1px 3px rgba(0, 0, 0, 0.12)' }}
+          style={{ boxShadow: '-1px 1px 2px rgba(0, 0, 0, 0.06)' }}
           className="flex flex-col items-center gap-0 border border-[#E8CB85] bg-white py-0.5 text-[#144B3C] rounded-l-md w-8"
         >
           <CustomSelect

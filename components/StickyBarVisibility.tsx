@@ -2,11 +2,12 @@
 
 import { useSyncExternalStore } from 'react';
 
-// === Module-level store: true when any sticky bottom bar (shop sticky
-// controls on /shop, or product page mobile action bar on /product/*)
-// is currently visible. Other floating UI (e.g. WhatsApp button)
-// subscribes to this to clear the area.
-let _visible = false;
+// === Module-level store: which sticky bottom bar is currently visible.
+// Other floating UI (e.g. WhatsApp button) subscribes so it can lift
+// out of the way using a per-bar offset.
+export type StickyBarType = 'shop' | 'product' | null;
+
+let _type: StickyBarType = null;
 const _listeners = new Set<() => void>();
 
 function subscribe(cb: () => void): () => void {
@@ -16,19 +17,19 @@ function subscribe(cb: () => void): () => void {
   };
 }
 
-function getSnapshot(): boolean {
-  return _visible;
+function getSnapshot(): StickyBarType {
+  return _type;
 }
 
-function getServerSnapshot(): boolean {
-  return false;
+function getServerSnapshot(): StickyBarType {
+  return null;
 }
 
-export const setStickyBarVisible = (visible: boolean): void => {
-  if (_visible === visible) return;
-  _visible = visible;
+export const setStickyBarType = (type: StickyBarType): void => {
+  if (_type === type) return;
+  _type = type;
   _listeners.forEach((cb) => cb());
 };
 
-export const useStickyBarVisible = (): boolean =>
+export const useStickyBarType = (): StickyBarType =>
   useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
