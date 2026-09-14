@@ -299,9 +299,10 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) 
   };
 
   return (
-    <div className="w-full">
+    <div dir="ltr" className="w-full">
       <div
         ref={containerRef}
+        dir="ltr"
         className="group relative w-full cursor-zoom-in overflow-hidden rounded-sm border border-[#E5DDD0] bg-[#FAF8F5]"
         style={size ? { height: `${size}px` } : { height: 0 }}
         onTouchStart={onTouchStart}
@@ -312,7 +313,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) 
         onMouseLeave={onContainerMouseLeave}
         onClick={() => setLightboxOpen(true)}
       >
-        <div className="absolute inset-0 flex" style={trackStyle}>
+        <div dir="ltr" className="absolute inset-0 flex" style={trackStyle}>
           {images.map((src, i) => (
             <div
               key={src + i}
@@ -389,7 +390,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) 
       </div>
 
       {total > 1 && (
-        <div className="mx-auto mt-3 grid w-[224px] grid-cols-4 gap-2 sm:mt-4 sm:w-[236px] sm:gap-3">
+        <div dir="ltr" className="mx-auto mt-3 grid w-[224px] grid-cols-4 gap-2 sm:mt-4 sm:w-[236px] sm:gap-3">
           {images.map((src, i) => (
             <button
               key={src + i}

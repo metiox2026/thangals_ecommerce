@@ -22,13 +22,14 @@ export const SearchBar: React.FC = () => {
     <div className="border-b border-[#003024] bg-[#004237] lg:hidden">
       <div className="mx-auto flex max-w-[1400px] items-center px-3 py-2">
         <form
-          className="flex w-full items-center gap-2 border border-[#2D5A3D] bg-[#144B3C] px-4 py-1.5 text-white"
+          className="flex h-9 w-full items-center gap-2 border border-[#2D5A3D] bg-[#144B3C] px-4 font-jost text-white text-start"
           onSubmit={(e) => {
             e.preventDefault();
             const q = query.trim();
             if (!q) return;
             router.push(`/search?q=${encodeURIComponent(q)}`);
           }}
+          suppressHydrationWarning
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +51,7 @@ export const SearchBar: React.FC = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={typewriterPlaceholder}
-            className="w-full min-w-0 bg-transparent text-[16px] leading-[1] tracking-[0.14em] text-white placeholder:text-[12px] placeholder:tracking-normal focus:outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
+            className="w-full min-w-0 bg-transparent font-jost text-[16px] leading-[1] tracking-[0.14em] text-white placeholder:text-[12px] placeholder:tracking-normal focus:outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
             suppressHydrationWarning
           />
         </form>

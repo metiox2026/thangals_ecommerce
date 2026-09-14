@@ -62,7 +62,7 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
           <button
             type="button"
             onClick={() => setGuideOpen(true)}
-            className="cursor-pointer text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-800 underline underline-offset-4 transition-colors hover:text-emerald-700"
+            className="cursor-pointer border-b border-current pb-px text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-800 transition-colors hover:text-emerald-700"
           >
             {t('size.sizeGuide')}
           </button>

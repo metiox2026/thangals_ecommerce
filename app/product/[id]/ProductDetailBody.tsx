@@ -8,7 +8,21 @@ import { Rating } from '@/components/Rating';
 import { Disclosure } from './Disclosure';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useLocalizedReview } from '@/lib/hooks/useLocalizedReview';
-import { formatDecimal, formatNumber, NumberText, localizeDigits } from '@/lib/format';
+import { formatDecimal, formatNumber, NumberText, LocalizedText, localizeDigits } from '@/lib/format';
+import type { Language } from '@/contexts/LanguageContext';
+
+function renderDate(date: string, lang: Language): React.ReactNode {
+  const match = date.match(/[\d٠-٩]{4}/);
+  if (!match || lang !== 'AR') return date;
+  const idx = match.index!;
+  return (
+    <>
+      {date.slice(0, idx)}
+      <LocalizedText value={match[0]} lang={lang} />
+      {date.slice(idx + 4)}
+    </>
+  );
+}
 
 function Aed({ value }: { value: number }) {
   const { lang } = useLanguage();
@@ -114,7 +128,7 @@ export const ProductDetailBody: React.FC<ProductDetailBodyProps> = ({
               href="tel:+97142261993"
               className="mt-2 inline-block font-sans text-2xl font-semibold tabular-nums lining-nums tracking-[0.02em] text-[#1A2621] hover:underline"
             >
-              {localizeDigits('+971 4 226 1993', lang)}
+              <LocalizedText value="+971 4 226 1993" lang={lang} />
             </a>
             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-[11px] text-[#444]">
               <Link href="/contact" className="hover:underline">
@@ -225,7 +239,7 @@ export const ProductDetailBody: React.FC<ProductDetailBodyProps> = ({
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-[#1C1C1C]">{lr.author}</p>
                       <p className="mt-0.5 text-[11px] text-[#777]">
-                        {lr.location} · {lr.date}
+                        {lr.location} · {renderDate(lr.date, lang)}
                       </p>
                     </div>
                     <Rating value={r.rating} size="sm" />

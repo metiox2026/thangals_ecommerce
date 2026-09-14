@@ -65,19 +65,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${jost.variable} ${amiri.variable} ${tajawal.variable} ${cairo.variable} bg-white`} suppressHydrationWarning>
-      <body className="bg-white text-[#1C1C1C] antialiased font-sans overflow-hidden">
+    <html lang="en" className={`${cormorant.variable} ${jost.variable} ${amiri.variable} ${tajawal.variable} ${cairo.variable}`} suppressHydrationWarning>
+      <head>
+      </head>
+      <body className="text-[#1C1C1C] antialiased font-sans overflow-hidden">
         <Script
           id="loader-skip"
           strategy="beforeInteractive"
         >{`try{if(sessionStorage.getItem('thangals_loader_shown')==='1'){document.documentElement.setAttribute('data-loader-skip','');}}catch(e){}`}</Script>
+        <Script
+          id="lang-sync"
+          strategy="beforeInteractive"
+        >{`try{var l=localStorage.getItem('thangals.lang');if(l==='AR'){document.documentElement.lang='ar';document.documentElement.dir='rtl';}}catch(e){}`}</Script>
         <LanguageProvider>
           <InitialLoader />
           <BagProvider>
             <WishlistProvider>
               <PageScroll>
                 <Header />
-                <div className="h-[72px] sm:h-[80px] md:h-[115px]" />
+                <div className="h-[72px] bg-[#004237] sm:h-[80px] md:h-[115px]" />
                 <SearchBar />
                 <main className="min-h-[70vh]">{children}</main>
                 <Footer />

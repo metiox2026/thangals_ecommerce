@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Store } from '@/lib/api';
 import { StoreMap } from '@/components/StoreMap';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { formatDecimal, formatNumber, localizeDigits } from '@/lib/format';
+import { formatDecimal, formatNumber, LocalizedText } from '@/lib/format';
 
 interface Props {
   stores: Store[];
@@ -104,7 +104,7 @@ export const StoresList: React.FC<Props> = ({ stores }) => {
                   href={`tel:${store.phone}`}
                   className="text-xs font-medium text-[#1A3A2A] hover:underline"
                 >
-                  {localizeDigits(store.phone, lang)}
+                  <LocalizedText value={store.phone} lang={lang} />
                 </a>
                 <a
                   href={mapHref}

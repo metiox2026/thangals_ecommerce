@@ -77,3 +77,31 @@ export const NumberText: React.FC<NumberTextProps> = ({
   }
   return <span className={className}>{formatted}</span>;
 };
+
+interface LocalizedTextProps {
+  value: string;
+  lang: Language;
+  className?: string;
+}
+
+/**
+ * Like NumberText but for pre-formatted strings (phone numbers, addresses,
+ * SKUs, etc.) that contain digits but aren't pure numbers. Converts Latin
+ * digits to Arabic-Indic in AR mode and wraps the result in <bdo dir="rtl">
+ * so the digits flow right-to-left visually — matching how the rest of the
+ * Arabic text flows around them.
+ */
+export const LocalizedText: React.FC<LocalizedTextProps> = ({
+  value,
+  lang,
+  className,
+}) => {
+  if (lang === 'AR') {
+    return (
+      <bdo dir="rtl" className={className}>
+        {localizeDigits(value, lang)}
+      </bdo>
+    );
+  }
+  return <span className={className}>{value}</span>;
+};

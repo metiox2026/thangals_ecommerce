@@ -302,7 +302,8 @@ export const Header: React.FC = () => {
 
                 {searchOpen && (
                   <form
-                    className="animate-fade-in flex flex-1 items-center gap-3 border border-[#2D5A3D] bg-[#144B3C] py-0.5 pl-4 pr-1 text-white"
+                    dir="ltr"
+                    className="animate-fade-in flex h-9 flex-1 items-center gap-3 border border-[#2D5A3D] bg-[#144B3C] pl-4 pr-1 font-jost text-white text-start"
                     onSubmit={(e) => {
                       e.preventDefault();
                       const q = searchQuery.trim();
@@ -324,7 +325,7 @@ export const Header: React.FC = () => {
                       onBlur={() => {
                         if (!searchQuery) setSearchOpen(false);
                       }}
-                      className="min-w-0 flex-1 bg-transparent text-[12px] text-white normal-case placeholder:text-[#B8C7BE] placeholder:tracking-normal focus:outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
+                      className="min-w-0 flex-1 bg-transparent font-jost text-[12px] text-white normal-case placeholder:text-[#B8C7BE] placeholder:tracking-normal focus:outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
                       suppressHydrationWarning
                     />
                     <button

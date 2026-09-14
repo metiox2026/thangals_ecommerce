@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { localizeDigits } from '@/lib/format';
+import { LocalizedText } from '@/lib/format';
 
 const socialIconClass =
   'flex h-9 w-9 items-center justify-center border border-[#D8D2C7] text-[#666666] transition-colors hover:border-[#0B3C30] hover:text-[#0B3C30]';
@@ -173,7 +173,7 @@ export const Footer: React.FC = () => {
             </p>
             <p>
               <a href="tel:+97142261993" className="link-underline hover:text-[#1C1C1C]">
-                {localizeDigits('+971 4 226 1993', lang)}
+                <LocalizedText value="+971 4 226 1993" lang={lang} />
               </a>
             </p>
             <p>
@@ -226,14 +226,28 @@ export const Footer: React.FC = () => {
       {/* ===== COPYRIGHT BAR ===== */}
       <div className="border-t border-[#E6E1DA]">
         <div className="mx-auto max-w-[1400px] px-5 py-5 text-center text-[11px] leading-relaxed text-[#666666] sm:py-6 sm:text-xs lg:px-10">
-          <p>{t('footer.copyright', { year: 2026 }).split('METIOX SOLUTIONS').map((part, i, arr) => (
-            <React.Fragment key={i}>
-              {part}
-              {i < arr.length - 1 && (
-                <a href="https://metiox.com" className="text-[#1A2621] hover:underline">METIOX SOLUTIONS</a>
-              )}
-            </React.Fragment>
-          ))}</p>
+          {(() => {
+            const rendered = t('footer.copyright');
+            const yearMatch = rendered.match(/[\d٠-٩]{4}/);
+            const before = yearMatch ? rendered.slice(0, yearMatch.index) : rendered;
+            const yearText = yearMatch ? yearMatch[0] : '';
+            const after = yearMatch ? rendered.slice(yearMatch.index! + 4) : '';
+            const afterParts = after.split('METIOX SOLUTIONS');
+            return (
+              <p>
+                {before}
+                {yearText && <LocalizedText value={yearText} lang={lang} />}
+                {afterParts.map((part, i, arr) => (
+                  <React.Fragment key={i}>
+                    {part}
+                    {i < arr.length - 1 && (
+                      <a href="https://metiox.com" className="text-[#1A2621] hover:underline">METIOX SOLUTIONS</a>
+                    )}
+                  </React.Fragment>
+                ))}
+              </p>
+            );
+          })()}
           <p className="mt-1.5">
             {t('footer.legalDisclaimer')}
           </p>

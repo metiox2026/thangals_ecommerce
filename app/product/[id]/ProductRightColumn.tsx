@@ -126,9 +126,7 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
 
   const hasSizes = (p.sizes?.length ?? 0) > 0;
   const tagLabel = p.tag ? t(TAG_KEYS[p.tag] ?? '') || p.tag : null;
-  const metalColorLabel = p.metalColor
-    ? `${p.metalColor.charAt(0).toUpperCase()}${p.metalColor.slice(1)} ${t('pdp.gold')}`
-    : null;
+  const metalColorLabel = p.metalColor ? t(`filter.metalColor.${p.metalColor}`) : null;
   const productCode = `THG-${p.id.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
 
   const currentPrice = getPriceForSize(p, selectedSize);
@@ -342,15 +340,15 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
             <SpecRow label={t('pdp.spec.dimensions')} value={localizeDigits(sizeDimension, lang)} highlight />
           ) : (
             p.weightGrams !== undefined && (
-              <SpecRow label={t('pdp.spec.weight')} value={`${localizeDigits(String(p.weightGrams), lang)} g`} />
+              <SpecRow label={t('pdp.spec.weight')} value={`${localizeDigits(String(p.weightGrams), lang)} ${t('units.gram')}`} />
             )
           )}
-          {p.purity && <SpecRow label={t('pdp.spec.purity')} value={p.purity} />}
+          {p.purity && <SpecRow label={t('pdp.spec.purity')} value={t(`filter.purity.${p.purity}`)} />}
           {metalColorLabel && <SpecRow label={t('pdp.spec.metalColor')} value={metalColorLabel} />}
           {p.occasion && (
             <SpecRow
               label={t('pdp.spec.designedFor')}
-              value={p.occasion.charAt(0).toUpperCase() + p.occasion.slice(1)}
+              value={t(`filter.option.${p.occasion}`)}
             />
           )}
           <SpecRow label={t('pdp.spec.certification')} value={t('pdp.certHallmark')} />
