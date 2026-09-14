@@ -147,7 +147,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
       >
         <div
           style={{ boxShadow: '-1px 1px 3px rgba(0, 0, 0, 0.12)' }}
-          className="flex flex-col items-center gap-1 bg-[#144B3C] py-2 text-white rounded-l-md w-[44px] sm:w-[48px]"
+          className="flex flex-col items-center gap-0.5 bg-[#144B3C] py-1.5 text-white rounded-l-md w-9"
         >
           <CustomSelect
             label="Sort"
@@ -158,16 +158,16 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
             align="right"
             active={activeSort !== 'featured'}
             variant="light"
-            className="h-10 w-10 sm:h-11 sm:w-11"
+            className="h-8 w-8"
           />
 
           <button
             type="button"
             aria-label="Filter"
             onClick={openDrawer}
-            className="flex h-10 w-10 items-center justify-center text-white transition-colors hover:text-[#C89F53] cursor-pointer sm:h-11 sm:w-11"
+            className="flex h-8 w-8 items-center justify-center text-white transition-colors hover:text-[#C89F53] cursor-pointer"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
             </svg>
           </button>
@@ -177,7 +177,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
             onClick={toggleView}
             aria-label={activeView === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
             aria-pressed={activeView === 'list'}
-            className={`flex h-10 w-10 items-center justify-center text-white transition-colors hover:text-[#C89F53] cursor-pointer sm:h-11 sm:w-11 ${
+            className={`flex h-8 w-8 items-center justify-center text-white transition-colors hover:text-[#C89F53] cursor-pointer ${
               activeView === 'list' ? 'text-[#C89F53]' : ''
             }`}
           >
