@@ -97,10 +97,10 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
 
   return (
     <>
-      {/* Inline row — sticky on small/tablet, static on lg+ */}
+      {/* Inline row at top of page; side tab takes over once it scrolls out */}
       <div
         ref={inlineRowRef}
-        className="sticky top-[75px] z-40 mt-6 flex items-center justify-between gap-3 border-y border-[#E5DDD0] bg-white py-4 sm:mt-8 sm:gap-4 md:top-[115px] lg:static lg:top-auto lg:z-auto lg:bg-transparent"
+        className="mt-6 flex items-center justify-between gap-3 border-y border-[#E5DDD0] py-4 sm:mt-8 sm:gap-4"
       >
         <p className="text-[10px] uppercase tracking-[0.18em] text-[#60736A] sm:text-[11px]">
           <span className="font-semibold text-[#1A2621]">{totalCount}</span>{' '}
@@ -142,10 +142,10 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
         </div>
       </div>
 
-      {/* Floating side tab — large screens only, visible after inline row scrolls out */}
+      {/* Floating side tab — mirrors gold-rate button position; visible after inline row scrolls out */}
       <div
         aria-hidden={!showTab}
-        className={`hidden transition-all duration-300 ease-out lg:block fixed right-0 top-1/2 z-40 -translate-y-1/2 ${
+        className={`fixed bottom-24 right-0 top-auto z-40 transition-all duration-300 ease-out md:top-1/2 md:bottom-auto md:-translate-y-[calc(50%-43px)] ${
           showTab ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'
         }`}
       >
