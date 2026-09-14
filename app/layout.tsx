@@ -9,6 +9,7 @@ import { BagDrawer } from '@/components/BagDrawer';
 import { InitialLoader } from '@/components/InitialLoader';
 import { PageScroll } from '@/components/PageScroll';
 import { SearchBar } from '@/components/SearchBar';
+import { WhatsAppButton } from '@/components/WhatsAppButton';
 
 const cormorant = localFont({
   src: './fonts/CormorantGaramond-VariableFont_wght.woff2',
@@ -53,6 +54,7 @@ export default function RootLayout({
               <SearchBar />
               <main className="min-h-[70vh]">{children}</main>
               <Footer />
+              <WhatsAppButton />
             </PageScroll>
             <BagDrawer />
           </WishlistProvider>

@@ -6,7 +6,6 @@ import { HeroCarousel } from '@/components/HeroCarousel';
 import { SnapCarousel } from '@/components/SnapCarousel';
 import { GoldScreenButton } from '@/components/GoldScreenButton';
 import { GoldRateButton } from '@/components/GoldRateButton';
-import { WhatsAppButton } from '@/components/WhatsAppButton';
 
 type Review = {
   name: string;
@@ -269,7 +268,7 @@ export default async function HomePage() {
                 <img
                   src={c.img}
                   alt={c.name}
-                  loading="lazy"
+                  loading="eager"
                   width={800}
                   height={800}
                   className="aspect-[4/5] w-full object-cover"
@@ -307,7 +306,7 @@ export default async function HomePage() {
         <img
           src="/images/hero_bg.jpg"
           alt="The Emerald Suite"
-          loading="lazy"
+          loading="eager"
           className="absolute inset-0 h-full w-full object-cover opacity-40"
         />
         <div className="relative mx-auto flex max-w-[1400px] items-center px-8 py-8 lg:px-20 lg:py-12">
@@ -404,7 +403,7 @@ export default async function HomePage() {
           <img
             src="/images/gifting.jpg"
             alt="Green jewellery gift box with a matching ribbon, holding an emerald pendant, earrings and ring"
-            loading="lazy"
+            loading="eager"
             width={1200}
             height={800}
             className="w-full object-cover"
@@ -454,7 +453,7 @@ export default async function HomePage() {
           <img
             src="/images/boutique.jpg"
             alt="Interior of a Thangals boutique with marble, gold and green detailing"
-            loading="lazy"
+            loading="eager"
             width={1600}
             height={1008}
             className="w-full object-cover"
@@ -543,8 +542,6 @@ export default async function HomePage() {
 
       <GoldScreenButton />
       <GoldRateButton />
-
-      <WhatsAppButton />
     </div>
   );
 }

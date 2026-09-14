@@ -77,7 +77,7 @@ export const SnapCarousel: React.FC<{ items: SnapItem[] }> = ({ items }) => {
               <img
                 src={tile.img}
                 alt={tile.title}
-                loading="lazy"
+                loading="eager"
                 width={912}
                 height={1200}
                 className="aspect-[3/4] w-full object-cover"

@@ -30,7 +30,7 @@ const WishlistItem: React.FC<{ product: Product }> = ({ product }) => {
         <img
           src={product.image}
           alt={product.name}
-          loading="lazy"
+          loading="eager"
           width={800}
           height={800}
           className="aspect-square w-full object-cover"

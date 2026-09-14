@@ -202,9 +202,8 @@ export const ProductRightColumn: React.FC<ProductRightColumnProps> = ({ product 
         </div>
 
         <p className="mt-2 text-[10px] tracking-wide text-[#777]">
-          {isShowingFrom
-            ? 'Final price depends on selected size'
-            : '(Price inclusive of Taxes)'}
+          {isShowingFrom ? 'Final price depends on selected size. ' : ''}
+          Price excludes VAT (5%).
         </p>
 
         <div className="mt-2 flex w-full items-center gap-3 rounded-sm border border-[#E5DDD0] bg-[#FAF8F5] px-4 py-3 text-xs text-[#555] lg:hidden">

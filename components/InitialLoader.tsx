@@ -63,7 +63,7 @@ export const InitialLoader: React.FC = () => {
       role="status"
       aria-live="polite"
       aria-label="Loading Thangals"
-      className={`fixed inset-x-0 z-[200] flex items-center justify-center bg-white transition-opacity duration-500 ease-out ${
+      className={`fixed inset-x-0 z-[200] flex items-center justify-center bg-[#004237] transition-opacity duration-500 ease-out ${
         hiding ? 'opacity-0' : 'opacity-100'
       }`}
       style={{ top: 'env(safe-area-inset-top)', bottom: 0 }}

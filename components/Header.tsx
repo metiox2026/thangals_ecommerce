@@ -18,6 +18,7 @@ export const Header: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const lastScrollYRef = useRef(0);
   const directionalEnabledRef = useRef(false);
+  const scrolledRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
@@ -52,7 +53,10 @@ export const Header: React.FC = () => {
     }
 
     if (scrollY < HEADER_HEIGHT) {
-      setScrolled(false);
+      if (scrolledRef.current) {
+        scrolledRef.current = false;
+        setScrolled(false);
+      }
       lastScrollYRef.current = scrollY;
       return;
     }
@@ -62,17 +66,17 @@ export const Header: React.FC = () => {
 
     if (delta === 0) return;
 
-    if (delta > 0) {
-      setScrolled(true);
-    } else {
-      setScrolled(false);
+    const next = delta > 0;
+    if (scrolledRef.current !== next) {
+      scrolledRef.current = next;
+      setScrolled(next);
     }
 
     lastScrollYRef.current = scrollY;
   }, [scrollY]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#E2E7E4] bg-white">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/15 bg-[#004237]">
       {/* Top Logo & Actions Row (collapses on scroll via grid-rows; spacer follows via root class) */}
       <div
         className={`grid transition-[grid-template-rows] duration-150 ease-out ${
@@ -80,13 +84,13 @@ export const Header: React.FC = () => {
         }`}
       >
         <div className="overflow-hidden">
-          <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto_1fr] items-center px-5 pt-4 pb-3 lg:px-10">
+          <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto_1fr] items-center px-5 pt-2 pb-2 lg:px-10">
             {/* Left Actions */}
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setMobileNavOpen(true)}
                 aria-label="Open menu"
-                className="-ml-2.5 flex items-center justify-center p-2.5 text-[#1A2621] transition-colors hover:text-[#144B3C] lg:hidden"
+                className="-ml-2.5 flex items-center justify-center p-2.5 text-white transition-colors hover:text-[#C89F53] lg:hidden"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-6">
                   <path d="M4 5h16"></path>
@@ -96,13 +100,13 @@ export const Header: React.FC = () => {
               </button>
               <button
                 aria-label="Search"
-                className="hidden w-64 items-center gap-2 border border-[#EAEAEA] bg-white px-4 py-2 text-[#1A2621] transition-colors hover:border-[#D5D5D5] lg:flex"
+                className="hidden w-64 items-center gap-2 border border-white/30 bg-transparent px-4 py-2 text-white transition-colors hover:border-white/60 lg:flex"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-[16px] text-[#60736A]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-[16px] text-white/70">
                   <path d="m21 21-4.34-4.34"></path>
                   <circle cx="11" cy="11" r="8"></circle>
                 </svg>
-                <span className="text-[11px] tracking-[0.14em] text-[#60736A] uppercase">
+                <span className="text-[11px] tracking-[0.14em] text-white/70 uppercase">
                   Search
                 </span>
               </button>
@@ -110,18 +114,22 @@ export const Header: React.FC = () => {
 
             {/* Center Brand Logo (Official Logo Image) */}
             <Link href="/" aria-label="Thangals home" className="justify-self-center">
-              <img
-                src="/images/thangals-logo.png"
-                alt="Thangals Gold & Diamonds"
-                className="h-[46px] w-auto sm:h-[50px] object-contain"
-              />
+              <div className="flex h-[56px] items-center sm:h-[62px]">
+                <img
+                  src="/images/thangals-logo-white.png"
+                  alt="Thangals Gold & Diamonds"
+                  width={350}
+                  height={200}
+                  className="h-full w-auto max-w-full object-contain"
+                />
+              </div>
             </Link>
 
             {/* Right Actions */}
             <div className="flex items-center justify-end gap-5 sm:gap-7">
               <Link
                 href="/stores"
-                className="hidden flex-col items-center gap-1 text-[#1A2621] transition-colors hover:text-[#144B3C] md:flex"
+                className="hidden flex-col items-center gap-1 text-white transition-colors hover:text-[#C89F53] md:flex"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-[17px]">
                   <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
@@ -132,7 +140,7 @@ export const Header: React.FC = () => {
 
               <Link
                 href="/wishlist"
-                className="flex flex-col items-center gap-1 text-[#1A2621] transition-colors hover:text-[#144B3C]"
+                className="flex flex-col items-center gap-1 text-white transition-colors hover:text-[#C89F53]"
               >
                 <span className="relative inline-flex">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-[17px]">
@@ -149,7 +157,7 @@ export const Header: React.FC = () => {
 
               <Link
                 href="/contact"
-                className="hidden flex-col items-center gap-1 text-[#1A2621] transition-colors hover:text-[#144B3C] sm:flex"
+                className="hidden flex-col items-center gap-1 text-white transition-colors hover:text-[#C89F53] sm:flex"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-[17px]">
                   <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
@@ -160,7 +168,7 @@ export const Header: React.FC = () => {
 
               <button
                 onClick={openBag}
-                className="relative flex flex-col items-center gap-1 text-[#1A2621] transition-colors hover:text-[#144B3C]"
+                className="relative flex flex-col items-center gap-1 text-white transition-colors hover:text-[#C89F53]"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="size-[17px]">
                   <path d="M16 10a4 4 0 0 1-8 0"></path>
@@ -169,7 +177,7 @@ export const Header: React.FC = () => {
                 </svg>
                 <span className="hidden text-[8.5px] font-normal tracking-[0.14em] uppercase sm:inline">Bag</span>
                 {totalCount > 0 && (
-                  <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#144B3C] text-[9px] font-medium text-white">
+                  <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[9px] font-medium text-[#004237]">
                     {totalCount}
                   </span>
                 )}
@@ -180,7 +188,7 @@ export const Header: React.FC = () => {
       </div>
 
       {/* Main Navigation Bar */}
-      <nav className="hidden border-t border-[#E2E7E4] lg:block bg-white">
+      <nav className="hidden border-t border-white/15 lg:block bg-[#004237]">
         <ul className="mx-auto flex max-w-[1440px] items-center justify-center gap-9 px-10">
           {[
             { name: 'Gold Jewellery', href: '/shop' },
@@ -195,7 +203,7 @@ export const Header: React.FC = () => {
             <li key={item.name}>
               <Link
                 href={item.href}
-                className="group flex items-center gap-1 py-3 text-[11px] font-medium tracking-[0.2em] text-[#4A4A4A] uppercase transition-colors hover:text-[#C89F53]"
+                className="group flex items-center gap-1 py-3 text-[11px] font-medium tracking-[0.2em] text-white/90 uppercase transition-colors hover:text-[#C89F53]"
               >
                 {item.name}
               </Link>

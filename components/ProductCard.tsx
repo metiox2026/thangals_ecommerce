@@ -53,13 +53,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
 
   if (view === 'list') {
     return (
-      <Link href={`/product/${product.id}`} className="group block">
+      <Link href={`/product/${product.id}`} target="_blank" rel="noopener noreferrer" className="group block">
         <div className="flex flex-col border border-[#EAEAEA] bg-white transition-colors hover:border-[#1A3A2A] sm:flex-row">
           <div className="media-zoom relative shrink-0 border-b border-[#EAEAEA] bg-[#F2F6F4] sm:border-b-0 sm:border-r sm:w-72 lg:w-80">
             <img
               src={product.image}
               alt={product.name}
-              loading="lazy"
+              loading="eager"
               width={800}
               height={800}
               className="aspect-square w-full object-cover sm:h-full sm:aspect-auto"
@@ -83,7 +83,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
                 height="18"
                 viewBox="0 0 24 24"
                 fill={added ? '#C89F53' : 'none'}
-                stroke={added ? '#1A3A2A' : 'currentColor'}
+                stroke={added ? '#FFFFFF' : 'currentColor'}
                 strokeWidth="1.25"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -160,12 +160,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
   return (
     <div className="group">
       <div className="relative aspect-square w-full overflow-hidden">
-        <Link href={`/product/${product.id}`} className="absolute inset-0 block">
+        <Link href={`/product/${product.id}`} target="_blank" rel="noopener noreferrer" className="absolute inset-0 block">
           <div className="media-zoom h-full w-full border border-[#EAEAEA] bg-[#F2F6F4]">
             <img
               src={product.image}
               alt={product.name}
-              loading="lazy"
+              loading="eager"
               width={800}
               height={800}
               className="h-full w-full object-cover"
@@ -192,7 +192,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
             height="18"
             viewBox="0 0 24 24"
             fill={added ? '#C89F53' : 'none'}
-            stroke={added ? '#1A3A2A' : 'currentColor'}
+            stroke={added ? '#FFFFFF' : 'currentColor'}
             strokeWidth="1.25"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -230,7 +230,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, view = 'grid'
           </svg>
         </button>
       </div>
-      <Link href={`/product/${product.id}`} className="block pt-4">
+      <Link href={`/product/${product.id}`} target="_blank" rel="noopener noreferrer" className="block pt-4">
         <h3 className="font-display text-lg leading-snug text-[#1A2621] group-hover:text-[#144B3C] transition-colors">
           {product.name}
         </h3>

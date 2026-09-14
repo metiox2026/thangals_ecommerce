@@ -162,6 +162,26 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         </div>
       </section>
 
+      {/* Related Products */}
+      {related.length > 0 && (
+        <section id="related-products" className="mt-16 border-t border-[#E5DDD0] pt-12">
+          <div className="text-center">
+            <p className="text-[10px] uppercase tracking-[0.28em] text-[#C89F53] sm:text-[11px]">
+              You May Also Love
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-normal text-[#1C1C1C] sm:text-3xl">
+              More from this Collection
+            </h2>
+            <div className="mx-auto mt-3 h-[1px] w-10 bg-[#C89F53]" />
+          </div>
+          <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4">
+            {related.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Reviews */}
       {reviews.length > 0 && product.rating !== undefined && product.reviewCount !== undefined && (
         <section id="reviews" className="mt-16 border-t border-[#E5DDD0] pt-12 lg:mt-20 lg:pt-14">
@@ -266,26 +286,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 </article>
               ))}
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* Related Products */}
-      {related.length > 0 && (
-        <section id="related-products" className="mt-16 border-t border-[#E5DDD0] pt-12">
-          <div className="text-center">
-            <p className="text-[10px] uppercase tracking-[0.28em] text-[#C89F53] sm:text-[11px]">
-              You May Also Love
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-normal text-[#1C1C1C] sm:text-3xl">
-              More from this Collection
-            </h2>
-            <div className="mx-auto mt-3 h-[1px] w-10 bg-[#C89F53]" />
-          </div>
-          <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4">
-            {related.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
           </div>
         </section>
       )}

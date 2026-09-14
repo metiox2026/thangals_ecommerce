@@ -690,7 +690,7 @@ export default function CheckoutPage() {
                             alt={item.name}
                             width={72}
                             height={72}
-                            loading="lazy"
+                            loading="eager"
                             className="h-[72px] w-[72px] shrink-0 object-cover"
                           />
                           <div className="flex min-w-0 flex-1 flex-col">
@@ -809,6 +809,12 @@ export default function CheckoutPage() {
                     <span className="font-medium text-emerald-700">Free</span>
                   </dd>
                 </div>
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-[#555]">VAT (5%)</dt>
+                  <dd className="font-medium tabular-nums lining-nums text-[#1A2621]">
+                    <AedPrice value={Math.round(subtotal * 0.05)} />
+                  </dd>
+                </div>
               </dl>
 
               <div className="mt-4 border-t border-[#E5DDD0] pt-3">
@@ -817,11 +823,11 @@ export default function CheckoutPage() {
                     Estimated Total
                   </dt>
                   <dd className="text-base font-semibold tabular-nums lining-nums text-[#1A2621]">
-                    <AedPrice value={subtotal} />
+                    <AedPrice value={subtotal + Math.round(subtotal * 0.05)} />
                   </dd>
                 </div>
-                <p className="mt-0.5 text-right text-[9px] uppercase tracking-[0.14em] text-[#60736A]">
-                  Inclusive of all taxes
+                <p className="mt-0.5 text-right text-[9px] text-[#60736A]">
+                  VAT included in total
                 </p>
               </div>
             </div>

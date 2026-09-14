@@ -100,7 +100,7 @@ const ItemRow: React.FC<ItemRowProps> = ({ item, product, onRemove, onQuantity, 
           alt={item.name}
           width={180}
           height={180}
-          loading="lazy"
+          loading="eager"
           className="h-full w-full object-cover"
         />
       </Link>
@@ -393,6 +393,12 @@ export const BagDrawer: React.FC = () => {
                   <span className="font-medium text-emerald-700">Free</span>
                 </dd>
               </div>
+              <div className="flex items-baseline justify-between gap-3">
+                <dt className="text-[#444]">VAT (5%)</dt>
+                <dd className="font-medium tabular-nums lining-nums text-[#1A2621]">
+                  <AedPrice value={Math.round(subtotal * 0.05)} />
+                </dd>
+              </div>
             </dl>
 
             <div className="mt-3 border-t border-[#E5DDD0] pt-2.5">
@@ -401,11 +407,11 @@ export const BagDrawer: React.FC = () => {
                   Estimated Total
                 </dt>
                 <dd className="text-sm font-semibold tabular-nums lining-nums text-[#1A2621]">
-                  <AedPrice value={subtotal} />
+                  <AedPrice value={subtotal + Math.round(subtotal * 0.05)} />
                 </dd>
               </div>
               <p className="mt-0.5 text-right text-[9px] text-[#60736A]">
-                (Inclusive of all taxes)
+                VAT included in total
               </p>
             </div>
 

@@ -141,23 +141,29 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         style={{ left: '50%', right: '50%', marginLeft: '-50vw', marginRight: '-50vw' }}
       >
         <img
-          src="/images/hero_bg.jpg"
+          src="/images/shop-hero-necklace.jpg"
           alt="Thangals jewellery collection — hand-finished hallmarked gold"
           width={1920}
           height={600}
           className="absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: 'center 35%' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/30 to-black/60" />
-        <div className="relative mx-auto flex h-full max-w-[1400px] flex-col items-center justify-center px-5 text-center text-white sm:px-8 lg:px-10">
-          <p className="text-[10px] uppercase tracking-[0.28em] text-[#E5C88C] sm:text-[11px] sm:tracking-[0.32em]">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              'linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(255,255,255,0.3), rgba(255,255,255,0.6))',
+          }}
+        />
+        <div className="relative mx-auto flex h-full max-w-[1400px] flex-col items-center justify-center px-5 text-center text-[#1A2621] sm:px-8 lg:px-10">
+          <p className="text-[10px] uppercase tracking-[0.28em] text-[#C89F53] sm:text-[11px] sm:tracking-[0.32em]">
             The Thangals Edit
           </p>
           <h1 className="mt-2 font-serif text-2xl leading-tight sm:mt-3 sm:text-4xl lg:text-5xl" style={{ fontWeight: 200 }}>
             All Jewellery
           </h1>
-          <div className="mx-auto mt-3 h-[1px] w-10 bg-[#E5C88C] sm:mt-4 sm:w-12" />
-          <p className="mt-3 max-w-md px-2 text-[11px] leading-relaxed text-white/85 sm:mt-4 sm:max-w-xl sm:px-0 sm:text-sm">
+          <div className="mx-auto mt-3 h-[1px] w-10 bg-[#C89F53] sm:mt-4 sm:w-12" />
+          <p className="mt-3 max-w-md px-2 text-[11px] leading-relaxed text-[#1A2621]/85 sm:mt-4 sm:max-w-xl sm:px-0 sm:text-sm">
             Every piece is hallmarked, hand-finished and covered by lifetime care.
           </p>
         </div>
