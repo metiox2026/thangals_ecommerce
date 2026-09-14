@@ -132,6 +132,21 @@
   animation: fadeDown 160ms ease-out;
 }
 
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 160ms ease-out;
+}
+
 @keyframes fadeInImage {
   from { opacity: 0; }
   to { opacity: 1; }

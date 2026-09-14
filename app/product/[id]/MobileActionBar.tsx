@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Product } from '@/lib/api';
 import { usePageScroll } from '@/context/ScrollContext';
+import { setStickyBarVisible } from '@/components/StickyBarVisibility';
 import { AddToBagButton } from './AddToBagButton';
 import { WishlistToggle } from './WishlistToggle';
 
@@ -52,9 +53,14 @@ export const MobileActionBar: React.FC<MobileActionBarProps> = ({
     return () => io.disconnect();
   }, []);
 
-  if (!mounted) return null;
-
   const visible = scrollY > SCROLL_THRESHOLD && !atRelated && !atReviews && !atFooter;
+
+  useEffect(() => {
+    setStickyBarVisible(visible);
+    return () => setStickyBarVisible(false);
+  }, [visible]);
+
+  if (!mounted) return null;
 
   return createPortal(
     <div
