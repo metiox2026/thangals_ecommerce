@@ -17,7 +17,7 @@
   }
 
   html {
-    background-color: #ffffff;
+    background-color: #004237 !important;
     overflow-anchor: none;
     height: 100%;
     scroll-behavior: smooth;
@@ -30,11 +30,13 @@
   }
 
   body {
-    background-color: #ffffff;
+    background-color: #004237 !important;
     color: var(--foreground);
     font-family: var(--font-jost), sans-serif;
+    font-size: 19px;
     overflow-x: hidden;
     height: 100%;
+    -webkit-text-size-adjust: 100%;
   }
 
   h1, h2, h3, h4, h5, h6, .font-display {
@@ -43,6 +45,66 @@
 
   .font-jost {
     font-family: var(--font-jost), sans-serif;
+  }
+
+  /* Universal RTL reset — Arabic glyphs shouldn't inherit letter-spacing
+     from English-style tracking classes (.eyebrow, Tailwind tracking-*, etc.).
+     Specific overrides below (e.g. .nav-link) sit later with !important so
+     they still win the cascade. */
+  html[dir="rtl"] * {
+    letter-spacing: 0 !important;
+    word-spacing: 0 !important;
+    text-transform: none !important;
+  }
+
+  /* Arabic text rendered inside an LTR page (e.g. the "العربية" option in the
+     language picker while the document is still English). Without this the
+     .drawer-link / nav-link letter-spacing gaps the Arabic glyphs. */
+  :lang(ar) {
+    font-family: var(--font-noto-naskh), 'Noto Naskh Arabic', 'Amiri', serif;
+    letter-spacing: 0 !important;
+    word-spacing: 0 !important;
+    text-transform: none !important;
+  }
+
+  html[dir="rtl"] body,
+  html[dir="rtl"] .font-display,
+  html[dir="rtl"] .font-jost,
+  html[dir="rtl"] .font-sans,
+  html[dir="rtl"] .font-serif,
+  html[dir="rtl"] .drawer-footer-link span,
+  html[dir="rtl"] .drawer-footer-count {
+    font-family: var(--font-noto-naskh), 'Noto Naskh Arabic', 'Amiri', serif;
+  }
+
+  html[dir="rtl"] .drawer-link,
+  html[dir="rtl"] .drawer-footer-link span,
+  html[dir="rtl"] .drawer-option {
+    font-family: var(--font-noto-naskh), 'Noto Naskh Arabic', 'Amiri', serif;
+    letter-spacing: 0 !important;
+    word-spacing: 0 !important;
+    text-transform: none !important;
+    font-weight: 400 !important;
+  }
+
+  html[dir="rtl"] .nav-link {
+    font-family: var(--font-noto-naskh), 'Noto Naskh Arabic', 'Amiri', serif;
+    font-size: 13px !important;
+    letter-spacing: 0.3em !important;
+    word-spacing: 0.1em !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    padding-inline: 0.5rem;
+  }
+
+  html[dir="rtl"] h1,
+  html[dir="rtl"] h2,
+  html[dir="rtl"] h3,
+  html[dir="rtl"] h4,
+  html[dir="rtl"] h5,
+  html[dir="rtl"] h6 {
+    font-family: var(--font-noto-naskh), 'Noto Naskh Arabic', 'Amiri', serif;
+    font-weight: 700;
   }
 }
 
@@ -300,22 +362,55 @@
 }
 
 /* Mobile drawer — always rendered, CSS drives the slide. Avoids iOS Safari
-   rAF timing issues with mount-then-animate patterns. */
+   rAF timing issues with mount-then-animate patterns. Z-index sits above
+   Leaflet panes (≤700) and the stores page's locate/summary overlays
+   (z-[1000]/z-[9999]) so the backdrop can blur the map. */
 .drawer-root {
   position: fixed;
-  inset: 0;
-  z-index: 70;
+  top: 72px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 11001;
   pointer-events: none;
 }
 
+@media (min-width: 768px) {
+  .drawer-root {
+    top: 115px;
+  }
+}
+
 .drawer-backdrop {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 72px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 11000;
   background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   opacity: 0;
+  pointer-events: none;
   transition: opacity 400ms ease-out;
+  /* Force a compositor layer so Android Chrome actually renders the blur
+     rather than falling back to the plain rgba fill. */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: backdrop-filter;
+  isolation: isolate;
+}
+
+@media (min-width: 768px) {
+  .drawer-backdrop {
+    top: 115px;
+  }
+}
+
+.drawer-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .drawer-panel {
@@ -323,7 +418,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  width: min(85vw, 420px);
+  width: min(92vw, 480px);
   background-color: white;
   padding: 1.5rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -332,6 +427,14 @@
   will-change: transform;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+}
+
+/* In RTL, anchor the drawer to the right edge and slide it in from off-screen right. */
+html[dir="rtl"] .drawer-panel {
+  left: auto;
+  right: 0;
+  transform: translateX(100%);
 }
 
 .drawer-root.drawer-open {
@@ -347,19 +450,7 @@
 }
 
 .drawer-header {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 0.25rem;
-  padding-bottom: 1.75rem;
-  border-bottom: 1px solid #E2E7E4;
-  opacity: 0;
-  transition: opacity 400ms ease-out 100ms;
-}
-
-.drawer-root.drawer-open .drawer-header {
-  opacity: 1;
+  display: none;
 }
 
 .drawer-logo {
@@ -430,6 +521,7 @@
   text-transform: uppercase;
   color: #4A4A4A;
   transition: color 200ms;
+  text-align: start;
 }
 
 .drawer-link:hover {
@@ -441,7 +533,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.75rem;
+  gap: 1rem;
   padding-top: 1rem;
   padding-bottom: 0.25rem;
 }
@@ -498,6 +590,66 @@
   font-weight: 500;
 }
 
+.drawer-options {
+  /* Inline panel that renders inside the drawer footer when language/country is tapped. */
+}
+
+.drawer-options-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.drawer-option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  text-align: start;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #1A2621;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 200ms, color 200ms, border-color 200ms;
+}
+
+.drawer-option:hover {
+  background-color: #F2F6F4;
+  color: #144B3C;
+}
+
+.drawer-option-selected {
+  background-color: #144B3C;
+  color: white;
+  border-color: #144B3C;
+}
+
+.drawer-option-selected:hover {
+  background-color: #0E372B;
+  color: white;
+}
+
 body[data-modal-open="true"] [data-mobile-action-bar] {
   display: none;
+}
+
+/* When the mobile drawer is open, demote Leaflet panes and our store-map
+   overlays. The backdrop lives inside the header's z-50 stacking context,
+   so anything above z-50 in the page (Leaflet panes up to z-700, plus our
+   z-[1000]/z-[9999] overlays) would otherwise paint above the blur. */
+body[data-drawer-open="true"] .leaflet-pane,
+body[data-drawer-open="true"] .leaflet-control,
+body[data-drawer-open="true"] [data-map-overlay] {
+  z-index: 1 !important;
 }

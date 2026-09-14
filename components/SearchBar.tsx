@@ -1,12 +1,15 @@
 'use client';
 
 import React from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const SearchBar: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
-    <div className="border-b border-[#E2E7E4] bg-white lg:hidden">
+    <div className="border-b border-[#003024] bg-[#004237] lg:hidden">
       <div className="mx-auto flex max-w-[1400px] items-center px-3 py-2">
-        <label className="flex w-full items-center gap-2 border border-[#EAEAEA] bg-[#FCFBF8] px-4 py-2 text-[#1A2621] transition-colors focus-within:border-[#144B3C]">
+        <label className="flex w-full items-center gap-2 border border-[#2D5A3D] bg-[#144B3C] px-4 py-2 text-white transition-colors focus-within:border-[#C89F53]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -17,15 +20,15 @@ export const SearchBar: React.FC = () => {
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="size-4 shrink-0 text-[#60736A]"
+            className="size-4 shrink-0 text-white"
           >
             <path d="m21 21-4.34-4.34"></path>
             <circle cx="11" cy="11" r="8"></circle>
           </svg>
           <input
             type="search"
-            placeholder="Search jewellery, collections, gifts…"
-            className="w-full min-w-0 bg-transparent text-[12px] tracking-[0.14em] text-[#1A2621] uppercase placeholder:text-[#60736A] placeholder:normal-case placeholder:tracking-normal focus:outline-none"
+            placeholder={t('search.placeholder')}
+            className="w-full min-w-0 bg-transparent text-[12px] tracking-[0.14em] text-white uppercase placeholder:text-[#B8C7BE] placeholder:normal-case placeholder:tracking-normal focus:outline-none"
             suppressHydrationWarning
           />
         </label>

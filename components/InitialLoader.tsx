@@ -1,15 +1,22 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MIN_VISIBLE_MS = 2000;
 const FADE_OUT_MS = 500;
+const HARD_TIMEOUT_MS = 8000;
 
 export const InitialLoader: React.FC = () => {
   const pathname = usePathname();
-  const [visible, setVisible] = useState(() => !pathname?.startsWith('/product/'));
+  const { t } = useLanguage();
+
+  const isProductRoute = pathname?.startsWith('/product/') ?? false;
+
+  const [visible, setVisible] = useState(!isProductRoute);
   const [hiding, setHiding] = useState(false);
+  const finishedRef = useRef(false);
 
   useEffect(() => {
     if (pathname?.startsWith('/product/')) {
@@ -18,21 +25,39 @@ export const InitialLoader: React.FC = () => {
     }
     if (typeof window === 'undefined') return;
 
-    if (sessionStorage.getItem('thangals_loader_shown') === '1') {
+    let alreadyShownInEffect = false;
+    try {
+      alreadyShownInEffect = sessionStorage.getItem('thangals_loader_shown') === '1';
+    } catch {
+      alreadyShownInEffect = false;
+    }
+    if (alreadyShownInEffect) {
       setVisible(false);
       return;
     }
 
     const startTime = Date.now();
-    let raf = 0;
-    let fallbackTimer = 0;
+    let loadTimer = 0;
+    let hardTimer = 0;
+    let fadeOutTimer = 0;
+
+    const cleanup = () => {
+      window.removeEventListener('load', onLoad);
+      window.clearTimeout(loadTimer);
+      window.clearTimeout(hardTimer);
+      window.clearTimeout(fadeOutTimer);
+    };
 
     const finish = () => {
+      if (finishedRef.current) return;
+      finishedRef.current = true;
+      cleanup();
+
       const elapsed = Date.now() - startTime;
       const wait = Math.max(0, MIN_VISIBLE_MS - elapsed);
-      window.setTimeout(() => {
+      fadeOutTimer = window.setTimeout(() => {
         setHiding(true);
-        window.setTimeout(() => {
+        fadeOutTimer = window.setTimeout(() => {
           setVisible(false);
           try {
             sessionStorage.setItem('thangals_loader_shown', '1');
@@ -43,22 +68,21 @@ export const InitialLoader: React.FC = () => {
       }, wait);
     };
 
+    const onLoad = () => {
+      window.removeEventListener('load', onLoad);
+      window.clearTimeout(hardTimer);
+      hardTimer = 0;
+      finish();
+    };
+
     if (document.readyState === 'complete') {
       finish();
     } else {
-      const onLoad = () => {
-        window.removeEventListener('load', onLoad);
-        finish();
-      };
       window.addEventListener('load', onLoad);
-      // Hard fallback in case 'load' never fires (e.g. stalled requests)
-      fallbackTimer = window.setTimeout(finish, 4000);
+      loadTimer = window.setTimeout(onLoad, 4000);
+      hardTimer = window.setTimeout(finish, HARD_TIMEOUT_MS);
 
-      return () => {
-        window.removeEventListener('load', onLoad);
-        window.clearTimeout(fallbackTimer);
-        window.cancelAnimationFrame(raf);
-      };
+      return cleanup;
     }
   }, [pathname]);
 
@@ -68,7 +92,7 @@ export const InitialLoader: React.FC = () => {
     <div
       role="status"
       aria-live="polite"
-      aria-label="Loading Thangals"
+      aria-label={t('loader.loading')}
       className={`fixed inset-x-0 z-[200] flex items-center justify-center bg-[#004237] transition-opacity duration-500 ease-out ${
         hiding ? 'opacity-0' : 'opacity-100'
       }`}
