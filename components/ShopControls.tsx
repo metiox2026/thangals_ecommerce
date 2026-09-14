@@ -80,7 +80,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
   };
 
   return (
-    <div className="mt-6 flex items-center justify-between gap-3 border-y border-[#E5DDD0] py-4 sm:mt-8 sm:gap-4">
+    <div className="sticky top-[75px] z-40 mt-6 flex items-center justify-between gap-3 border-y border-[#E5DDD0] bg-white py-4 sm:mt-8 sm:gap-4 md:top-[115px]">
       <p className="text-[10px] uppercase tracking-[0.18em] text-[#60736A] sm:text-[11px]">
         <span className="font-semibold text-[#1A2621]">{totalCount}</span>{' '}
         {totalCount === 1 ? 'piece' : 'pieces'}
