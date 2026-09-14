@@ -24,6 +24,7 @@ export const MobileActionBar: React.FC<MobileActionBarProps> = ({
 }) => {
   const [mounted, setMounted] = useState(false);
   const [atRelated, setAtRelated] = useState(false);
+  const [atReviews, setAtReviews] = useState(false);
   const [atFooter, setAtFooter] = useState(false);
   const { scrollY } = usePageScroll();
 
@@ -31,26 +32,29 @@ export const MobileActionBar: React.FC<MobileActionBarProps> = ({
     setMounted(true);
 
     const related = document.getElementById('related-products');
+    const reviews = document.getElementById('reviews');
     const footer = document.getElementById('site-footer');
-    if (!related && !footer) return;
+    if (!related && !reviews && !footer) return;
 
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.target === related) setAtRelated(entry.isIntersecting);
+          if (entry.target === reviews) setAtReviews(entry.isIntersecting);
           if (entry.target === footer) setAtFooter(entry.isIntersecting);
         }
       },
       { rootMargin: '0px 0px -60px 0px' },
     );
     if (related) io.observe(related);
+    if (reviews) io.observe(reviews);
     if (footer) io.observe(footer);
     return () => io.disconnect();
   }, []);
 
   if (!mounted) return null;
 
-  const visible = scrollY > SCROLL_THRESHOLD && !atRelated && !atFooter;
+  const visible = scrollY > SCROLL_THRESHOLD && !atRelated && !atReviews && !atFooter;
 
   return createPortal(
     <div
