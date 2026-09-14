@@ -49,9 +49,6 @@ const LIST_ICON = (
   </svg>
 );
 
-const PANEL_MS = 320;
-const PANEL_EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
-
 export const ShopControls: React.FC<ShopControlsProps> = ({
   totalCount,
   activeSort,
@@ -60,7 +57,6 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [tabOpen, setTabOpen] = useState(false);
   const [showTab, setShowTab] = useState(false);
   const inlineRowRef = useRef<HTMLDivElement>(null);
 
@@ -142,7 +138,7 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
         </div>
       </div>
 
-      {/* Floating side tab — mirrors gold-rate button position; visible after inline row scrolls out */}
+      {/* Floating side tab — three icons in gold-rate styling; visible after inline row scrolls out */}
       <div
         aria-hidden={!showTab}
         className={`fixed bottom-24 right-0 top-auto z-40 transition-all duration-300 ease-out md:top-1/2 md:bottom-auto md:-translate-y-[calc(50%-43px)] ${
@@ -150,161 +146,43 @@ export const ShopControls: React.FC<ShopControlsProps> = ({
         }`}
       >
         <div
-          style={{
-            transition: `width ${PANEL_MS}ms ${PANEL_EASE}, height ${PANEL_MS}ms ${PANEL_EASE}, border-radius ${PANEL_MS}ms ${PANEL_EASE}, box-shadow ${PANEL_MS}ms ${PANEL_EASE}`,
-            boxShadow: tabOpen ? '0 0 0 0 rgba(0, 0, 0, 0)' : '-1px 1px 3px rgba(0, 0, 0, 0.12)',
-          }}
-          className={`relative bg-[#144B3C] text-white ${
-            tabOpen
-              ? 'w-[320px] h-[440px] rounded-l-md'
-              : 'w-[32px] h-[120px] rounded-tl-[12px] rounded-bl-[12px]'
-          }`}
+          style={{ boxShadow: '-1px 1px 3px rgba(0, 0, 0, 0.12)' }}
+          className="flex flex-col items-center gap-1 bg-[#144B3C] py-2 text-white rounded-l-md w-[44px] sm:w-[48px]"
         >
-          {!tabOpen && (
-            <button
-              type="button"
-              onClick={() => setTabOpen(true)}
-              aria-label="Open sort and filter"
-              className="absolute inset-0 flex cursor-pointer items-center justify-center"
-            >
-              <span
-                style={{
-                  writingMode: 'vertical-rl',
-                  transform: 'rotate(180deg)',
-                  color: '#ffffff',
-                  fontFamily: 'Arial, Helvetica, sans-serif',
-                  fontSize: '10px',
-                  fontWeight: 600,
-                  letterSpacing: '2px',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Sort & Filter
-              </span>
-            </button>
-          )}
+          <CustomSelect
+            label="Sort"
+            value={activeSort}
+            options={SORT_OPTIONS}
+            onChange={handleSort}
+            icon={SORT_ICON}
+            align="right"
+            active={activeSort !== 'featured'}
+            variant="light"
+            className="h-10 w-10 sm:h-11 sm:w-11"
+          />
 
-          {tabOpen && (
-            <div className="absolute inset-0 flex flex-col overflow-y-auto p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[10px] tracking-[0.22em] uppercase text-white/70">
-                    Refine
-                  </p>
-                  <p className="mt-1 font-sans text-base font-medium tracking-[0.04em]">
-                    Sort & Filter
-                  </p>
-                  <div className="mt-2 h-px w-10 bg-[#C89F53]" />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setTabOpen(false)}
-                  aria-label="Close sort and filter"
-                  className="text-white/70 transition-colors hover:text-white"
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 6 6 18" />
-                    <path d="M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+          <button
+            type="button"
+            aria-label="Filter"
+            onClick={openDrawer}
+            className="flex h-10 w-10 items-center justify-center text-white transition-colors hover:text-[#C89F53] cursor-pointer sm:h-11 sm:w-11"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            </svg>
+          </button>
 
-              <p className="mt-3 text-[10px] tracking-[0.12em] uppercase text-white/60">
-                {totalCount} {totalCount === 1 ? 'piece' : 'pieces'}
-              </p>
-
-              <div className="mt-5">
-                <p className="text-[10px] tracking-[0.16em] uppercase text-white/70">
-                  Sort by
-                </p>
-                <div className="mt-2 space-y-0.5">
-                  {SORT_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => handleSort(opt.value)}
-                      aria-pressed={activeSort === opt.value}
-                      className={`flex w-full items-center justify-between gap-2 px-2 py-1.5 text-left text-[12px] transition-colors ${
-                        activeSort === opt.value
-                          ? 'text-[#C89F53]'
-                          : 'text-white hover:text-[#C89F53]'
-                      }`}
-                    >
-                      <span>{opt.label}</span>
-                      {activeSort === opt.value && (
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <path d="m5 12 5 5 9-11" />
-                        </svg>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  openDrawer();
-                  setTabOpen(false);
-                }}
-                className="mt-5 flex w-full items-center justify-between gap-2 border-t border-white/15 px-2 pt-4 text-left text-[12px] text-white transition-colors hover:text-[#C89F53]"
-              >
-                <span className="flex items-center gap-2">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                  </svg>
-                  Filters
-                </span>
-                <span className="text-[14px] text-white/50">→</span>
-              </button>
-
-              <div className="mt-auto border-t border-white/15 pt-4">
-                <p className="text-[10px] tracking-[0.16em] uppercase text-white/70">
-                  View
-                </p>
-                <div className="mt-2 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => activeView !== 'grid' && toggleView()}
-                    aria-pressed={activeView === 'grid'}
-                    className={`flex flex-1 items-center justify-center gap-2 px-3 py-2 text-[11px] uppercase tracking-[0.12em] transition-colors ${
-                      activeView === 'grid'
-                        ? 'bg-white text-[#144B3C]'
-                        : 'border border-white/30 text-white hover:border-white'
-                    }`}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <rect x="3" y="3" width="7" height="7" />
-                      <rect x="14" y="3" width="7" height="7" />
-                      <rect x="3" y="14" width="7" height="7" />
-                      <rect x="14" y="14" width="7" height="7" />
-                    </svg>
-                    Grid
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => activeView !== 'list' && toggleView()}
-                    aria-pressed={activeView === 'list'}
-                    className={`flex flex-1 items-center justify-center gap-2 px-3 py-2 text-[11px] uppercase tracking-[0.12em] transition-colors ${
-                      activeView === 'list'
-                        ? 'bg-white text-[#144B3C]'
-                        : 'border border-white/30 text-white hover:border-white'
-                    }`}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M8 6h13" />
-                      <path d="M8 12h13" />
-                      <path d="M8 18h13" />
-                      <path d="M3 6h.01" />
-                      <path d="M3 12h.01" />
-                      <path d="M3 18h.01" />
-                    </svg>
-                    List
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={toggleView}
+            aria-label={activeView === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
+            aria-pressed={activeView === 'list'}
+            className={`flex h-10 w-10 items-center justify-center text-white transition-colors hover:text-[#C89F53] cursor-pointer sm:h-11 sm:w-11 ${
+              activeView === 'list' ? 'text-[#C89F53]' : ''
+            }`}
+          >
+            {activeView === 'grid' ? LIST_ICON : GRID_ICON}
+          </button>
         </div>
       </div>
     </>

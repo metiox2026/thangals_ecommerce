@@ -16,6 +16,7 @@ interface CustomSelectProps<T extends string> {
   align?: 'left' | 'right';
   active?: boolean;
   className?: string;
+  variant?: 'default' | 'light';
 }
 
 export function CustomSelect<T extends string>({
@@ -27,6 +28,7 @@ export function CustomSelect<T extends string>({
   align = 'right',
   active = false,
   className = '',
+  variant = 'default',
 }: CustomSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -34,6 +36,14 @@ export function CustomSelect<T extends string>({
 
   const current = options.find((o) => o.value === value) ?? options[0];
   const isHighlighted = active || open;
+  const isLight = variant === 'light';
+  const buttonColor = isLight
+    ? isHighlighted
+      ? 'text-[#C89F53]'
+      : 'text-white hover:text-[#C89F53]'
+    : isHighlighted
+      ? 'text-[#C89F53]'
+      : 'text-[#1A3A2A] hover:text-[#C89F53]';
 
   useEffect(() => {
     if (!open) return;
@@ -64,9 +74,7 @@ export function CustomSelect<T extends string>({
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className={`flex shrink-0 items-center justify-center text-[#1A3A2A] outline-none transition-colors cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[48px] sm:min-w-[48px] h-10 w-10 sm:h-12 sm:w-12 ${
-          isHighlighted ? 'text-[#C89F53]' : 'hover:text-[#C89F53]'
-        }`}
+        className={`flex shrink-0 items-center justify-center outline-none transition-colors cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[48px] sm:min-w-[48px] h-10 w-10 sm:h-12 sm:w-12 ${buttonColor}`}
       >
         {icon}
       </button>
