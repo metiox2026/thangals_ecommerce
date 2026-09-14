@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Amiri, Tajawal, Noto_Naskh_Arabic } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { BagProvider } from '@/context/BagContext';
 import { WishlistProvider } from '@/context/WishlistContext';
@@ -64,15 +65,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${jost.variable} ${amiri.variable} ${tajawal.variable} ${cairo.variable} bg-[#004237]`} suppressHydrationWarning>
-      <body className="bg-[#004237] text-[#1C1C1C] antialiased font-sans overflow-hidden">
+    <html lang="en" className={`${cormorant.variable} ${jost.variable} ${amiri.variable} ${tajawal.variable} ${cairo.variable} bg-white`} suppressHydrationWarning>
+      <body className="bg-white text-[#1C1C1C] antialiased font-sans overflow-hidden">
+        <Script
+          id="loader-skip"
+          strategy="beforeInteractive"
+        >{`try{if(sessionStorage.getItem('thangals_loader_shown')==='1'){document.documentElement.setAttribute('data-loader-skip','');}}catch(e){}`}</Script>
         <LanguageProvider>
           <InitialLoader />
           <BagProvider>
             <WishlistProvider>
               <PageScroll>
                 <Header />
-                <div className="h-[72px] sm:h-[80px] md:h-[124px]" />
+                <div className="h-[72px] sm:h-[80px] md:h-[115px]" />
                 <SearchBar />
                 <main className="min-h-[70vh]">{children}</main>
                 <Footer />

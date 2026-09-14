@@ -1,15 +1,35 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTypewriterPlaceholder } from '@/lib/hooks/useTypewriterPlaceholder';
 
 export const SearchBar: React.FC = () => {
-  const { t } = useLanguage();
+  const router = useRouter();
+  const { lang: language, t } = useLanguage();
+  const [query, setQuery] = useState('');
+
+  const typewriterPlaceholder = useTypewriterPlaceholder({
+    words:
+      language === 'AR'
+        ? ['مجوهرات', 'مجموعات', 'هدايا', 'خواتم', 'قلادات']
+        : ['jewellery', 'collections', 'gifts', 'rings', 'necklaces'],
+    prefix: language === 'AR' ? 'ابحث عن ' : 'Search ',
+  });
 
   return (
     <div className="border-b border-[#003024] bg-[#004237] lg:hidden">
       <div className="mx-auto flex max-w-[1400px] items-center px-3 py-2">
-        <label className="flex w-full items-center gap-2 border border-[#2D5A3D] bg-[#144B3C] px-4 py-2 text-white transition-colors focus-within:border-[#C89F53]">
+        <form
+          className="flex w-full items-center gap-2 border border-[#2D5A3D] bg-[#144B3C] px-4 py-1.5 text-white"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const q = query.trim();
+            if (!q) return;
+            router.push(`/search?q=${encodeURIComponent(q)}`);
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -27,11 +47,13 @@ export const SearchBar: React.FC = () => {
           </svg>
           <input
             type="search"
-            placeholder={t('search.placeholder')}
-            className="w-full min-w-0 bg-transparent text-[12px] tracking-[0.14em] text-white uppercase placeholder:text-[#B8C7BE] placeholder:normal-case placeholder:tracking-normal focus:outline-none"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={typewriterPlaceholder}
+            className="w-full min-w-0 bg-transparent text-[16px] leading-[1] tracking-[0.14em] text-white placeholder:text-[12px] placeholder:tracking-normal focus:outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
             suppressHydrationWarning
           />
-        </label>
+        </form>
       </div>
     </div>
   );

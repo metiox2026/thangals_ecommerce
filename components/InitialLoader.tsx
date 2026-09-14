@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -8,15 +8,37 @@ const MIN_VISIBLE_MS = 2000;
 const FADE_OUT_MS = 500;
 const HARD_TIMEOUT_MS = 8000;
 
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+function shouldSkipLoader(): boolean {
+  if (typeof document === 'undefined') return false;
+  if (document.documentElement.hasAttribute('data-loader-skip')) return true;
+  try {
+    return sessionStorage.getItem('thangals_loader_shown') === '1';
+  } catch {
+    return false;
+  }
+}
+
 export const InitialLoader: React.FC = () => {
   const pathname = usePathname();
   const { t } = useLanguage();
 
   const isProductRoute = pathname?.startsWith('/product/') ?? false;
-
+  // Initial state must match server output (visible=true on non-product routes)
+  // so hydration doesn't mismatch. We hide via layout effect on first paint
+  // when the loader was already shown in this session.
   const [visible, setVisible] = useState(!isProductRoute);
   const [hiding, setHiding] = useState(false);
   const finishedRef = useRef(false);
+
+  useIsomorphicLayoutEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (shouldSkipLoader()) {
+      setVisible(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (pathname?.startsWith('/product/')) {
@@ -25,13 +47,7 @@ export const InitialLoader: React.FC = () => {
     }
     if (typeof window === 'undefined') return;
 
-    let alreadyShownInEffect = false;
-    try {
-      alreadyShownInEffect = sessionStorage.getItem('thangals_loader_shown') === '1';
-    } catch {
-      alreadyShownInEffect = false;
-    }
-    if (alreadyShownInEffect) {
+    if (shouldSkipLoader()) {
       setVisible(false);
       return;
     }
@@ -61,6 +77,7 @@ export const InitialLoader: React.FC = () => {
           setVisible(false);
           try {
             sessionStorage.setItem('thangals_loader_shown', '1');
+            document.documentElement.setAttribute('data-loader-skip', '');
           } catch {
             /* storage unavailable — ignore */
           }
@@ -107,3 +124,4 @@ export const InitialLoader: React.FC = () => {
     </div>
   );
 };
+
